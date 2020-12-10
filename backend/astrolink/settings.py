@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     #Custom apps
     "asclepios",
     "inventory",
-    "procedures",
+    "activities",
 
 ]
 

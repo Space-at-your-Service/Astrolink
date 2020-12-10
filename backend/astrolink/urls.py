@@ -22,11 +22,8 @@ from rest_framework.authtoken import views
 
 urlpatterns = [
 
-    #path("experiments/", include("experiments.urls")),
     path("inventory/", include("inventory.urls")),
-    #path("planning/", include("planning.urls")),
-    path("procedures/", include("procedures.urls")),
-    #path("psyforms/", include("psyforms.urls")),
+    path("activities/", include("activities.urls")),
 
     path("login/", views.obtain_auth_token),
     path("admin/", admin.site.urls),

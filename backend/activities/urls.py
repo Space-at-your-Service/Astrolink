@@ -1,11 +1,11 @@
 from django.urls import path
 
-from . import views
+from .views import GlobalView, SelectiveView
 
 
 urlpatterns = [
 
-    path("", views.GlobalView.as_view()),
-    path("<slug:pk>", views.SelectiveView.as_view()),
+    path("", GlobalView.as_view()),
+    path("<slug:pk>", SelectiveView.as_view()),
 
 ]
