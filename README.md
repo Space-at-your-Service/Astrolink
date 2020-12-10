@@ -9,15 +9,23 @@ Astrolink is a multi-tool web application for the [Asclepios mission](asclepios.
 ## Structure :
 
     - backend
-        - astrolink : Core django project folder
+        - astrolink : core django project folder
         - inventory : inventory app
         -  : procedures app
     - vue
-        - ?
+        - public : the public page where the app is compiled
+        - src : core vue project folder
+            - assets : static assets (CSS sheets, images, police, etc.)
+            - components : reusable Vue components
+            - models : reusable classes
+            - router : handles client routing between the different views
+            - services : data API (collection of REST methods to access the backend)
+            - store : single source of truth for data shared accross the app
+            - views : pages of the app
 
 ## Usage
 
-    All commands assume you have a shell in the main repository folder
+    All commands assume you have a command shell in the main repository folder Astrolink.
 
 ### Backend
 
@@ -27,6 +35,8 @@ Astrolink is a multi-tool web application for the [Asclepios mission](asclepios.
 
 ### Frontend
 
+    You need to have Node.js installed in order to use the command `npm`. It can be downloaded at https://nodejs.org/fr/download/.
+
     `cd vue`
     `npm run serve`
 
@@ -34,8 +44,8 @@ Astrolink is a multi-tool web application for the [Asclepios mission](asclepios.
 
 ### Backend
 
-    The exact conda environment used to run the backend can be found in the file conda.txt at the root of the repository
+    The exact conda environment used to run the backend can be found in the file conda.txt at the root of the repository.
 
 ### Frontend
 
-    npm run install should handle all the dependencies ?
+    Run `npm install` to install all the dependencies listed in package.json.
