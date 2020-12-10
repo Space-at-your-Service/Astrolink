@@ -1,5 +1,0 @@
-   user   |   password   |                 token                    |
-peasant   | azerty123456 |                                          |
-astronot  | qzerty123456 |                                          |
-capcom    | awerty123456 |                                          |
-scientist | qsdfgh123456 |                                          |
