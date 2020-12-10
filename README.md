@@ -8,12 +8,15 @@ Astrolink is a multi-tool web application for the [Asclepios mission](https://as
 
 ## Structure
 
-    - backend
-        - astrolink : Core django project folder
-        - inventory : inventory app
-        -  : procedures app
+    - backend (one folder per django app except otherwise specified)
+        - activities
+        - asclepios
+        - astrolink : django core project folder
+        - inventory
+        conda.txt : conda environment specification
+        manage.py : general-purpose django administration script
     - vue
-        - to be given
+        - to be completed
 
 ## Usage
 
