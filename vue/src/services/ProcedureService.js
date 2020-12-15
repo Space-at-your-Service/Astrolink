@@ -17,6 +17,15 @@ class ProcedureService {
 			onUploadProgress
 		})
 	}
+
+	reuploadProcedure(nick, formData, onUploadProgress) {
+		return http.put("/activities/procedures/"+nick, formData, {
+			headers: {
+				"Content-Type": "multipart/form-data"
+			},
+			onUploadProgress
+		})
+	}
 }
 
 export default new ProcedureService();

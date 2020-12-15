@@ -217,16 +217,6 @@
 		},
 		computed: {
 			...mapState(['procedureTypes']),
-			formattedProcedure() {
-				let formData = new FormData()
-				formData.append('nick', this.createdProcedure.nick)
-				formData.append('title', this.createdProcedure.title)
-				formData.append('type', this.createdProcedure.type)
-				formData.append('subtype', this.createdProcedure.subtype)
-				formData.append('abstract', this.createdProcedure.abstract)
-				formData.append('pdfFile', this.createdProcedure.file)
-				return formData
-			},
 			procedurePrimaryTypes() {
 				var procedurePrimaryTypes = []
 				for (var type of this.procedureTypes) {
@@ -236,6 +226,16 @@
 			}
 		},
 		methods: {
+			formatProcedure(procedure) {
+				let formData = new FormData()
+				formData.append('nick', procedure.nick)
+				formData.append('title', procedure.title)
+				formData.append('type', procedure.type)
+				formData.append('subtype', procedure.subtype)
+				formData.append('abstract', procedure.abstract)
+				formData.append('pdfFile', procedure.file)
+				return formData
+			},
 			editModal(procedure) {
 				this.editedProcedure = procedure
 			},
@@ -315,10 +315,14 @@
 				if (!this.checkProcedure(this.createdProcedure)) return
 				else this.fileUpload()
 			},
+			okEdit() {
+				if (!this.checkProcedure(this.editedProcedure)) return
+				else this.fileReupload()
+			},
 			fileUpload() {
 				this.progress = 0
 				this.isUploading = true;
-				ProcedureService.uploadProcedure(this.formattedProcedure, event => {
+				ProcedureService.uploadProcedure(this.formatProcedure(this.createdProcedure), event => {
 					this.uploadProgress = Math.round((100*event.loaded) / event.total)
 				})
 				.then(() => {
@@ -332,6 +336,23 @@
 					this.uploadProgress = 0
 				})
 				
+			},
+			fileReupload(){
+				this.progress = 0
+				this.isUploading = true;
+				ProcedureService.reuploadProcedure(this.editedProcedure.nick, this.formatProcedure(this.editedProcedure), event => {
+					this.uploadProgress = Math.round((100*event.loaded) / event.total)
+				})
+				.then(() => {
+					this.refreshProcedures()
+				})
+				.catch(() => {
+					alert("An error occured during file upload.")
+				})
+				.then(() => {
+					this.isUploading = false
+					this.uploadProgress = 0
+				})
 			},
 			refreshProcedures() {
 				this.getProceduresFromServer()

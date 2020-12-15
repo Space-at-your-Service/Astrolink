@@ -76,8 +76,8 @@
                 if (this.user.username && this.user.password) {
                     this.login(this.user)
                     .then(() => {
-                            this.$router.push('/home')
                             window.location.reload()
+                            this.$router.push('/home')
                         },
                         error => {
                             this.loading = false
