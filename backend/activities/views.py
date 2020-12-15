@@ -53,7 +53,7 @@ class SelectiveView(APIView):
 
         procedure = Procedure.objects.get(pk = pk)
 
-        f = request.data["file"]
+        f = request.data["pdfFile"]
 
         procedure.pdfFile.save(f.name, f, save = True)
 
