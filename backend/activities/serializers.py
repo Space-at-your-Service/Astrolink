@@ -8,4 +8,4 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Procedure
-        fields = ("nick", "title", "type", "abstract", "pdfFile")
+        fields = ("nick", "title", "type", "subtype", "abstract", "pdfFile")

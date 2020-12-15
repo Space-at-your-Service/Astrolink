@@ -16,6 +16,7 @@ class Procedure(models.Model):
     nick = models.SlugField(max_length = 20, primary_key = True, unique = True)
     title = models.CharField(max_length = 20)
     type = models.CharField(max_length = 20)
+    subtype = models.CharField(max_length = 20)
     abstract = models.CharField(max_length = 140)
     pdfFile = models.FileField(max_length = 100) #TODO : Change this, files need to be stored in the DB as blobs !
 
