@@ -5,6 +5,6 @@ from . import views
 
 urlpatterns = [
 
-    path("", views.GlobalView.as_view()),
+    path("permissions_lexicon/", views.PermiView.as_view()),
 
 ]

@@ -17,16 +17,19 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework.authtoken import views
+from rest_framework.authtoken.views import obtain_auth_token
+
+from asclepios.views import UserView
 
 
 urlpatterns = [
 
     path("inventory/", include("inventory.urls")),
     path("activities/", include("activities.urls")),
+    path("asclepios/", include("asclepios.urls")),
 
-    path("profile/", include("asclepios.urls")),
-    path("login/", views.obtain_auth_token),
+    path("profile/", UserView.as_view()),
+    path("login/", obtain_auth_token),
 
     path("admin/", admin.site.urls),
 ]

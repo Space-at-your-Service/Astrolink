@@ -15,17 +15,15 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
         fullcodename = f"{instance.content_type.app_label}.{instance.codename}"
         name = instance.name
 
-        return {"codename" : fullcodename, "name" : name}
+        return {fullcodename : name}
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
-    #permissions = PermissionSerializer(many = True)
-
     class Meta:
 
         model = Group
-        fields = ("name",)# "permissions")
+        fields = ("name",)
 
     def to_representation(self, instance):
 
