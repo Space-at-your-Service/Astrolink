@@ -2,13 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { auth } from './auth.module'
+import { perm } from './perm.module'
 import Datasheet from '../models/datasheet'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
 	modules: {
-		auth
+		auth,
+		perm
 	},
 
 	state: {

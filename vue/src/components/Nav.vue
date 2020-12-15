@@ -46,10 +46,16 @@
 			...mapActions('auth', [
                 'logout'
             ]),
+            ...mapActions('perm', [
+				'getUserPermissions'
+			]),
 			handleLogout() {
 				this.logout()
 				.then(this.$router.push('/login'))
 			}
+		},
+		created() {
+			this.getUserPermissions()
 		}
 	}
 </script>

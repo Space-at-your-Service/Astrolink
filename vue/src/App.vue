@@ -10,18 +10,10 @@
 
 <script>
   import Nav from './components/Nav.vue';
-  import { mapState } from 'vuex';
   export default {
     name: 'app',
     components: {
       Nav
-    }, 
-    data() {
-      return {
-      }
-    },
-    computed: {
-      ...mapState(['isLogged'])
     }
   }
 </script>
