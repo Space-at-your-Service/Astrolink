@@ -8,27 +8,24 @@ class PermissionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Permission
-        fields = ("codename",)
+        fields = ("codename", "name")
 
     def to_representation(self, instance):
 
-        print(instance)
-        print(type(instance))
-        ret = super().to_representation(instance)
-        print(ret)
-        ret['codename'] = ret['codename'].upper()
+        fullcodename = f"{instance.content_type.app_label}.{instance.codename}"
+        name = instance.name
 
-        return ret
+        return {"codename" : fullcodename, "name" : name}
 
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
-    permissions = PermissionSerializer(many = True)
+    #permissions = PermissionSerializer(many = True)
 
     class Meta:
 
         model = Group
-        fields = ("name", "permissions")
+        fields = ("name",)# "permissions")
 
 
 class AsclepianSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,4 +35,12 @@ class AsclepianSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Asclepian
-        fields = ("username", "first_name", "last_name", "groups")
+        fields = ("username", "first_name", "last_name", "groups",)
+
+    def to_representation(self, instance):
+
+        rep = super().to_representation(instance)
+        perms = instance.get_all_permissions()
+        rep.update({"permissions" : list(perms)})
+
+        return rep
