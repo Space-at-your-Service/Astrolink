@@ -14,12 +14,16 @@ class GlobalView(APIView):
 
     def get(self, request):
 
+        request.user.check_perms(("activities.view_procedure",))
+
         all_nicks = Procedure.objects.all()
         ser = ProcedureSerializer(all_nicks, many = True)
 
         return JsonResponse(ser.data, safe = False)
 
     def post(self, request):
+
+        request.user.check_perms(("activities.add_procedure",))
 
         ser = ProcedureSerializer(data = request.data)
 
@@ -37,11 +41,15 @@ class SelectiveView(APIView):
 
     def get(self, request, pk):
 
+        request.user.check_perms(("activities.view_procedure",))
+
         procedure = Procedure.objects.get(pk = pk)
 
         return HttpResponse(FileWrapper(procedure.pdfFile), content_type = "application/pdf")
 
     def put(self, request, pk):
+
+        request.user.check_perms(("activities.change_procedure",))
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -52,6 +60,8 @@ class SelectiveView(APIView):
         return JsonResponse({"message" : "Upload was done successfully"}, status = status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk):
+
+        request.user.check_perms(("activities.delete_procedure",))
 
         procedure = Procedure.objects.get(pk = pk)
         procedure.delete()
