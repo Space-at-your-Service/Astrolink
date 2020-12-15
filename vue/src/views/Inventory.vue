@@ -119,7 +119,7 @@
 				<col
 				v-for="field in scope.fields"
 				:key="field.key"
-				:style="{ width: field.key !== 'name' ? '100px' : '180px' }"
+				:style="{ width: field.key !== 'name' ? '80px' : '180px' }"
 				>
 			</template>
 

@@ -18,7 +18,13 @@ export default new Vuex.Store({
 			{expanded: false, index: 1, title: "experiment2", state: "aborted", supervisor: "Mary", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]},
 			{expanded: false, index: 2, title: "experiment3", state: "planned", supervisor: "Bill", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]}
 		],
-		procedureTypes: ['Logistics', 'Contacts', 'Emergencies'],
+		procedureTypes: [
+		{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
+		{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},
+		{primaryType: 'MCC', subtypes: []}, 
+		{primaryType: 'Emergencies', subtypes: []}, 
+		{primaryType: 'Others', subtypes: []}
+		],
 		proceduresList: [
 			{nick: 'mas-lunar-base-evacuation', title: 'MAS Lunar Base Evacuation', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: 'C:/Users/Valentin/Documents/EPFL/Cours M3/Projet Astrolink/Astrolink/vue/public/lib/procedures/2020_SC_SOP_0001_MAS_Lunar_Base_Evacuation.docx.pdf'},
 			{nick: 'geophysical-experiment', title: 'Geophysical Experiment', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_Geophysical_experiment.docx.pdf'},

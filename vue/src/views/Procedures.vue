@@ -22,63 +22,77 @@
 		</div>
 
 		<b-card no-body>
-			<b-tabs content-class="my-3" justified>
-				<b-tab v-for="section in proceduresByType" :key="section.type" :title="section.type">
-					<div class="container p-0">
-						<div class="row no-gutters justify-content-around">
-							<div v-for="procedure in section.procedures" :key="procedure.nick" class="col-3 m-2 text-center">
-								<b-card
-								v-if="!showFavsOnly || favoritesList[procedure.nick]"
-								:id="procedure.nick"
-								:title="procedure.title"
-								footer-tag="footer"
-								header-tag="header"
-								class="text-dark m-0 p-0 h-100"
-								v-b-tooltip.hover
-								>
-									<b-card-text>
-										{{ procedure.abstract }}
-									</b-card-text>
+			<b-tabs content-class="my-3" justified active-nav-item-class="font-weight-bold text-uppercase text-dark">
+				<b-tab v-for="section in proceduresSections" :key="section.type" :title="section.type">
+				<template #title>
+					<strong  style="font-variant-caps: small-caps;">{{ section.type }}</strong>
+				</template>
 
-								<!-- 	<template #header>
-										<strong style="font-size: larger;">{{ procedure.title }}</strong>
-									</template> -->
+					<b-tabs content-class="my-3" justified small vertical pills>
+						<b-tab v-for="subsection in section.subsections" :key="subsection.type" :title="subsection.type">
+							<div class="container p-0">
+								<div class="row no-gutters justify-content-around">
+									<div v-for="procedure in subsection.procedures" :key="procedure.nick" class="col-3 m-2 text-center">
+										<b-card
+										v-if="!showFavsOnly || favoritesList[procedure.nick]"
+										:id="procedure.nick"
+										:title="procedure.title"
+										footer-tag="footer"
+										header-tag="header"
+										class="text-dark m-0 p-0 h-100"
+										v-b-tooltip.hover
+										>
+											<b-card-text>
+												{{ procedure.abstract }}
+											</b-card-text>
 
-									<template #footer>
-										<b-row>
-											<b-col>
-												<b-container class="hover-grow hover-pointer" @click="toggleToFavorites(procedure.nick)">
-													<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
-													<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
-												</b-container>
-											</b-col>
-											<b-col>
-												<b-container class="hover-grow hover-pointer" @click="openPDF(procedure.nick)">
-													<b-icon icon="eye-fill" variant="dark"></b-icon>
-												</b-container>
-											</b-col>
-											<b-col >
-												<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
-													<b-icon icon="pencil-square" variant="info"  
-													></b-icon>
-												</b-container>
-											</b-col>
-										</b-row>
-									</template>
-								</b-card>
+											<template #header>
+												<strong style="font-size: larger;">{{ procedure.title }}</strong>
+											</template>
 
-								<b-tooltip :target="procedure.nick" triggers="hover">
-									<strong class="text-info">{{ procedure.title }}</strong>
-									<br/>
-									{{ procedure.abstract }}
-								</b-tooltip>
+											<template #footer>
+												<b-row>
+													<b-col>
+														<b-container class="hover-grow hover-pointer" @click="toggleToFavorites(procedure.nick)">
+															<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
+															<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
+														</b-container>
+													</b-col>
+													<b-col>
+														<b-container class="hover-grow hover-pointer" @click="openPDF(procedure.nick)">
+															<b-icon icon="eye-fill" variant="dark"></b-icon>
+														</b-container>
+													</b-col>
+													<b-col >
+														<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
+															<b-icon icon="pencil-square" variant="info"  
+															></b-icon>
+														</b-container>
+													</b-col>
+												</b-row>
+											</template>
+										</b-card>
+
+										<b-tooltip :target="procedure.nick" triggers="hover">
+											<strong class="text-info">{{ procedure.title }}</strong>
+											<br/>
+											{{ procedure.abstract }}
+										</b-tooltip>
+									</div>
+
+									<div v-if="subsection.procedures.length === 0" class="text-center text-dark">
+										This subsection is empty.
+									</div>
+								</div>
+
 							</div>
+						</b-tab>
+					</b-tabs>
 
-							<div v-if="section.procedures.length === 0" class="text-center text-dark">
-								This section is empty.
-							</div>
-						</div>
+					<div v-if="section.subsections.length === 0" class="text-center text-dark">
+						This section is empty.
 					</div>
+
 				</b-tab>
 			</b-tabs>
 		</b-card>
@@ -175,7 +189,7 @@
 				sectionList: ['Section 1', 'Section 2', 'Section 3', 'Section 4'],
 				selected: "section1",
 				procedures: [],
-				proceduresByType: [],
+				proceduresSections: [],
 				createdProcedure: {nick: '', title: '', type: '', abstract: '', file: undefined},
 				editedProcedure: {nick: '', title: '', type: '', abstract: '', file: undefined},
 				isUploading: false,
@@ -213,19 +227,28 @@
 				else 
 					this.$set(this.favoritesList, nick, true)
 			},
-			splitProceduresByType() {
-				this.proceduresByType = []
+			splitProceduresSections() {
+				this.proceduresSections = []
+				console.log('hey1')
 				for (var type of this.procedureTypes) {
+					console.log('hey2')
 					var colorVariant = 'primary'
-					var pair = this.typesColorVariants.find(pair => pair.type === type)
-					if (pair) {
-						colorVariant = pair.colorVariant
+					var typeColorPair = this.typesColorVariants.find(typeColorPair => typeColorPair.type === type.primaryType)
+					if (typeColorPair) {
+						colorVariant = typeColorPair.colorVariant
 					}
+					console.log('hey3')
+					var section = {type: type.primaryType, colorVariant: colorVariant, subsections: []}
+					var proceduresOfType = this.procedures.filter(procedure => procedure.type === type.primaryType)
+					console.log('hey4')
 
-					var proceduresOfType = this.procedures.filter(procedure => procedure.type === type)
-
-					var section = {type: type, colorVariant: colorVariant, procedures: proceduresOfType}
-					this.proceduresByType.push(section)
+					for (var subtype of type.subtypes) {
+						var proceduresOfSubtype = proceduresOfType.filter(procedure => procedure.subtype === subtype)
+						var subsection = {type: subtype, procedures: proceduresOfSubtype}
+						section.subsections.push(subsection)
+					}
+					console.log('hey6')
+					this.proceduresSections.push(section)
 				}
 			},
 			// getFileURL(nick) {
@@ -298,7 +321,7 @@
 				ProcedureService.getProcedures()
 				.then(response => {
 					this.procedures = response.data
-					this.splitProceduresByType()
+					this.splitProceduresSections()
 				})
 				.catch(e => {
 					console.log(e)

@@ -21,58 +21,20 @@
 
 					<b-nav-item-dropdown right class="ml-lg-5">
 						<template #button-content>
-							<strong>admin</strong>
+							admin
 						</template>
-						<b-dropdown-item to="/profile" @click="isActive = 'profile'">Profile</b-dropdown-item>
-						<b-dropdown-item to="/login" @click="isActive = 'login'"><strong>Log Out</strong></b-dropdown-item>
+						<b-dropdown-item to="/profile" class="text-center" @click="isActive = 'profile'"><b-icon icon="person-circle"></b-icon> <strong>Profile</strong></b-dropdown-item>
+						<b-dropdown-item class="text-center" @click="handleLogout"><b-icon icon="box-arrow-left"></b-icon> <strong>Log Out</strong></b-dropdown-item>
 					</b-nav-item-dropdown>
 
 				</b-navbar-nav>
 			</b-collapse>
-
-				<!-- <ul class="nav navbar-nav flex-row float-right" style="font-size:larger;g">
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "home" }' @click='changeSelected("home")'>
-							<router-link class="nav-link pr-3" to="/home">Planning</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "procedures" }' @click='changeSelected("procedures")'>
-							<router-link class="nav-link pr-3" to="/procedures">Procedures</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "experiments" }' @click='changeSelected("experiments")'>
-							<router-link class="nav-link pr-3" to="/experiments">Experiments</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "inventory" }' @click='changeSelected("inventory")'>
-							<router-link class="nav-link pr-3" to="/inventory">Inventory</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "psyforms" }' @click='changeSelected("psyforms")'>
-							<router-link class="nav-link pr-3" to="/psyforms">Psychological forms</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "profile" }' @click='changeSelected("profile")'>
-							<router-link class="nav-link pr-3" to="/profile">Profile</router-link>
-						</span>
-					</li>
-					<li class="nav-item">
-						<span :class='{ "selected": selected === "logout" }' @click='changeSelected("logout")'>
-							<router-link class="btn btn-outline-primary" to="/login">Log out</router-link>
-						</span>
-					</li>
-				</ul>
-			</div> -->
 		</b-navbar>
 	</div>
 </template>
 
 <script>
+	import {mapActions} from 'vuex'
 
 	export default {
 		data() {
@@ -80,14 +42,22 @@
 				isActive: ''
 			}
 		},
-		methods: {
+		methods: { 
+			...mapActions('auth', [
+                'logout'
+            ]),
+			handleLogout() {
+				this.logout()
+				.then(this.$router.push('/login'))
+			}
 		}
 	}
 </script>
 
-<style>
+<style scoped>
 	.nav-item {
 		font-variant-caps: all-small-caps;
+		font-weight: bold;
 		font-size: 1.5em;
 		margin: 0px 5px 0px 5px;
 	}
