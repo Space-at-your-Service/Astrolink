@@ -23,7 +23,7 @@
 
 		<b-card no-body>
 			<b-tabs content-class="my-3" justified active-nav-item-class="font-weight-bold text-uppercase text-dark">
-				<b-tab v-for="section in proceduresSections" :key="section.type" :title="section.type">
+				<b-tab v-for="section in procedureSections" :key="section.type" :title="section.type">
 				<template #title>
 					<strong  style="font-variant-caps: small-caps;">{{ section.type }}</strong>
 				</template>
@@ -32,7 +32,7 @@
 						<b-tab v-for="subsection in section.subsections" :key="subsection.type" :title="subsection.type">
 							<div class="container p-0">
 								<div class="row no-gutters justify-content-around">
-									<div v-for="procedure in subsection.procedures" :key="procedure.nick" class="col-3 m-2 text-center">
+									<div v-for="procedure in subsection.procedures" :key="procedure.nick" class="col-4 m-2 text-center">
 										<b-card
 										v-if="!showFavsOnly || favoritesList[procedure.nick]"
 										:id="procedure.nick"
@@ -41,14 +41,15 @@
 										header-tag="header"
 										class="text-dark m-0 p-0 h-100"
 										v-b-tooltip.hover
+										style="min-width: 200px"
 										>
 											<b-card-text>
 												{{ procedure.abstract }}
 											</b-card-text>
 
-											<template #header>
+											<!-- <template #header>
 												<strong style="font-size: larger;">{{ procedure.title }}</strong>
-											</template>
+											</template> -->
 
 											<template #footer>
 												<b-row>
@@ -111,9 +112,20 @@
 				label="Type"
 				label-for="createdTypeInput"
 				>
-					<b-form-select v-model="createdProcedure.type" :options="procedureTypes">
+					<b-form-select v-model="createdProcedure.type" :options="procedurePrimaryTypes" @change="refreshSubtypesOptions">
 						<template #first>
 							<b-form-select-option value="" disabled>Please select a procedure type</b-form-select-option>
+						</template>
+					</b-form-select>
+				</b-form-group>
+
+				<b-form-group
+				label="Subtype"
+				label-for="createdSubtypeInput"
+				>
+					<b-form-select v-model="createdProcedure.subtype" :options="subtypesOptions">
+						<template #first>
+							<b-form-select-option value="" disabled>Please select a procedure subtype</b-form-select-option>
 						</template>
 					</b-form-select>
 				</b-form-group>
@@ -186,16 +198,14 @@
 		},
 		data() {
 			return {
-				sectionList: ['Section 1', 'Section 2', 'Section 3', 'Section 4'],
-				selected: "section1",
 				procedures: [],
-				proceduresSections: [],
-				createdProcedure: {nick: '', title: '', type: '', abstract: '', file: undefined},
-				editedProcedure: {nick: '', title: '', type: '', abstract: '', file: undefined},
+				procedureSections: [],
+				createdProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
+				editedProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
+				subtypesOptions: [],
 				isUploading: false,
 				uploadProgress: 0,
 				fileInfos: [],
-				fileURL: '',
 				typesColorVariants : [
 				{type: 'Logistics', colorVariant: 'dark'},
 				{type: 'Contacts', colorVariant: 'warning'},
@@ -212,9 +222,17 @@
 				formData.append('nick', this.createdProcedure.nick)
 				formData.append('title', this.createdProcedure.title)
 				formData.append('type', this.createdProcedure.type)
+				formData.append('subtype', this.createdProcedure.subtype)
 				formData.append('abstract', this.createdProcedure.abstract)
 				formData.append('pdfFile', this.createdProcedure.file)
 				return formData
+			},
+			procedurePrimaryTypes() {
+				var procedurePrimaryTypes = []
+				for (var type of this.procedureTypes) {
+					procedurePrimaryTypes.push(type.primaryType)
+				}
+				return procedurePrimaryTypes
 			}
 		},
 		methods: {
@@ -227,29 +245,30 @@
 				else 
 					this.$set(this.favoritesList, nick, true)
 			},
-			splitProceduresSections() {
-				this.proceduresSections = []
-				console.log('hey1')
+			splitProcedureSections() {
+				this.procedureSections = []
 				for (var type of this.procedureTypes) {
-					console.log('hey2')
 					var colorVariant = 'primary'
 					var typeColorPair = this.typesColorVariants.find(typeColorPair => typeColorPair.type === type.primaryType)
 					if (typeColorPair) {
 						colorVariant = typeColorPair.colorVariant
 					}
-					console.log('hey3')
+
 					var section = {type: type.primaryType, colorVariant: colorVariant, subsections: []}
 					var proceduresOfType = this.procedures.filter(procedure => procedure.type === type.primaryType)
-					console.log('hey4')
 
 					for (var subtype of type.subtypes) {
 						var proceduresOfSubtype = proceduresOfType.filter(procedure => procedure.subtype === subtype)
 						var subsection = {type: subtype, procedures: proceduresOfSubtype}
 						section.subsections.push(subsection)
 					}
-					console.log('hey6')
-					this.proceduresSections.push(section)
+
+					this.procedureSections.push(section)
 				}
+			},
+			refreshSubtypesOptions() {
+				const type = this.procedureTypes.find(type => type.primaryType == this.createdProcedure.type)
+				if (type) this.subtypesOptions = type.subtypes
 			},
 			// getFileURL(nick) {
 			// 	ProcedureService.getFile(nick)
@@ -321,7 +340,7 @@
 				ProcedureService.getProcedures()
 				.then(response => {
 					this.procedures = response.data
-					this.splitProceduresSections()
+					this.splitProcedureSections()
 				})
 				.catch(e => {
 					console.log(e)
