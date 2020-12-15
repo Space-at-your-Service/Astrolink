@@ -10,7 +10,6 @@ export const perm = {
 	mutations: {
 		SET_PERMISSIONS(state, permissions) {
 			state.permissions = permissions
-			console.log(state.permissions)
 		}
 	},
 

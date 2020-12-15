@@ -14,7 +14,7 @@
 
 				<b-navbar-nav class="ml-auto">
 					<b-nav-item to="/home" :class="{ active : isActive === 'home' }" @click="isActive = 'home'">Planning</b-nav-item>
-					<b-nav-item to="/procedures" :class="{ active : isActive === 'procedures' }" @click="isActive = 'procedures'">Procedures</b-nav-item>
+					<b-nav-item to="/procedures" :class="{ active : isActive === 'procedures' }" @click="isActive = 'procedures'" v-if="permissions.includes('activities.view_procedure')">Procedures</b-nav-item>
 					<b-nav-item to="/experiments" :class="{ active : isActive === 'experiments' }" @click="isActive = 'experiments'">Experiments</b-nav-item>
 					<b-nav-item to="/inventory" :class="{ active : isActive === 'inventory' }" @click="isActive = 'inventory'" v-if="permissions.includes('inventory.view_item')">Inventory</b-nav-item>
 					<b-nav-item to="/psyforms" :class="{ active : isActive === 'psyforms' }" @click="isActive = 'psyforms'">Psychological</b-nav-item>

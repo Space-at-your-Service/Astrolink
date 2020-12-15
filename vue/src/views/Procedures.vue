@@ -4,7 +4,7 @@
 		<div class="container my-3 p-0 text-left">
 			<b-row class="no-gutters">
 				<b-col>
-					<b-button v-b-modal.uploadModal size="md">
+					<b-button v-b-modal.uploadModal size="md" v-if="permissions.includes('activities.add_procedure')">
 						<b-icon icon="plus-square" class="mr-1"></b-icon>
 						New procedure
 					</b-button>
@@ -64,7 +64,7 @@
 															<b-icon icon="eye-fill" variant="dark"></b-icon>
 														</b-container>
 													</b-col>
-													<b-col >
+													<b-col v-if="permissions.includes('activities.change_procedure')">
 														<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
 															<b-icon icon="pencil-square" variant="info"  
 															></b-icon>
@@ -179,6 +179,11 @@
 					</b-form-file>
 				</b-form-group>
 			</form>
+
+			<b-button size="sm" variant="danger" @click="deleteProcedure(editedProcedure)" class="ml-1" v-if="permissions.includes('activities.delete_procedure')">
+				<b-icon icon="trash"></b-icon>
+				Delete procedure
+			</b-button>
 		</b-modal>
 
 		<b-progress v-if="isUploading" max="100" variant="primary" show-progress animated>
@@ -217,6 +222,7 @@
 		},
 		computed: {
 			...mapState(['procedureTypes']),
+			...mapState('perm', ['permissions']),
 			procedurePrimaryTypes() {
 				var procedurePrimaryTypes = []
 				for (var type of this.procedureTypes) {
@@ -235,6 +241,11 @@
 				formData.append('abstract', procedure.abstract)
 				formData.append('pdfFile', procedure.file)
 				return formData
+			},
+			deleteProcedure(procedure) {
+				ProcedureService.deleteProcedure(procedure)
+				this.refreshProcedures()
+				this.$bvModal.hide('editModal')
 			},
 			editModal(procedure) {
 				this.editedProcedure = procedure

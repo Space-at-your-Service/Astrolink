@@ -26,6 +26,10 @@ class ProcedureService {
 			onUploadProgress
 		})
 	}
+
+	deleteProcedure(procedure) {
+		return http.delete("/activities/procedures/"+procedure.nick)
+	}
 }
 
 export default new ProcedureService();
