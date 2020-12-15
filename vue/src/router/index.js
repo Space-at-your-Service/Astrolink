@@ -1,9 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 Vue.use(VueRouter)
 
-  const routes = [
+const routes = [
   {
     path: '*',
     name: '404notfound',
@@ -95,7 +94,7 @@ router.beforeEach((to, from, next) => {
   // redirect to login page
   if (authRequired && !loggedIn) {
     next('/login')
-  } 
+  }
   else {
     next()
   }

@@ -2,8 +2,6 @@
   <div class="main-container">
     <h3 class="section-title">{{user.username}} Profile</h3>
 {{user}}
-<br/>
-{{this.$store.state.perm.permissions}}
     <b-container style="letter-spacing: 2px">
       <h2>Personal information</h2>
       <ul>

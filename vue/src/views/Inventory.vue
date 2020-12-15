@@ -5,7 +5,7 @@
 		<div class="container my-3 p-0">
 			<div class="row no-gutters">
 				<div class="col">
-					<b-button v-b-modal.createModal size="md" variant="info" class="float-left">
+					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" v-if="permissions.includes('inventory.add_item')">
 						<b-icon icon="plus-square" class="mr-1"></b-icon>
 						New item
 					</b-button>
@@ -77,10 +77,10 @@
 						<div class="col">
 							<b-button-group class="float-right">
 								<b-badge v-if="row.item.quantity == 0" variant="danger" class="m-auto">empty</b-badge>
-								<b-button v-if="row.item.quantity > 0" size="sm" @click="removeUnit(row.item)" class="mr-1" variant="">
+								<b-button size="sm" @click="removeUnit(row.item)" class="mr-1" variant="" v-if="row.item.quantity > 0 && permissions.includes('inventory.modify_item_qty')">
 									<b-icon icon="dash"></b-icon>
 								</b-button>
-								<b-button size="sm" @click="addUnit(row.item)" class="ml-1" variant="">
+								<b-button size="sm" @click="addUnit(row.item)" class="ml-1" variant="" v-if="permissions.includes('inventory.modify_item_qty')">
 									<b-icon icon="plus"></b-icon>
 								</b-button>
 							</b-button-group>
@@ -103,10 +103,10 @@
 						</div>
 						<div class="col-1">
 							<b-button-group class="float-right">
-								<b-button v-b-modal.editModal size="sm" variant="info" @click="editModal(row.item)" class="mr-1">
+								<b-button v-b-modal.editModal size="sm" variant="info" @click="editModal(row.item)" class="mr-1" v-if="permissions.includes('inventory.change_item')">
 									<b-icon icon="pencil-square"></b-icon>
 								</b-button>
-								<b-button size="sm" variant="danger" @click="deleteThisItem(row.item)" class="ml-1">
+								<b-button size="sm" variant="danger" @click="deleteThisItem(row.item)" class="ml-1" v-if="permissions.includes('inventory.delete_item')">
 									<b-icon icon="trash"></b-icon>
 								</b-button>
 							</b-button-group>
@@ -204,17 +204,6 @@
 	</div>
 </template>
 
-<style>
-	.main-container {
-		max-width: 1000px;
-		display: flex;
-		flex-direction: column;
-		text-align: left;
-		justify-content: center;
-		margin: auto;
-	}
-</style>
-
 <script>
 	import {mapState} from 'vuex'
 	import {mapActions} from 'vuex'
@@ -251,6 +240,7 @@
 		},
 		computed: {
 			...mapState(['inventoryHistory']),
+			...mapState('perm', ['permissions']),
 			sortOptions() {
 				return this.fields
 					.filter(f => f.sortable)
