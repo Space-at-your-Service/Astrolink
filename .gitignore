@@ -26,6 +26,7 @@ yarn-error.log*
 __pycache__
 files/
 migrations
+nukedb.sh
 
 # Procedures stored locally
 /vue/public/lib

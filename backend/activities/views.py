@@ -4,8 +4,6 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
 
-from asclepios.permissions import IsAstronaut, IsMCC, per_method
-
 from .models import Procedure
 from .serializers import ProcedureSerializer
 
@@ -13,10 +11,6 @@ from .serializers import ProcedureSerializer
 class GlobalView(APIView):
 
     parser_classes = (MultiPartParser, FormParser,)
-
-    @per_method({"GET" : IsMCC | IsAstronaut, "POST" : IsMCC})
-    def get_permissions(self):
-        pass
 
     def get(self, request):
 
@@ -40,10 +34,6 @@ class GlobalView(APIView):
 class SelectiveView(APIView):
 
     parser_classes = (MultiPartParser,)
-
-    @per_method({"GET" : IsMCC | IsAstronaut, "DELETE" : IsMCC, "PUT" : IsMCC})
-    def get_permissions(self):
-        pass
 
     def get(self, request, pk):
 

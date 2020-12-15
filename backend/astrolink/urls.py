@@ -25,7 +25,8 @@ urlpatterns = [
     path("inventory/", include("inventory.urls")),
     path("activities/", include("activities.urls")),
 
+    path("profile/", include("asclepios.urls")),
     path("login/", views.obtain_auth_token),
-    path("admin/", admin.site.urls),
 
+    path("admin/", admin.site.urls),
 ]

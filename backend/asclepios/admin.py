@@ -5,10 +5,10 @@ from .models import Asclepian
 
 
 class AsclepianAdmin(UserAdmin):
-
-    fieldsets = (*UserAdmin.fieldsets,
-                 ("Asclepios", {"fields" : ("role",)}),
-                )
+    pass
+#    fieldsets = (*UserAdmin.fieldsets,
+#                 ("Asclepios", {"fields" : ("role",)}),
+#                )
 
 
 admin.site.register(Asclepian, AsclepianAdmin)

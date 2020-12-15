@@ -9,3 +9,11 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
         model = Item
         fields = ("id", "name", "details", "quantity")
+
+
+class ItemQtySerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+
+        model = Item
+        fields = ("quantity")

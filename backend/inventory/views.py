@@ -3,20 +3,15 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 
-from asclepios.permissions import IsAstronaut, IsMCC, per_method
-
 from .models import Item
 from .serializers import ItemSerializer
 
 
-
 class GlobalView(APIView):
 
-    @per_method({"GET" : IsAstronaut | IsMCC, "POST" : IsAstronaut})
-    def get_permissions(self):
-        pass
-
     def get(self, request):
+
+        request.user.check_perms(("inventory.view_item",))
 
         all_items = Item.objects.all().order_by("id")
         ser = ItemSerializer(all_items, many = True)
@@ -24,6 +19,8 @@ class GlobalView(APIView):
         return JsonResponse(ser.data, safe = False)
 
     def post(self, request):
+
+        request.user.check_perms(("inventory.add_item",))
 
         item_data = JSONParser().parse(request)
         ser = ItemSerializer(data = item_data)
@@ -38,11 +35,9 @@ class GlobalView(APIView):
 
 class SelectiveView(APIView):
 
-    @per_method({"PUT" : IsAstronaut | IsMCC, "DELETE" : IsAstronaut})
-    def get_permissions(self):
-        pass
-
     def put(self, request, pk):
+
+        request.user.check_perms(("inventory.change_item",))
 
         item = Item.objects.get(pk = pk)
 
@@ -57,6 +52,8 @@ class SelectiveView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+
+        request.user.check_perms(("inventory.delete_item",))
 
         item = Item.objects.get(pk = pk)
 

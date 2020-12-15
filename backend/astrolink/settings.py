@@ -11,7 +11,12 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-from .private import SECRET_KEY, DATABASES
+
+try:
+    from .private import SECRET_KEY, DATABASES
+except ImportError:
+    print("You are missing some secrets !")
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
