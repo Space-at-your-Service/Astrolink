@@ -77,6 +77,7 @@
                     this.login(this.user)
                     .then(() => {
                             this.$router.push('/home')
+                            window.location.reload()
                         },
                         error => {
                             this.loading = false
