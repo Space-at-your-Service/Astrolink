@@ -27,6 +27,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         model = Group
         fields = ("name",)# "permissions")
 
+    def to_representation(self, instance):
+
+        return instance.name
 
 class AsclepianSerializer(serializers.HyperlinkedModelSerializer):
 
