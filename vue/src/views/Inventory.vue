@@ -14,11 +14,14 @@
 					<b-form-checkbox
 						id="hideEmptyInput"
 						v-model="hideEmpty"
+						switch
+						size="lg"
+						class="mt-1"
 						>
 						Hide empty items
 					</b-form-checkbox>
 				</div>
-				<div class="col-4">
+				<div class="col">
 					<b-icon icon="search" class="h3 float-right mt-1 mr-2"></b-icon>
 				</div>
 				<div class="col-3">
