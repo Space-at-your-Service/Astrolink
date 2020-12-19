@@ -46,7 +46,7 @@
 				</template>
 
 				<template v-slot:today-button >
-					<b-button variant="warning" size="sm" style="border-style: solid; border-color: black; font-weight: bold; letter-spacing: 1px">
+					<b-button variant="primary"  style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
 						TODAY
 					</b-button>
 				</template>
@@ -88,72 +88,98 @@
 
 			<b-modal id="createModal" title="New task" v-model="showCreateModal" @ok.prevent="okCreate()" @cancel="cancelCreate()" @hidden="resetSelectedEvent" no-close-on-backdrop>
 				<form>
-					<b-row>
-						<b-col>
-							<b-form-group 
-							label="From"
-							label-for="startTimeInput">
-								<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
+					<b-container>
+						<b-row>
+							<b-col>
+								<b-form-group 
+								label="From"
+								label-for="startTimeInput">
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
 
-						<b-col>
-							<b-form-group 
-							label="To"
-							label-for="endTimeInput">
-								<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
-					</b-row>
+							<b-col>
+								<b-form-group 
+								label="To"
+								label-for="endTimeInput">
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+						</b-row>
 
-					<b-form-group 
-					label="Title"
-					label-for="titleInput">
-						<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
-					</b-form-group>
-				
-					<b-form-group 
-					label="Content"
-					label-for="contentInput">
-						<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
-					</b-form-group>
+						<b-form-group 
+						label="Title"
+						label-for="titleInput">
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
+						</b-form-group>
+					
+						<b-form-group 
+						label="Content"
+						label-for="contentInput">
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
+						</b-form-group>
 
-					<b-form-group 
-					label="Category"
-					label-for="categoryInput">
-						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
-							<template #first>
-								<b-form-select-option value="" disabled>Please select a task category</b-form-select-option>
-							</template>
-						</b-form-select>
-					</b-form-group>
+						<b-form-group 
+						label="Category"
+						label-for="categoryInput">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
+								<template #first>
+									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+					</b-container>
 
-					<b-form-group
-					>
-						<template #label>
-							Performed by
-							<br/>
-							<b-form-checkbox @change="toggleAllSplits" class="mt-2">
-								<strong>Everyone</strong>
-							</b-form-checkbox>
-						</template>
-
-						<b-form-checkbox-group
-						v-model="selectedEventSplits"
-						:options="astronautsList"
-						inline
+					<div @click="showMoreOptions = !showMoreOptions"  style="color: black; font-weight: bold">
+						<span v-if="!showMoreOptions">
+							<b-icon icon="chevron-down"></b-icon>
+							More options
+						</span>
+						<span v-if="showMoreOptions" >
+							<b-icon icon="chevron-up"></b-icon>
+							Less options
+						</span>
+					</div>
+					<b-container v-if="showMoreOptions" class="mt-2">
+						<b-form-group
 						>
-						</b-form-checkbox-group>
+							<template #label>
+								Performed by
+								<br/>
+								<b-form-checkbox @change="toggleAllSplits" class="mt-2">
+									<strong>Everyone</strong>
+								</b-form-checkbox>
+							</template>
 
-				</b-form-group>
+							<b-form-checkbox-group
+							v-model="selectedEventSplits"
+							:options="astronautsList"
+							inline
+							>
+							</b-form-checkbox-group>
 
-				<b-form-group
-				label="Repeated daily:"
-				label-cols="auto">
-					<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1">
-						{{ selectedEventEveryday ? 'Yes' : 'No' }}
-					</b-form-checkbox>
-				</b-form-group>
+						</b-form-group>
+
+						<b-form-group
+						label="Repeated daily:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1">
+								{{ selectedEventEveryday ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<div class="text-primary hover-pointer" @click="showLinkToInput=true">
+							<b-icon icon="link45deg"></b-icon>
+							Add a link to a procedure
+						</div>
+						<b-form-group>
+							<b-form-select v-if="showLinkToInput" id="linkToInput" options="" v-model="linkToProcedure" size="sm">
+								<template #first>
+									<b-form-select-option value="" disabled>Select a procedure to link to</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+					</b-container>
 				</form>
 			</b-modal>
 
@@ -194,7 +220,7 @@
 					label-for="categoryInput">
 						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
 							<template #first>
-								<b-form-select-option value="" disabled>Please select a task category</b-form-select-option>
+								<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
 							</template>
 						</b-form-select>
 					</b-form-group>
@@ -230,7 +256,9 @@
 				],
 				astronautsList: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
 				selectedEventSplits: [],
-				selectedEventEveryday: false
+				selectedEventEveryday: false,
+				showMoreOptions: false,
+				showLinkToInput: false
 			}
 		},
 		computed: {

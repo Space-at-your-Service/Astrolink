@@ -1,11 +1,11 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Procedures</h3>
-		<div class="container my-3 p-0 text-left">
+		<div class="container my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col>
-					<b-button v-b-modal.uploadModal size="md" v-if="permissions.includes('activities.add_procedure')">
-						<b-icon icon="plus-square" class="mr-1"></b-icon>
+					<b-button v-b-modal.uploadModal size="md" variant="info" v-if="permissions.includes('activities.add_procedure')" style="border-radius: 15px">
+						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New procedure
 					</b-button>
 				</b-col>

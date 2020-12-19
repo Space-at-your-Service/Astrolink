@@ -22,7 +22,7 @@
 	</div>
 </template>
 
-<style>
+<style scoped>
 	#titleInput {
 		border-style: none; 
 		border-radius: 15px 15px 0px 0px; 

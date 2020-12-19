@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <h3 class="section-title">{{user.username}}'s Profile</h3>
-{{user}}
+      <b-avatar src="https://placekitten.com/300/300" size="10rem"></b-avatar>
     <b-container style="letter-spacing: 2px">
       <h2>Personal information</h2>
       <ul>

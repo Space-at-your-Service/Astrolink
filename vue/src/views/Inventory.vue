@@ -5,8 +5,8 @@
 		<div class="container my-3 p-0">
 			<div class="row no-gutters">
 				<div class="col">
-					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" v-if="permissions.includes('inventory.add_item')">
-						<b-icon icon="plus-square" class="mr-1"></b-icon>
+					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
+						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New item
 					</b-button>
 				</div>

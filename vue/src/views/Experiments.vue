@@ -3,8 +3,8 @@
 		<h3 class="section-title">Experiments</h3>
 
 		<div class="container p-0 text-left">		
-			<b-button class="my-3">
-				<b-icon icon="plus-square" class="mr-1"></b-icon>
+			<b-button variant="info" class="my-3" style="border-radius: 15px;">
+				<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 				New experiment
 			</b-button>
 		</div>
