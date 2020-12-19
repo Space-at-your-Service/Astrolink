@@ -1,32 +1,42 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">{{user.username}}'s Profile</h3>
-      <b-avatar src="https://placekitten.com/300/300" size="10rem"></b-avatar>
-    <b-container style="letter-spacing: 2px">
-      <h2>Personal information</h2>
-      <ul>
-        <li><strong>First name:</strong> {{user.first_name}}</li>
-        <li><strong>Last name:</strong> {{user.last_name}}</li>
-      </ul>
-    </b-container>
+    <h3 class="section-title">{{ user.username }}'s Profile</h3>
 
-    <b-container style="letter-spacing: 2px">
-      <h2>Group</h2>
-      <ul>
-        <li v-for="role in user.groups" :key="role">
-          {{ role }}
-        </li>
-      </ul>
-    </b-container>
+    <div class="inner-block">
+      <b-row>
+        <b-col>
+          <div style="letter-spacing: 2px">   
+            <h2>Personal information</h2>
+            <ul>
+              <li><strong>First name:</strong> {{user.first_name}}</li>
+              <li><strong>Last name:</strong> {{user.last_name}}</li>
+            </ul>
+          </div>
 
-    <b-container style="letter-spacing: 2px">
-      <h2>Permissions</h2>
-      <ul>
-        <li v-for="permission in user.permissions" :key="permission">
-          {{ permission }}
-        </li>
-      </ul>
-    </b-container>
+          <div style="letter-spacing: 2px">
+            <h2>Group</h2>
+            <ul>
+              <li v-for="role in user.groups" :key="role">
+                {{ role }}
+              </li>
+            </ul>
+          </div>
+
+          <div style="letter-spacing: 2px">
+            <h2>Permissions</h2>
+            <ul>
+              <li v-for="permission in user.permissions" :key="permission">
+                {{ permission }}
+              </li>
+            </ul>
+          </div>
+        </b-col>
+
+        <b-col >
+          <b-avatar src="https://placekitten.com/300/300" size="10rem" class="float-right hover-pointer hover-transparent"></b-avatar>
+        </b-col>
+      </b-row>
+    </div>
   </div>
 </template>
 
