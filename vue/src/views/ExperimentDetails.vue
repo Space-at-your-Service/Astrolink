@@ -9,11 +9,10 @@
 				<h2 style=" font-variant-caps: small-caps;">{{ experiment.title }}</h2> 
 				<span :class="['badge', 'ml-2', {'badge-success': experiment.state === 'complete'}, {'badge-primary': experiment.state === 'planned'}, {'badge-danger': experiment.state === 'aborted'}]">{{experiment.state}}</span>
 			</template>
-
-			<b-card-img src="https://www.rrts.com/wp-content/uploads/2018/09/Blue-Background.jpg" alt="Experiment image" height="300px" top>
-			</b-card-img>
 			
 			<b-card-text class="p-3">
+				<img src="../assets/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+
 				<b-container class="mb-2 py-3">
 					<h4>Description</h4>
 					{{ experiment.info }}

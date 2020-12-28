@@ -1,14 +1,13 @@
-import axios from 'axios'
-import authHeader from './auth.header'
+// boilerplate for all http requests, including url and authentication token
 
-const contentHeader = {
-    "Content-type": "application/json"
-  }
+import axios from 'axios'
+
+// add the user's authentication token to all requests if logged in
+const token = localStorage.getItem('token')
+if (token) {
+  axios.defaults.headers.common['Authorization'] = 'Token ' + token
+}
 
 export default axios.create({
-	baseURL: "http://localhost:8000",
-	headers: {
-		...contentHeader,
-		...authHeader()
-	}
+	baseURL: "http://localhost:8000"
 });

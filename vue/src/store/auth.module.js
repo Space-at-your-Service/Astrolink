@@ -1,8 +1,8 @@
 import AuthService from '../services/AuthService'
 
-const user = JSON.parse(localStorage.getItem('user'))
-const initialState = user
-? { status: { loggedIn: true }, user }
+const token = localStorage.getItem('token')
+const initialState = token
+? { status: { loggedIn: true }, user: {token: token} }
 : { status: { loggedIn: false }, user: null }
 
 export const auth = {
@@ -40,6 +40,7 @@ export const auth = {
         },
         error => {
           commit('loginFailure')
+          alert('login failed')
           return Promise.reject(error)
         }
         )

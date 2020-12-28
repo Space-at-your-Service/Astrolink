@@ -1,6 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
+
 Vue.use(VueRouter)
+
+const ifNotLogged = (to, from, next) => {
+  const loggedIn = store.state.auth.status.loggedIn
+  if (!loggedIn) {
+    next()
+    return
+  }
+  next('/profile')
+}
 
 const routes = [
   {
@@ -16,11 +27,13 @@ const routes = [
     path: '/login',
     alias: '/',
     name: 'login',
+    beforeEnter: ifNotLogged,
     component: () => import('../views/Login.vue')
   },
   {
     path: '/signup',
     name: 'signup',
+    beforeEnter: ifNotLogged,
     component: () => import('../views/Signup.vue')
   },
   {
@@ -85,10 +98,12 @@ const router = new VueRouter({
   routes
 })
 
+const publicPages = ['/login', '/signup']
+
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login', '/signup']
+  
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = store.state.auth.status.loggedIn
 
   // trying to access a restricted page + not logged in
   // redirect to login page

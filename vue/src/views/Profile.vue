@@ -33,7 +33,10 @@
         </b-col>
 
         <b-col >
-          <b-avatar src="https://placekitten.com/300/300" size="10rem" class="float-right hover-pointer hover-transparent"></b-avatar>
+          <b-avatar id="avatar" size="10rem" class="float-right hover-pointer hover-transparent">
+            <img src="https://placekitten.com/300/300" alt="Profile Image"/>
+            <b-icon id="avatarEdit" icon="zoom-in"></b-icon>
+          </b-avatar>
         </b-col>
       </b-row>
     </div>
@@ -69,5 +72,16 @@
 <style scoped>
   ul {
     list-style: none;
+  }
+
+  #avatarEdit {
+    position: absolute; 
+    height: 30px; 
+    width: 30px; 
+    visibility: hidden;
+  }
+
+  #avatar:hover #avatarEdit {
+    visibility: visible;
   }
 </style>

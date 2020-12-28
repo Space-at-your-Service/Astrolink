@@ -1,24 +1,25 @@
 import http from './http.common';
+import axios from 'axios'
 
 class AuthService {
 	login(user) {
 		return http.post('/login/', {
 				username: user.username,
 				password: user.password
-			}, 
-			{"Content-type": "application/json"}
+			}
 		)
 		.then(response => {
-			if (response.data.token) {
-				localStorage.setItem('user', JSON.stringify(response.data));
+			const token = response.data.token
+			if (token) {
+				localStorage.setItem('token', token);
+				axios.defaults.headers.common['Authorization'] = 'Token ' + token
 			}
 			return response.data;
-		}
-		);
+		});
 	}
 
 	logout() {
-		localStorage.removeItem('user');
+		localStorage.removeItem('token');
 	}
 
 	register(user) {

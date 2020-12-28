@@ -87,7 +87,7 @@
 			</vue-cal>
 
 			<b-modal id="createModal" title="New task" v-model="showCreateModal" @ok.prevent="okCreate()" @cancel="cancelCreate()" @hidden="resetSelectedEvent" no-close-on-backdrop>
-				<form>
+				<form @submit.stop.prevent="handleSubmit">
 					<b-container>
 						<b-row>
 							<b-col>
@@ -130,12 +130,12 @@
 						</b-form-group>
 					</b-container>
 
-					<div @click="showMoreOptions = !showMoreOptions"  style="color: black; font-weight: bold">
-						<span v-if="!showMoreOptions">
+					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold">
+						<span v-if="!showMoreOptions" class="hover-pointer">
 							<b-icon icon="chevron-down"></b-icon>
 							More options
 						</span>
-						<span v-if="showMoreOptions" >
+						<span v-if="showMoreOptions" class="hover-pointer">
 							<b-icon icon="chevron-up"></b-icon>
 							Less options
 						</span>

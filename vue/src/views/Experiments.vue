@@ -16,18 +16,16 @@
 			header-tag="header" 
 			class="text-dark text-center hover-glow" 
 			no-body>
-
-				<b-card-img src="https://www.rrts.com/wp-content/uploads/2018/09/Blue-Background.jpg" alt="Experiment image" height="150px" top class="hover-pointer" @click="gotoExperimentDetails(experiment.title)">
-				</b-card-img>
-				
-				<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
-					{{ experiment.info }}
-				</b-card-text>
-
 				<template #header>
 					<span style="font-size: 1.5em; font-variant-caps: all-small-caps;">{{ experiment.title }}</span> 
 					<span :class="['badge', 'ml-2', {'badge-success': experiment.state === 'complete'}, {'badge-primary': experiment.state === 'planned'}, {'badge-danger': experiment.state === 'aborted'}]">{{experiment.state}}</span>
 				</template>
+
+				<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
+					<img src="../assets/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+
+					{{ experiment.info }}
+				</b-card-text>
 			</b-card>
 		</b-card-group>
 		
@@ -43,7 +41,6 @@ export default {
 
 	data() {
 		return {
-			editorContent: ''
 		};
 	},
 	computed: {

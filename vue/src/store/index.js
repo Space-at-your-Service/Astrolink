@@ -7,7 +7,7 @@ import Datasheet from '../models/datasheet'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
 	modules: {
 		auth,
 		perm
@@ -23,9 +23,9 @@ export default new Vuex.Store({
 		procedureTypes: [
 		{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
 		{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},
-		{primaryType: 'MCC', subtypes: []}, 
-		{primaryType: 'Emergencies', subtypes: []}, 
-		{primaryType: 'Others', subtypes: []}
+		{primaryType: 'MCC', subtypes: ['Main']}, 
+		{primaryType: 'Emergencies', subtypes: ['Main']}, 
+		{primaryType: 'Others', subtypes: ['Main']}
 		],
 		proceduresList: [
 			{nick: 'mas-lunar-base-evacuation', title: 'MAS Lunar Base Evacuation', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: 'C:/Users/Valentin/Documents/EPFL/Cours M3/Projet Astrolink/Astrolink/vue/public/lib/procedures/2020_SC_SOP_0001_MAS_Lunar_Base_Evacuation.docx.pdf'},
@@ -101,3 +101,5 @@ export default new Vuex.Store({
 		// }
 	}
 })
+
+export default store
