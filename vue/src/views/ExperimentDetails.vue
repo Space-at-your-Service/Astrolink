@@ -85,7 +85,7 @@
 		computed: {
 			...mapState(['experiments']),
 			experiment() {
-				return this.$store.state.experiments.find(experiment => experiment.title = this.$route.params.experimentTitle)
+				return this.$store.state.experiments.find(experiment => experiment.title === this.$route.params.experimentTitle)
 			}
 		}
 	}
