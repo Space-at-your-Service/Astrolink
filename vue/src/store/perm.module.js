@@ -4,12 +4,14 @@ export const perm = {
 	namespaced: true,
 
 	state: {
+		username: '',
 		permissions: []
 	},
 
 	mutations: {
-		SET_PERMISSIONS(state, permissions) {
-			state.permissions = permissions
+		SET_PERMISSIONS(state, user) {
+			state.username = user.username
+			state.permissions = user.permissions
 		}
 	},
 
@@ -17,7 +19,7 @@ export const perm = {
 		getUserPermissions({ commit }) {
 			ProfileService.getUserProfile()
 			.then(response => {
-				commit('SET_PERMISSIONS', response.data.permissions)
+				commit('SET_PERMISSIONS', response.data)
 			})
 		}
 	}

@@ -15,10 +15,6 @@ export const auth = {
       state.status.loggedIn = true
       state.user = user
     },
-    loginFailure(state) {
-      state.status.loggedIn = false
-      state.user = null
-    },
     logout(state) {
       state.status.loggedIn = false
       state.user = null
@@ -39,11 +35,10 @@ export const auth = {
           return Promise.resolve(user)
         },
         error => {
-          commit('loginFailure')
           alert('login failed')
           return Promise.reject(error)
         }
-        )
+      )
     },
     logout({ commit }) {
       AuthService.logout()
