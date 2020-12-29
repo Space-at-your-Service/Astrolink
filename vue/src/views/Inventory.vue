@@ -243,7 +243,7 @@
 		},
 		computed: {
 			...mapState(['inventoryHistory']),
-			...mapState('perm', ['permissions']),
+			...mapState('user', ['permissions']),
 			sortOptions() {
 				return this.fields
 					.filter(f => f.sortable)

@@ -47,12 +47,6 @@ const routes = [
     component: () => import('../views/Procedures.vue')
   },
   {
-    path: '/procedures/pdfview/:procedureNick',
-    name: 'pdfview',
-    props: true,
-    component: () => import ('../views/PDFView.vue')
-  },
-  {
     path: '/experiments',
     name: 'experiments',
     component: () => import('../views/Experiments.vue')

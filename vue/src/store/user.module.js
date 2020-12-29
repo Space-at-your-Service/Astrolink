@@ -1,6 +1,6 @@
 import ProfileService from '../services/ProfileService.js'
 
-export const perm = {
+export const user = {
 	namespaced: true,
 
 	state: {

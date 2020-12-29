@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { auth } from './auth.module'
-import { perm } from './perm.module'
+import { user } from './user.module'
 import Datasheet from '../models/datasheet'
 
 Vue.use(Vuex)
@@ -10,7 +10,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	modules: {
 		auth,
-		perm
+		user
 	},
 
 	state: {

@@ -44,13 +44,13 @@
 			}
 		},
 		computed: {
-			...mapState('perm', ['permissions', 'username'])
+			...mapState('user', ['permissions', 'username'])
 		},
 		methods: { 
 			...mapActions('auth', [
                 'logout'
             ]),
-            ...mapActions('perm', [
+            ...mapActions('user', [
 				'getUserPermissions'
 			]),
 			handleLogout() {

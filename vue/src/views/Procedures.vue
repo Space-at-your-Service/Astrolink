@@ -311,7 +311,7 @@
 		},
 		computed: {
 			...mapState(['procedureTypes']),
-			...mapState('perm', ['permissions']),
+			...mapState('user', ['permissions']),
 			procedurePrimaryTypes() {
 				var procedurePrimaryTypes = []
 				for (var type of this.procedureTypes) {
