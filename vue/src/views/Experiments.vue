@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import {mapState} from 'vuex';
+import { mapState } from 'vuex';
 
 export default {
 	components: {
@@ -47,12 +47,6 @@ export default {
 		...mapState(['experiments'])
 	},
 	methods: {
-		expand(index) {
-			this.expanded[index] = !this.expanded[index];
-			console.log(this.expanded);
-			// experiment.expanded = !experiment.expanded;
-			// console.log(experiment.expanded)
-		},
 		gotoExperimentDetails(experimentTitle) {
 			this.$router.push({ path: 'experiments/'+experimentTitle })
 		}
