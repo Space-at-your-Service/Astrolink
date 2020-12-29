@@ -1,4 +1,4 @@
-// boilerplate for all http requests, including url and authentication token
+// Boilerplate for all http requests, including url and authentication token
 
 import axios from 'axios'
 

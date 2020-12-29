@@ -1,3 +1,7 @@
+// The router that manages the content to display. It allows smooth navigation in the app without having to refresh all the content when changing page.
+// Each route is associated to a View or a Component to display.
+// Also includes Navigation guards to restrict accessible routes depending on the "logged in" state.
+
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
@@ -73,10 +77,10 @@ const routes = [
     component: () => import('../views/Communication.vue')
   },
   {
-    path: '/experiments/:experimentTitle/newdata',
-    name: 'experiment_data',
+    path: '/experiments/:experimentTitle/newtextdata',
+    name: 'experiment_textdata',
     props: true,
-    component: () => import ('../views/ExperimentData.vue')
+    component: () => import ('../views/ExperimentTextData.vue')
   },
   {
     path: '/profile',

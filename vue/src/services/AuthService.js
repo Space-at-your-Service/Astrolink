@@ -1,3 +1,5 @@
+// API for token authentication
+
 import http from './http.common';
 import axios from 'axios'
 
@@ -29,8 +31,7 @@ class AuthService {
 				lastName: user.lastName,
 				role: user.role,
 				password: user.password
-			}, 
-			{"Content-type": "application/json"}
+			}
 		)
 	}
 }

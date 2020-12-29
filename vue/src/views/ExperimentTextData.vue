@@ -4,21 +4,23 @@
 			<b-row>
 				<b-col cols=10>
 					<form>
-						<b-form-input id="titleInput" v-model="title" placeholder="Textsheet Title" class="text-center">
+						<b-form-input id="titleInput" v-model="textsheet.title" placeholder="Textsheet Title" class="text-center">
 						</b-form-input>
 					</form>
 				</b-col>
 
 				<b-col>
-					<b-button @click="saveContent" class="float-right" size="lg" variant="info" style="border-radius: 15px"><b-icon icon="cloud-upload" ></b-icon> Save</b-button>
+					<b-button @click="saveContent" class="float-right" size="lg" variant="info" style="border-radius: 15px" :disabled="saving">
+						<span v-if="!saving"><b-icon icon="cloud-upload" ></b-icon> Save</span>
+						<b-spinner type="grow" label="Spinning" v-if="saving"></b-spinner>
+					</b-button>
 				</b-col>
 			</b-row>
 		</b-container>
 
 		<b-container style="background-color: #fff; color: black; overflow: hidden; border-radius: 0px 0px 0px 15px" class="p-4">
-			<vue-editor v-model="datasheet.content" @imageAdded="handleImageAdded" :editorToolbar="customToolbar" style="height: 1000px;"></vue-editor>
+			<vue-editor v-model="textsheet.content" @imageAdded="handleImageAdded" :editorToolbar="customToolbar" style="height: 1000px;"></vue-editor>
 		</b-container>
-		<!--  -->
 	</div>
 </template>
 
@@ -42,7 +44,8 @@
 <script>
 	import {VueEditor} from 'vue2-editor';
 	import {axios} from 'axios';
-	import Datasheet from '../models/datasheet'
+	import Textsheet from '../models/textsheet'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: {
@@ -51,8 +54,7 @@
 
 		data() {
 			return {
-				datasheet: new Datasheet(),
-				title: "Textsheet Title",
+				textsheet: new Textsheet(),
 				customToolbar: [
 					[{ 'size': ['small', false, 'large', 'huge'] }],
 					['bold', 'italic', 'underline', 'strike'],
@@ -61,13 +63,14 @@
 					[{ 'list': 'ordered'}, { 'list': 'bullet' }, {'list': 'check'}],
 					[{ 'align': [] }],
 					// [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-					
 					// [{ 'font': [] }],
 					['image', 'link']
-				]
+				],
+				saving: false
 			}
 		},
 		computed: {
+			...mapState('user', ['username']),
 			experiment() {
 				return this.$store.state.experiments.find(experiment => experiment.title = this.$route.params.experimentTitle)
 			}
@@ -93,6 +96,14 @@
 				})
 			},
 			saveContent() {
+				this.saving = true
+				this.textsheet.creator = this.username
+				this.textsheet.lastUser = this.username
+				console.log(this.textsheet)
+				this.experiment.textsheets.push(this.textsheet)
+				console.log(this.experiment.textsheets)
+				setTimeout(() => { this.saving = false }, 2000)
+				
 				console.log('saved')
 			}
 		}

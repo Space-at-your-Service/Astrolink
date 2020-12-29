@@ -33,13 +33,17 @@
 						<b-col cols=6>
 							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
 							<ul>
-								<!-- <li v-for="textsheet in experiment.data.textsheets" :key="textsheet.id">
+								<li v-for="textsheet in experiment.textsheets" :key="textsheet.title" class="my-3">
 									<router-link  to="/">
 										{{ textsheet.title }}
-									</router-link>
-								</li> -->
+									</router-link><br/>
+									<strong>Created:</strong> {{ textsheet.creationDate }}
+							<strong>by:</strong>  {{ textsheet.creator }}<br/>
+							<strong>Last modified:</strong> {{textsheet.lastModifiedDate }}
+							<strong>by:</strong> {{ textsheet.lastUser }}
+								</li>
 							</ul>
-							<router-link :to="'/experiments/'+experiment.title+'/newdata'">
+							<router-link :to="'/experiments/'+experiment.title+'/newtextdata'">
 								<b-button class="m-1" variant="primary" size="sm"><b-icon icon="file-earmark-plus"></b-icon> New textsheet</b-button>
 							</router-link>
 						</b-col>
@@ -86,3 +90,10 @@
 		}
 	}
 </script>
+
+<style scoped>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+</style>

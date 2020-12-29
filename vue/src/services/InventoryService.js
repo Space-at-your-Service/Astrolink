@@ -1,3 +1,5 @@
+// Data API for Inventory data
+
 import http from './http.common';
 
 class InventoryService {

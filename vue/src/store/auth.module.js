@@ -1,9 +1,11 @@
+// Store module that contains the "logged in" state
+
 import AuthService from '../services/AuthService'
 
 const token = localStorage.getItem('token')
 const initialState = token
-? { status: { loggedIn: true }, user: {token: token} }
-: { status: { loggedIn: false }, user: null }
+? { status: { loggedIn: true } }
+: { status: { loggedIn: false } }
 
 export const auth = {
   namespaced: true,
@@ -11,27 +13,22 @@ export const auth = {
   state: initialState,
 
   mutations: {
-    loginSuccess(state, user) {
+    loginSuccess(state) {
       state.status.loggedIn = true
-      state.user = user
     },
     logout(state) {
       state.status.loggedIn = false
-      state.user = null
     },
-    registerSuccess(state) {
-      state.status.loggedIn = false
+    registerSuccess() {
+
     },
-    registerFailure(state) {
-      state.status.loggedIn = false
-    }
   },
 
   actions: {
     login({ commit }, user) {
       return AuthService.login(user).then(
         user => {
-          commit('loginSuccess', user)
+          commit('loginSuccess')
           return Promise.resolve(user)
         },
         error => {
@@ -45,16 +42,17 @@ export const auth = {
       commit('logout')
     },
     register({ commit }, user) {
-      return AuthService.register(user).then(
+      return AuthService.register(user)
+      .then(
         response => {
           commit('registerSuccess')
           return Promise.resolve(response.data)
         },
         error => {
-          commit('registerFailure')
+          alert('register failed')
           return Promise.reject(error)
         }
-        )
+      )
     }
   }
 }

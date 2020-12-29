@@ -284,7 +284,7 @@
 
 <script>
 	import ProcedureService from '../services/ProcedureService'
-	import {mapState} from 'vuex'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: {

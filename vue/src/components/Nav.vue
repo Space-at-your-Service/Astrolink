@@ -51,7 +51,7 @@
                 'logout'
             ]),
             ...mapActions('user', [
-				'getUserPermissions'
+				'getUserState'
 			]),
 			handleLogout() {
 				this.logout()
@@ -59,7 +59,7 @@
 			}
 		},
 		created() {
-			this.getUserPermissions()
+			this.getUserState()
 		}
 	}
 </script>

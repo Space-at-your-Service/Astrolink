@@ -1,3 +1,5 @@
+// Store module that contains user data, including permissions
+
 import ProfileService from '../services/ProfileService.js'
 
 export const user = {
@@ -5,21 +7,31 @@ export const user = {
 
 	state: {
 		username: '',
+		firstName: '',
+		lastName: '',
+		groups: [],
 		permissions: []
 	},
 
+	getters: {
+		username: state => state.username
+	},
+
 	mutations: {
-		SET_PERMISSIONS(state, user) {
+		SET_USER(state, user) {
 			state.username = user.username
+			state.firstName = user.first_name
+			state.lastName = user.last_name
+			state.groups = user.groups
 			state.permissions = user.permissions
 		}
 	},
 
 	actions: {
-		getUserPermissions({ commit }) {
+		getUserState({ commit }) {
 			ProfileService.getUserProfile()
 			.then(response => {
-				commit('SET_PERMISSIONS', response.data)
+				commit('SET_USER', response.data)
 			})
 		}
 	}

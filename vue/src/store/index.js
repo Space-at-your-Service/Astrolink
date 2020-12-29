@@ -1,9 +1,16 @@
+// Main store, aka data manager. The store is used as a single source of truth by all the app and is called everytime some data is needed. 
+// It is made of several modules, each containing specific data.
+// State contains the data.
+// Getters are functions that return some computed data to make store data manipulation easier, and can be called outside the store.
+// Mutations are simple synchronous functions that affect the State. They should not be called directly outside the store.
+// Actions are asynchronous functions that can be called outside the store and generally call mutations.
+
 import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { auth } from './auth.module'
 import { user } from './user.module'
-import Datasheet from '../models/datasheet'
+import Textsheet from '../models/textsheet'
 
 Vue.use(Vuex)
 
@@ -16,7 +23,7 @@ const store = new Vuex.Store({
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
 		experiments: [
-			{expanded: false, index: 0, title: "Experiment 1", state: "complete", supervisor: "John", img: '../assets/bluenova.jpg', infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[new Datasheet('First Datasheet', 'This is a placeholder content. Should be replaced with some data.')]},
+			{expanded: false, index: 0, title: "Experiment 1", state: "complete", supervisor: "John", img: '../assets/bluenova.jpg', infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", textsheets:[new Textsheet('First Datasheet', 'This is a placeholder content. Should be replaced with some data.')]},
 			{expanded: false, index: 1, title: "experiment2", state: "aborted", supervisor: "Mary", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]},
 			{expanded: false, index: 2, title: "experiment3", state: "planned", supervisor: "Bill", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]}
 		],

@@ -1,3 +1,5 @@
+// Data API for user data
+
 import http from "./http.common";
 
 class ProfileService {
