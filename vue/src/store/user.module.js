@@ -10,7 +10,9 @@ export const user = {
 		firstName: '',
 		lastName: '',
 		groups: [],
-		permissions: []
+		permissions: [],
+		favProcedures: [],
+		planning: []
 	},
 
 	getters: {
@@ -24,6 +26,8 @@ export const user = {
 			state.lastName = user.last_name
 			state.groups = user.groups
 			state.permissions = user.permissions
+			// state.favProcedures = user.favProcedures
+			// state.planning = user.planning
 		}
 	},
 

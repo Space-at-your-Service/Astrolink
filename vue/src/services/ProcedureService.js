@@ -7,11 +7,15 @@ class ProcedureService {
 		return http.get("/activities/procedures/")
 	}
 
+	// getProcedureTypes() {
+	// 	return http.get("/activities/procedureTypes/")
+	// }
+
 	getFile(nick) {
 		return http.get("/activities/procedures/"+nick, {responseType: 'blob'})
 	}
 
-	uploadProcedure(formData, onUploadProgress) {
+	postProcedure(formData, onUploadProgress) {
 		return http.post("/activities/procedures/", formData, {
 			headers: {
 				"Content-Type": "multipart/form-data"
@@ -20,7 +24,7 @@ class ProcedureService {
 		})
 	}
 
-	reuploadProcedure(nick, formData, onUploadProgress) {
+	updateProcedure(nick, formData, onUploadProgress) {
 		return http.put("/activities/procedures/"+nick, formData, {
 			headers: {
 				"Content-Type": "multipart/form-data"

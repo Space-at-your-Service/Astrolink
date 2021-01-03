@@ -32,10 +32,13 @@
 				</template>
 
 					<b-tabs content-class="my-3" justified small vertical pills>
-						<b-tab v-for="subsection in section.subsections" :key="subsection.type" :title="subsection.type">
+						<b-tab v-for="subsection in section.subsections" :key="subsection.type">
 
 							<template #title>
-								<span  style="font-variant-caps: small-caps;">{{ subsection.type }}</span>
+								<span  style="font-variant-caps: small-caps;">
+								{{ subsection.type }}
+								({{ subsection.procedures.length }})
+							</span>
 							</template>
 
 							<div class="container p-0">
@@ -422,7 +425,7 @@
 			fileUpload() {
 				this.progress = 0
 				this.isUploading = true;
-				ProcedureService.uploadProcedure(this.formatProcedure(this.createdProcedure), event => {
+				ProcedureService.postProcedure(this.formatProcedure(this.createdProcedure), event => {
 					this.uploadProgress = Math.round((100*event.loaded) / event.total)
 				})
 				.then(() => {
@@ -440,7 +443,7 @@
 			fileReupload(){
 				this.progress = 0
 				this.isUploading = true;
-				ProcedureService.reuploadProcedure(this.editedProcedure.nick, this.formatProcedure(this.editedProcedure), event => {
+				ProcedureService.updateProcedure(this.editedProcedure.nick, this.formatProcedure(this.editedProcedure), event => {
 					this.uploadProgress = Math.round((100*event.loaded) / event.total)
 				})
 				.then(() => {

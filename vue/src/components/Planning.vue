@@ -163,7 +163,7 @@
 						<b-form-group
 						label="Repeated daily:"
 						label-cols="auto">
-							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1">
+							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1" disabled>
 								{{ selectedEventEveryday ? 'Yes' : 'No' }}
 							</b-form-checkbox>
 						</b-form-group>
@@ -383,6 +383,10 @@
 			},
 			resetSelectedEvent() {
 				this.selectedEvent = {}
+				this.showMoreOptions = false
+				this.showLinkToInput = false
+				this.selectedEventSplits = []
+				this.selectedEventEveryday = false
 			}
 		}
 
