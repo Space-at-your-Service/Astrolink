@@ -1,6 +1,21 @@
+// The router that manages the content to display. It allows smooth navigation in the app without having to refresh all the content when changing page.
+// Each route is associated to a View or a Component to display.
+// Also includes Navigation guards to restrict accessible routes depending on the "logged in" state.
+
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import store from '../store'
+
 Vue.use(VueRouter)
+
+const ifNotLogged = (to, from, next) => {
+  const loggedIn = store.state.auth.status.loggedIn
+  if (!loggedIn) {
+    next()
+    return
+  }
+  next('/profile')
+}
 
 const routes = [
   {
@@ -16,11 +31,13 @@ const routes = [
     path: '/login',
     alias: '/',
     name: 'login',
+    beforeEnter: ifNotLogged,
     component: () => import('../views/Login.vue')
   },
   {
     path: '/signup',
     name: 'signup',
+    beforeEnter: ifNotLogged,
     component: () => import('../views/Signup.vue')
   },
   {
@@ -32,12 +49,6 @@ const routes = [
     path: '/procedures',
     name: 'procedures',
     component: () => import('../views/Procedures.vue')
-  },
-  {
-    path: '/procedures/pdfview/:procedureNick',
-    name: 'pdfview',
-    props: true,
-    component: () => import ('../views/PDFView.vue')
   },
   {
     path: '/experiments',
@@ -66,10 +77,10 @@ const routes = [
     component: () => import('../views/Communication.vue')
   },
   {
-    path: '/experiments/:experimentTitle/newdata',
-    name: 'experiment_data',
+    path: '/experiments/:experimentTitle/newtextdata',
+    name: 'experiment_textdata',
     props: true,
-    component: () => import ('../views/ExperimentData.vue')
+    component: () => import ('../views/ExperimentTextData.vue')
   },
   {
     path: '/profile',
@@ -85,10 +96,12 @@ const router = new VueRouter({
   routes
 })
 
+const publicPages = ['/login', '/signup']
+
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/login', '/signup']
+  
   const authRequired = !publicPages.includes(to.path)
-  const loggedIn = localStorage.getItem('user')
+  const loggedIn = store.state.auth.status.loggedIn
 
   // trying to access a restricted page + not logged in
   // redirect to login page

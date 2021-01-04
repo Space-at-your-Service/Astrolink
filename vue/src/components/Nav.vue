@@ -9,7 +9,7 @@
 
 			<b-collapse id="nav-collapse" is-nav>
 				<b-navbar-nav>
-					<b-nav-text>Alpha Version 0.2</b-nav-text>
+					<b-nav-text>Alpha Version 0.2</b-nav-text>							
 				</b-navbar-nav>
 
 				<b-navbar-nav class="ml-auto">
@@ -21,7 +21,7 @@
 
 					<b-nav-item-dropdown right class="ml-lg-5">
 						<template #button-content>
-							admin
+							{{ username }}
 						</template>
 						<b-dropdown-item to="/profile" class="text-center" @click="isActive = 'profile'"><b-icon icon="person-circle"></b-icon> <strong>Profile</strong></b-dropdown-item>
 						<b-dropdown-item class="text-center" @click="handleLogout"><b-icon icon="box-arrow-left"></b-icon> <strong>Log Out</strong></b-dropdown-item>
@@ -44,14 +44,14 @@
 			}
 		},
 		computed: {
-			...mapState('perm', ['permissions'])
+			...mapState('user', ['permissions', 'username'])
 		},
 		methods: { 
 			...mapActions('auth', [
                 'logout'
             ]),
-            ...mapActions('perm', [
-				'getUserPermissions'
+            ...mapActions('user', [
+				'getUserState'
 			]),
 			handleLogout() {
 				this.logout()
@@ -59,7 +59,7 @@
 			}
 		},
 		created() {
-			this.getUserPermissions()
+			this.getUserState()
 		}
 	}
 </script>

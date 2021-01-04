@@ -76,7 +76,6 @@
                 if (this.user.username && this.user.password) {
                     this.login(this.user)
                     .then(() => {
-                            window.location.reload()
                             this.$router.push('/home')
                         },
                         error => {
@@ -90,11 +89,6 @@
                     )
                 }
             }
-        },
-
-        created() {
-            if (this.loggedIn) 
-                this.$router.push('/home')
         }
     }
 </script>

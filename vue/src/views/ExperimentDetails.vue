@@ -5,43 +5,76 @@
 		footer-tag="footer"  
 		class="text-dark text-center" 
 		>
-
-			<b-card-img src="https://www.rrts.com/wp-content/uploads/2018/09/Blue-Background.jpg" alt="Experiment image" height="300px" top>
-			</b-card-img>
-			
-			<b-card-text class="p-3">
-				<h4>Description</h4>
-				{{ experiment.info }}
-
-				<h4>Protocol</h4>
-				<router-link  to="/">
-							Procedure title	
-				</router-link>
-
-				<h4>Data</h4>
-				<div>
-					<router-link v-for="datasheet in experiment.datasheets" :key="datasheet.id" to="/experiments/exper">
-						<b-button variant="info" class="m-1" >Datasheet {{ datasheet.id }}</b-button>
-					</router-link>
-				</div>
-			</b-card-text>
-
 			<template #header>
-				<h1 style=" font-variant-caps: all-small-caps;">{{ experiment.title }}</h1> 
+				<h2 style=" font-variant-caps: small-caps;">{{ experiment.title }}</h2> 
 				<span :class="['badge', 'ml-2', {'badge-success': experiment.state === 'complete'}, {'badge-primary': experiment.state === 'planned'}, {'badge-danger': experiment.state === 'aborted'}]">{{experiment.state}}</span>
 			</template>
+			
+			<b-card-text class="p-3">
+				<img src="../assets/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+
+				<b-container class="mb-2 py-3">
+					<h4>Description</h4>
+					{{ experiment.info }}
+				</b-container>
+				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
+					<h4>Procedure(s)</h4>
+					<ul>
+						<li v-for="procedure in experiments.procedure"  :key="procedure.nick">
+							<router-link  to="/">
+								{{ procedure.title }}
+							</router-link>
+						</li>
+					</ul>
+				</b-container>
+				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
+					<h4>Data</h4>
+					<b-row>
+						<b-col cols=6>
+							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
+							<ul>
+								<li v-for="textsheet in experiment.textsheets" :key="textsheet.title" class="my-3">
+									<router-link  to="/">
+										{{ textsheet.title }}
+									</router-link><br/>
+									<strong>Created:</strong> {{ textsheet.creationDate }}
+							<strong>by:</strong>  {{ textsheet.creator }}<br/>
+							<strong>Last modified:</strong> {{textsheet.lastModifiedDate }}
+							<strong>by:</strong> {{ textsheet.lastUser }}
+								</li>
+							</ul>
+							<router-link :to="'/experiments/'+experiment.title+'/newtextdata'">
+								<b-button class="m-1" variant="primary" size="sm"><b-icon icon="file-earmark-plus"></b-icon> New textsheet</b-button>
+							</router-link>
+						</b-col>
+					
+						<b-col cols=6>
+							<h5><b-icon icon="file-earmark-spreadsheet" variant="success"></b-icon> Spreadsheets</h5>
+							<ul>
+								<!-- <li v-for="spreadsheet in experiment.data.spreadsheets" :key="spreadsheet.id">
+									<router-link  to="/">
+										{{ spreadsheet.title }}
+									</router-link>
+								</li> -->
+							</ul>
+
+							<router-link to="/">
+								<b-button class="m-1" variant="success" size="sm" disabled><b-icon icon="file-earmark-plus"></b-icon> New spreadsheet</b-button>
+							</router-link>
+						</b-col>
+					</b-row>
+				</b-container>
+			</b-card-text>
 
 			<template #footer>
-				<router-link v-for="datasheet in experiment.datasheets" :key="datasheet.id" :to="'/experiments/'+experiment.title+'/newdata'">
-					<b-button variant="info" class="m-1" >Datasheet {{ datasheet.id }}</b-button>
-				</router-link>
-		</template>
+				<b-button variant="info" disabled><b-icon icon="pencil-square"></b-icon> Edit</b-button>
+			</template>
 		</b-card>
 	</div>
 </template>
 
 <script>
-	import {mapState} from 'vuex';
+	import { mapState } from 'vuex';
 
 	export default {
 		data() {
@@ -52,8 +85,15 @@
 		computed: {
 			...mapState(['experiments']),
 			experiment() {
-				return this.$store.state.experiments.find(experiment => experiment.title = this.$route.params.experimentTitle)
+				return this.$store.state.experiments.find(experiment => experiment.title === this.$route.params.experimentTitle)
 			}
 		}
 	}
 </script>
+
+<style scoped>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+</style>

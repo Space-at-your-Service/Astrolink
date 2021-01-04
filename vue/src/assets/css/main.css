@@ -29,7 +29,7 @@ h3 {
 }
 
 .inner-block {
-  width: 550px;
+  width: 700px;
   margin:auto;
 
   background: #ffffff;
@@ -68,4 +68,8 @@ h3 {
 .hover-grow-less:hover {
   transform: scale(1.1);
   transition: transform 200ms ease-in-out;
+}
+
+.hover-transparent:hover {
+  opacity: 0.8;
 }

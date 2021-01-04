@@ -1,3 +1,5 @@
+// Data API for user data
+
 import http from "./http.common";
 
 class ProfileService {
@@ -5,9 +7,9 @@ class ProfileService {
     return http.get('/asclepios/profile/');
   }
 
-  getPermissionLexicon() {
-    return http.get('/asclepios/permissions_lexicon/');
-  }
+  // getPermissionLexicon() {
+  //   return http.get('/asclepios/permissions_lexicon/');
+  // }
 }
 
 export default new ProfileService();

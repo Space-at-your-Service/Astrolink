@@ -1,9 +1,11 @@
+// Store module that contains the "logged in" state
+
 import AuthService from '../services/AuthService'
 
-const user = JSON.parse(localStorage.getItem('user'))
-const initialState = user
-? { status: { loggedIn: true }, user }
-: { status: { loggedIn: false }, user: null }
+const token = localStorage.getItem('token')
+const initialState = token
+? { status: { loggedIn: true } }
+: { status: { loggedIn: false } }
 
 export const auth = {
   namespaced: true,
@@ -11,54 +13,46 @@ export const auth = {
   state: initialState,
 
   mutations: {
-    loginSuccess(state, user) {
+    loginSuccess(state) {
       state.status.loggedIn = true
-      state.user = user
-    },
-    loginFailure(state) {
-      state.status.loggedIn = false
-      state.user = null
     },
     logout(state) {
       state.status.loggedIn = false
-      state.user = null
     },
-    registerSuccess(state) {
-      state.status.loggedIn = false
+    registerSuccess() {
+
     },
-    registerFailure(state) {
-      state.status.loggedIn = false
-    }
   },
 
   actions: {
     login({ commit }, user) {
       return AuthService.login(user).then(
         user => {
-          commit('loginSuccess', user)
+          commit('loginSuccess')
           return Promise.resolve(user)
         },
         error => {
-          commit('loginFailure')
+          alert('login failed')
           return Promise.reject(error)
         }
-        )
+      )
     },
     logout({ commit }) {
       AuthService.logout()
       commit('logout')
     },
     register({ commit }, user) {
-      return AuthService.register(user).then(
+      return AuthService.register(user)
+      .then(
         response => {
           commit('registerSuccess')
           return Promise.resolve(response.data)
         },
         error => {
-          commit('registerFailure')
+          alert('register failed')
           return Promise.reject(error)
         }
-        )
+      )
     }
   }
 }

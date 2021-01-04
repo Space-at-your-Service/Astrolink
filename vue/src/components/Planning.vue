@@ -1,12 +1,20 @@
 <template>
 	<div>
-		<b-form-checkbox
-			id="eventResizeInput"
-			v-model="editionOptions.resize"
-			>
-			Enable event resizing
-		</b-form-checkbox>
-		<div style="height: 620px; background-color: #fff; color: black; border-radius: 3px; box-shadow: 0px 0px 10px #fff">
+		<b-container class="my-3 p-0">
+			<b-row class="no-gutters">
+				<b-col>
+					<b-form-checkbox
+						id="eventResizeInput"
+						v-model="editionOptions.resize"
+						switch
+						size="lg"
+						>
+						Enable event resizing
+					</b-form-checkbox>
+				</b-col>
+			</b-row>
+		</b-container>
+		<div style="height: 620px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
@@ -38,7 +46,7 @@
 				</template>
 
 				<template v-slot:today-button >
-					<b-button variant="warning" size="sm" style="border-style: solid; border-color: black; font-weight: bold; letter-spacing: 1px">
+					<b-button variant="primary"  style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
 						TODAY
 					</b-button>
 				</template>
@@ -79,94 +87,186 @@
 			</vue-cal>
 
 			<b-modal id="createModal" title="New task" v-model="showCreateModal" @ok.prevent="okCreate()" @cancel="cancelCreate()" @hidden="resetSelectedEvent" no-close-on-backdrop>
-				<form>
-					<b-row>
-						<b-col>
-							<b-form-group 
-							label="From"
-							label-for="startTimeInput">
-								<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
+				<form @submit.stop.prevent="handleSubmit">
+					<b-container>
+						<b-row>
+							<b-col>
+								<b-form-group 
+								label="From"
+								label-for="startTimeInput">
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
 
-						<b-col>
-							<b-form-group 
-							label="To"
-							label-for="endTimeInput">
-								<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
-					</b-row>
+							<b-col>
+								<b-form-group 
+								label="To"
+								label-for="endTimeInput">
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+						</b-row>
 
-					<b-form-group 
-					label="Title"
-					label-for="titleInput">
-						<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
-					</b-form-group>
-				
-					<b-form-group 
-					label="Content"
-					label-for="contentInput">
-						<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
-					</b-form-group>
+						<b-form-group 
+						label="Title"
+						label-for="titleInput">
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
+						</b-form-group>
+					
+						<b-form-group 
+						label="Content"
+						label-for="contentInput">
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
+						</b-form-group>
 
-					<b-form-group 
-					label="Category"
-					label-for="categoryInput">
-						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
-							<template #first>
-								<b-form-select-option value="" disabled>Please select a task category</b-form-select-option>
+						<b-form-group 
+						label="Category"
+						label-for="categoryInput">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
+								<template #first>
+									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+					</b-container>
+
+					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold">
+						<span v-if="!showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-down"></b-icon>
+							More options
+						</span>
+						<span v-if="showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-up"></b-icon>
+							Less options
+						</span>
+					</div>
+					<b-container v-if="showMoreOptions" class="mt-2">
+						<b-form-group
+						>
+							<template #label>
+								Performed by
+								<br/>
+								<b-form-checkbox @change="toggleAllSplits" class="mt-2">
+									<strong>Everyone</strong>
+								</b-form-checkbox>
 							</template>
-						</b-form-select>
-					</b-form-group>
+
+							<b-form-checkbox-group
+							v-model="selectedEventSplits"
+							:options="astronautsList"
+							inline
+							>
+							</b-form-checkbox-group>
+
+						</b-form-group>
+
+						<b-form-group
+						label="Repeated daily:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1" disabled>
+								{{ selectedEventEveryday ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<div class="text-primary hover-pointer" @click="showLinkToInput=true">
+							<b-icon icon="link45deg"></b-icon>
+							Add a link to a procedure
+						</div>
+						<b-form-group>
+							<b-form-select v-if="showLinkToInput" id="linkToInput" options="" v-model="linkToProcedure" size="sm">
+								<template #first>
+									<b-form-select-option value="" disabled>Select a procedure to link to</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+					</b-container>
 				</form>
 			</b-modal>
 
-			<b-modal id="eventModal" title="selectedEvent.title" v-model="showEventModal" @hidden="resetSelectedEvent">
-				<form>
+			<b-modal id="eventModal" :title="selectedEvent.title" v-model="showEventModal" @hidden="resetSelectedEvent">
+				<b-container v-if="!isEditingEvent">
 					<b-row>
-						<b-col>
-							<b-form-group 
-							label="From"
-							label-for="startTimeInput">
-								<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
-
-						<b-col>
-							<b-form-group 
-							label="To"
-							label-for="endTimeInput">
-								<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-							</b-form-group>
-						</b-col>
+						From {{ selectedEvent.start}}
+						<br/> 
+						To {{ selectedEvent.end}} 
+					</b-row>
+					<b-row>
+						Content
+						{{ selectedEvent.content}}
+					</b-row>
+					<b-row>
+						Category
+						{{ selectedEvent.class}}
+					</b-row>
+					<b-row>
+						Background
+						{{ selectedEvent.background}}
+						<br/>
+						All day
+						{{ selectedEvent.allDay}}
+					</b-row>
+					<b-row>
+						Linked to
+						{{ selectedEvent.linkedTo}}
 					</b-row>
 
-					<b-form-group 
-					label="Title"
-					label-for="titleInput">
-						<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
-					</b-form-group>
+					<b-row class="float-right">
+						<b-button @click="isEditingEvent = true" variant="info" >
+							<b-icon icon="pencil-square"></b-icon> Edit
+						</b-button>
+					</b-row>
+				</b-container>
+				<b-container v-if="isEditingEvent">
+					<form>
+						<b-row>
+							<b-col>
+								<b-form-group 
+								label="From"
+								label-for="startTimeInput">
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
 
-					<b-form-group 
-					label="Content"
-					label-for="contentInput">
-						<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
-					</b-form-group>
+							<b-col>
+								<b-form-group 
+								label="To"
+								label-for="endTimeInput">
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+						</b-row>
 
-					<b-form-group 
-					label="Category"
-					label-for="categoryInput">
-						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
-							<template #first>
-								<b-form-select-option value="" disabled>Please select a task category</b-form-select-option>
-							</template>
-						</b-form-select>
-					</b-form-group>
-				</form>
+						<b-form-group 
+						label="Title"
+						label-for="titleInput">
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
+						</b-form-group>
+
+						<b-form-group 
+						label="Content"
+						label-for="contentInput">
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
+						</b-form-group>
+
+						<b-form-group 
+						label="Category"
+						label-for="categoryInput">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
+								<template #first>
+									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+					</form>
+					<b-button size="sm" variant="danger">
+						<b-icon icon="trash"></b-icon> Delete procedure
+					</b-button>
+				</b-container>
 			</b-modal>
-
 		</div>
+		{{events}}
+		<br/>
+		{{selectedEventSplits}}
 	</div>
 </template>
 
@@ -188,17 +288,13 @@
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,
-				splitDays: [
-					{ id: 1, class: 'astro1', label: 'Astro 1', hide: false },
-					{ id: 2, class: 'astro2', label: 'Astro 2', hide: false },
-					{ id: 3, class: 'astro3', label: 'Astro 3', hide: false },
-					{ id: 4, class: 'astro4', label: 'Astro 4', hide: false },
-					{ id: 5, class: 'astro5', label: 'Astro 5', hide: false },
-					{ id: 6, class: 'astro6', label: 'Astro 6', hide: false }
-					],
-				events: [
-					new Task('2020-11-30', '18:00', '2020-11-30', '19:00', 'Test', 'This task is a test', 'IBS', 1)
-				]
+				events: [],
+				astronautsList: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
+				selectedEventSplits: [],
+				selectedEventEveryday: false,
+				showMoreOptions: false,
+				showLinkToInput: false,
+				isEditingEvent: false
 			}
 		},
 		computed: {
@@ -209,6 +305,14 @@
 			},
 			maxDate () {
 				return new Date().addDays(10)
+			},
+			splitDays() { 
+				var splitDays = []
+				for (var astronaut of this.astronautsList){
+					var splitDay = { id: astronaut, class: astronaut, label: astronaut, hide: false }
+					splitDays.push(splitDay)
+				}
+				return splitDays
 			},
 			selectedEventStartTime: {
 				get: function() {
@@ -236,6 +340,9 @@
 			}
 		},
 		methods: {
+			toggleAllSplits(checked) {
+				this.selectedEventSplits = checked ? this.astronautsList.slice() : []
+			},
 			getMissionDayNumber(currentDate) {
 				return Math.floor((currentDate.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
 			},
@@ -260,6 +367,7 @@
 			onEventCreate(event, deleteEventFunction) {
 				this.selectedEvent = event
 				this.deleteEventFunction = deleteEventFunction
+				this.selectedEventSplits = [event.split]
 				return event
 			},
 			
@@ -275,6 +383,10 @@
 			},
 			resetSelectedEvent() {
 				this.selectedEvent = {}
+				this.showMoreOptions = false
+				this.showLinkToInput = false
+				this.selectedEventSplits = []
+				this.selectedEventEveryday = false
 			}
 		}
 

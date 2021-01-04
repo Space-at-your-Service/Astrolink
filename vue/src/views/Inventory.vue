@@ -5,8 +5,8 @@
 		<div class="container my-3 p-0">
 			<div class="row no-gutters">
 				<div class="col">
-					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" v-if="permissions.includes('inventory.add_item')">
-						<b-icon icon="plus-square" class="mr-1"></b-icon>
+					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
+						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New item
 					</b-button>
 				</div>
@@ -14,11 +14,14 @@
 					<b-form-checkbox
 						id="hideEmptyInput"
 						v-model="hideEmpty"
+						switch
+						size="lg"
+						class="mt-1"
 						>
 						Hide empty items
 					</b-form-checkbox>
 				</div>
-				<div class="col-4">
+				<div class="col">
 					<b-icon icon="search" class="h3 float-right mt-1 mr-2"></b-icon>
 				</div>
 				<div class="col-3">
@@ -240,7 +243,7 @@
 		},
 		computed: {
 			...mapState(['inventoryHistory']),
-			...mapState('perm', ['permissions']),
+			...mapState('user', ['permissions']),
 			sortOptions() {
 				return this.fields
 					.filter(f => f.sortable)
