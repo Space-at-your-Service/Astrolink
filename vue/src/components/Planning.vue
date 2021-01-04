@@ -14,7 +14,7 @@
 				</b-col>
 			</b-row>
 		</b-container>
-		<div style="height: 620px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
+		<div style="height: 1105px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
@@ -28,7 +28,7 @@
 				:sticky-split-labels="true"
 				:disable-views="['years', 'year', 'month', 'week']"
 				hide-view-selector
-				show-all-day-events='short'
+				:show-all-day-events="false"
 				today-button
 				:watchRealTime="true"
 				:timeCellHeight="30"
@@ -173,7 +173,7 @@
 							Add a link to a procedure
 						</div>
 						<b-form-group>
-							<b-form-select v-if="showLinkToInput" id="linkToInput" options="" v-model="linkToProcedure" size="sm">
+							<b-form-select v-if="showLinkToInput" id="linkToInput" options="this.$store.state.proceduresList" v-model="linkToProcedure" size="sm">
 								<template #first>
 									<b-form-select-option value="" disabled>Select a procedure to link to</b-form-select-option>
 								</template>
@@ -259,7 +259,7 @@
 						</b-form-group>
 					</form>
 					<b-button size="sm" variant="danger">
-						<b-icon icon="trash"></b-icon> Delete procedure
+						<b-icon icon="trash"></b-icon> Delete event
 					</b-button>
 				</b-container>
 			</b-modal>
@@ -383,7 +383,6 @@
 			},
 			resetSelectedEvent() {
 				this.selectedEvent = {}
-				this.showMoreOptions = false
 				this.showLinkToInput = false
 				this.selectedEventSplits = []
 				this.selectedEventEveryday = false
@@ -417,8 +416,9 @@
 		background-color: #ccc;
 		color: black;
 		cursor: pointer;
-		border-radius: 10px;
-		opacity: 0.8;
+		border-radius: 15px;
+		box-shadow: 0 1px 4px navy;
+		opacity: 0.9;
 		/*display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -426,8 +426,6 @@
 	}
 	
 	.vuecal__event:hover {
-		font-weight: bold;
-		transition: transform 200ms ease-in-out;
 	}
 
 	.vuecal__event.Break {

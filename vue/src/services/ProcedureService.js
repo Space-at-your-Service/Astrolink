@@ -15,6 +15,10 @@ class ProcedureService {
 		return http.get("/activities/procedures/"+nick, {responseType: 'blob'})
 	}
 
+	// getFavorites() {
+	// 	return http.get("/activities/procedures/favorites"+username)
+	// }
+
 	postProcedure(formData, onUploadProgress) {
 		return http.post("/activities/procedures/", formData, {
 			headers: {

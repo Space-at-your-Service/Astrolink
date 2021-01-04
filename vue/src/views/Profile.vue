@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <h3 class="section-title">{{ username }}'s Profile</h3>
-
+    
     <div class="inner-block">
       <b-row>
         <b-col>

@@ -11,12 +11,25 @@ export const procedure = {
 	},
 
 	getters: {
+		procedurePrimaryTypes: state => {
+			var procedurePrimaryTypes = []
+			for (var type of state.procedureTypes) {
+				procedurePrimaryTypes.push(type.primaryType)
+			}
+			return procedurePrimaryTypes
+		}
 	},
 
 	mutations: {
 		SET_STATE(state, payload) {
 			state.proceduresList = payload.procedures
 			state.procedureTypes = payload.procedureTypes
+		},
+		DELETE_SUCCESS(state, payload) {
+			const index = state.proceduresList.indexOf(payload);
+			if (index > -1) {
+				array.splice(index, 1);
+			}
 		}
 	},
 
@@ -33,6 +46,13 @@ export const procedure = {
 					commit('SET_STATE', payload)
 				})
 			})
+		},
+		deleteProcedure({ commit }, procedure) {
+			ProcedureService.deleteProcedure(procedure)
+			.then(
+				() => { commit('DELETE_SUCCESS', procedure) },
+				() => {  }
+			)
 		}
 	}
 }
