@@ -207,7 +207,7 @@
 					</b-row>
 					<b-row>
 						Linked to
-						{{ selectedEvent.linkedTo}}
+						{{ selectedEvent.procedures }}
 					</b-row>
 
 					<b-row class="float-right">
@@ -284,7 +284,7 @@
 			return {
 				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
 				selectedEvent: {},
-				eventsCssClasses: ['Break', 'Routine', 'IBS', 'OBS', 'Sport', 'External-contact', 'Background'],
+				eventsCssClasses: ['Break', 'Routine', 'IBS', 'OBS', 'Sport', 'External-contact'],
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,

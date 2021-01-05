@@ -28,7 +28,7 @@ export const procedure = {
 		DELETE_SUCCESS(state, payload) {
 			const index = state.proceduresList.indexOf(payload);
 			if (index > -1) {
-				array.splice(index, 1);
+				state.proceduresList.splice(index, 1);
 			}
 		}
 	},
@@ -51,7 +51,7 @@ export const procedure = {
 			ProcedureService.deleteProcedure(procedure)
 			.then(
 				() => { commit('DELETE_SUCCESS', procedure) },
-				() => {  }
+				() => { }
 			)
 		}
 	}
