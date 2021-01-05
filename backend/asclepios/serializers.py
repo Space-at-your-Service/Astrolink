@@ -29,6 +29,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
         return instance.name
 
+
 class AsclepianSerializer(serializers.HyperlinkedModelSerializer):
 
     groups = GroupSerializer(many = True)
