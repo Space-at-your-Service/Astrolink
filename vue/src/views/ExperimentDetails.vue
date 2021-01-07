@@ -11,7 +11,7 @@
 			</template>
 			
 			<b-card-text class="p-3">
-				<img src="../assets/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+				<!-- <img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/> -->
 
 				<b-container class="mb-2 py-3">
 					<h4>Description</h4>

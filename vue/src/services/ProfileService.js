@@ -7,9 +7,9 @@ class ProfileService {
     return http.get('/asclepios/profile/');
   }
 
-  // getPermissionLexicon() {
-  //   return http.get('/asclepios/permissions_lexicon/');
-  // }
+  getPermissionLexicon() {
+    return http.get('/asclepios/profile/permissions_lexicon/');
+  }
 }
 
 export default new ProfileService();

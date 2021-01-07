@@ -1,31 +1,33 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Procedures</h3>
-		<div class="container my-3 p-0">
+
+		<b-container-fluid class="m-0 p-0">
 			<b-row class="no-gutters">
 				<b-col>
-					<b-button v-b-modal.uploadModal size="md" variant="info" v-if="permissions.includes('activities.add_procedure')" style="border-radius: 15px">
-						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
+					<b-button v-b-modal.uploadModal size="lg" variant="info" v-if="permissions.includes('activities.add_procedure')" class="my-3" style="border-radius: 15px">
+						<b-icon icon="plus-circle-fill" ></b-icon>
 						New procedure
 					</b-button>
 				</b-col>
 
-				<b-col>
+				<!-- <b-col>
 					<b-form-checkbox
 						id="showFavsOnlyInput"
 						v-model="showFavsOnly"
 						switch
 						size="lg"
-						class="float-right"
+						class="float-right mt-4"
+						disabled
 						>
 						Show Favorites only
 					</b-form-checkbox>
-				</b-col>
+				</b-col> -->
 			</b-row>
-		</div>
+		</b-container-fluid>
 
 		<b-card no-body>
-			<b-tabs content-class="my-3" justified active-nav-item-class="font-weight-bold text-uppercase text-dark">
+			<b-tabs content-class="my-3" justified active-nav-item-class="font-weight-bold text-uppercase text-dark" card>
 				<b-tab v-for="section in procedureSections" :key="section.type" :title="section.type">
 				<template #title>
 					<strong  style="font-variant-caps: small-caps;">{{ section.type }}</strong>
@@ -41,26 +43,55 @@
 							</span>
 							</template>
 
-							<div class="container p-0">
-								<div class="row no-gutters justify-content-around">
-									<div v-for="procedure in subsection.procedures" :key="procedure.nick" class="col-4 m-2 text-center">
+							<b-container v-for="procedure in subsection.procedures" :key="procedure.nick"
+							
+							class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
+								<b-row no-gutters>
+									<b-col class="hover-bg-grey hover-pointer" @click="openPDF(procedure.nick)">
+										{{ procedure.title }}
+									</b-col>
+
+									<b-col cols=1 :id="procedure.nick" class="hover-bg-grey text-center">
+										<b-icon icon="info-circle"></b-icon>
+									</b-col>
+
+									<b-col cols=1 class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure.nick)">
+										<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
+										<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
+									</b-col>
+
+									<b-col cols=1 v-b-modal.editModal class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="permissions.includes('activities.change_procedure')">
+										<b-icon icon="pencil-square" variant="info"></b-icon>
+									</b-col>
+								</b-row>
+
+								<b-tooltip :target="procedure.nick" triggers="hover"  placement="topleft">
+									<strong class="text-info">{{ procedure.title }}</strong>
+									<br/>
+									{{ procedure.abstract }}
+								</b-tooltip>
+							</b-container>
+
+									<!-- <b-card-group deck>
 										<b-card
-										v-if="!showFavsOnly || favoritesList[procedure.nick]"
+										v-for="procedure in subsection.procedures" :key="procedure.nick"
 										:id="procedure.nick"
 										:title="procedure.title"
 										footer-tag="footer"
 										header-tag="header"
-										class="text-dark m-0 p-0 h-100"
+										class="text-dark text-center m-0 p-0"
 										v-b-tooltip.hover
-										style="min-width: 200px"
+										style="
+										min-width: 200px;
+										max-width: 500px;"
 										>
 											<b-card-text>
 												{{ procedure.abstract }}
 											</b-card-text>
 
-											<!-- <template #header>
+											<template #header>
 												<strong style="font-size: larger;">{{ procedure.title }}</strong>
-											</template> -->
+											</template> 
 
 											<template #footer>
 												<b-row>
@@ -83,26 +114,22 @@
 													</b-col>
 												</b-row>
 											</template>
-										</b-card>
 
-										<b-tooltip :target="procedure.nick" triggers="hover">
-											<strong class="text-info">{{ procedure.title }}</strong>
-											<br/>
-											{{ procedure.abstract }}
-										</b-tooltip>
-									</div>
-								</div>
+											<b-tooltip :target="procedure.nick" triggers="hover">
+												<strong class="text-info">{{ procedure.title }}</strong><br/>
+												{{ procedure.abstract }}
+											</b-tooltip>
+										</b-card>
+									</b-card-group> -->
 
 								<div v-if="subsection.procedures.length === 0" class="text-center text-dark">
 									This subsection is empty.
 								</div>
 
-							</div>
 						</b-tab>
 
 						<template #tabs-end>
 							<b-nav-item v-b-modal.createSubtypeModal><span class="text-dark" style="font-weight: bold; font-variant-caps: small-caps;"><b-icon icon="folder-plus" class="mr-2"></b-icon>new subtype</span></b-nav-item>
-							<li role="presentation" class="nav-item align-self-center">Plain text</li>
 						</template>
 					</b-tabs>
 
@@ -162,15 +189,15 @@
 									</template>
 								</b-card>
 
-								<b-tooltip :target="procedure.nick" triggers="hover">
+								<!-- <b-tooltip :target="procedure.nick" triggers="hover">
 									<strong class="text-info">{{ procedure.title }}</strong>
 									<br/>
 									{{ procedure.abstract }}
-								</b-tooltip>
+								</b-tooltip> -->
 							</div>
 						</div>
 
-						<div v-if="!(true in Object.values(favoritesList))" class="text-center text-dark">
+						<div v-if="favoritesList.length === 0" class="text-center text-dark">
 							Your favorites are empty.
 						</div>
 					</div>
@@ -189,7 +216,7 @@
 			</form>
 		</b-modal>
 
-		<b-modal id="uploadModal" title="Procedure Upload" centered @ok="okUpload">
+		<b-modal id="uploadModal" title="Create a Procedure" centered @ok="okUpload">
 			<form>
 
 				<b-form-group
@@ -288,6 +315,7 @@
 <script>
 	import ProcedureService from '../services/ProcedureService'
 	import { mapState } from 'vuex'
+	// import { mapActions } from 'vuex'
 
 	export default {
 		components: {
@@ -307,7 +335,7 @@
 				{type: 'Contacts', colorVariant: 'warning'},
 				{type: 'Emergencies', colorVariant: 'danger'},
 				],
-				favoritesList: {'test': true},
+				favoritesList: {'test1': true},
 				showFavsOnly: false,
 				createdSubtype: ""
 			}
@@ -324,6 +352,7 @@
 			}
 		},
 		methods: {
+			// ...mapActions('procedure',['deleteProcedure']),
 			formatProcedure(procedure) {
 				let formData = new FormData()
 				formData.append('nick', procedure.nick)

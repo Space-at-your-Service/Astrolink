@@ -1,31 +1,32 @@
 
 <template>
 	<div class="main-container">
-		<h3 class="section-title">Inventory</h3>		
-		<div class="container my-3 p-0">
-			<div class="row no-gutters">
-				<div class="col">
-					<b-button v-b-modal.createModal size="md" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
+		<h3 class="section-title">Inventory</h3>	
+
+		<b-container-fluid class="m-0 p-0">
+			<b-row no-gutters class="my-3">
+				<b-col>
+					<b-button v-b-modal.createModal size="lg" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
 						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New item
 					</b-button>
-				</div>
-				<div class="col">
+				</b-col>
+				<b-col>
 					<b-form-checkbox
 						id="hideEmptyInput"
 						v-model="hideEmpty"
 						switch
 						size="lg"
-						class="mt-1"
+						class="mt-2"
 						>
 						Hide empty items
 					</b-form-checkbox>
-				</div>
-				<div class="col">
-					<b-icon icon="search" class="h3 float-right mt-1 mr-2"></b-icon>
-				</div>
-				<div class="col-3">
-					<b-input-group>
+				</b-col>
+				<b-col class="p-auto">
+					<b-icon icon="search" class="h3 float-right mt-2 mr-2"></b-icon>
+				</b-col>
+				<b-col cols=3>
+					<b-input-group class="mt-1">
 						<b-form-input
 						v-model="filter"
 						type="search"
@@ -33,9 +34,9 @@
 						placeholder="Type to search . . ."
 						></b-form-input>
 					</b-input-group>
-				</div>
-			</div>
-		</div>
+				</b-col>
+			</b-row>
+		</b-container-fluid>
 
 		<b-pagination
 			v-model="currentPage"
