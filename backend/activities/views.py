@@ -4,11 +4,11 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
 
-from .models import Procedure
-from .serializers import ProcedureSerializer
+from .models import Procedure, ProcedureType, ProcedureSubtype
+from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer
 
 
-class GlobalView(APIView):
+class ProceduresView(APIView):
 
     parser_classes = (MultiPartParser, FormParser,)
 
@@ -16,8 +16,8 @@ class GlobalView(APIView):
 
         request.user.check_perms(("activities.view_procedure",))
 
-        all_nicks = Procedure.objects.all()
-        ser = ProcedureSerializer(all_nicks, many = True)
+        all_procedures = Procedure.objects.all()
+        ser = ProcedureSerializer(all_procedures, context = {"request" : request}, many = True)
 
         return JsonResponse(ser.data, safe = False)
 
@@ -35,7 +35,7 @@ class GlobalView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
-class SelectiveView(APIView):
+class ProcedureView(APIView):
 
     parser_classes = (MultiPartParser,)
 
@@ -67,3 +67,16 @@ class SelectiveView(APIView):
         procedure.delete()
 
         return JsonResponse({"message" : "Item was deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
+
+
+class ProcedureSubtypeView(APIView):
+
+    def get(self, request):
+
+        request.user.check_perms(("activities.view_proceduresubtype",))
+
+        alltypes = ProcedureType.objects.all()
+
+        ser = ProcedureTypeSerializer(alltypes, many = True, context = {"request" : request})
+
+        return JsonResponse(ser.data, safe = False)
