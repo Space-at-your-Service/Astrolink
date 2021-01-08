@@ -10,7 +10,7 @@
 		</template>
 
 		<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
-			<!-- <img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/> -->
+			<img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
 
 			{{ experiment.info }}
 		</b-card-text>

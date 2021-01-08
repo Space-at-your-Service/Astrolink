@@ -1,7 +1,7 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Procedures</h3>
-
+		{{ procedures }}
 		<b-container-fluid class="m-0 p-0">
 			<b-row class="no-gutters">
 				<b-col>
@@ -357,8 +357,7 @@
 				let formData = new FormData()
 				formData.append('nick', procedure.nick)
 				formData.append('title', procedure.title)
-				formData.append('type', procedure.type)
-				formData.append('subtype', procedure.subtype)
+				formData.append('types', JSON.stringify({masterType: procedure.type, subtype : procedure.subtype}))
 				formData.append('abstract', procedure.abstract)
 				formData.append('pdfFile', procedure.file)
 				return formData

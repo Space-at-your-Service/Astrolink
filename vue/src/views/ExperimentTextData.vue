@@ -1,10 +1,23 @@
 <template>
 	<div class="main-container">
+		{{enabled}}
+		<h3 class="section-title"><em>{{ experiment.title }}</em> data</h3>
+		<b-form-checkbox
+			ref = "enabledInput"
+			v-model="enabled"
+			switch
+			size="lg"
+			class="mt-2"
+			@change="toggleToolbar"
+			>
+			Enable edition mode
+		</b-form-checkbox>
+
 		<b-container class="p-0">
 			<b-row>
 				<b-col cols=10>
 					<form>
-						<b-form-input id="titleInput" v-model="textsheet.title" placeholder="Textsheet Title" class="text-center">
+						<b-form-input id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
 						</b-form-input>
 					</form>
 				</b-col>
@@ -19,7 +32,7 @@
 		</b-container>
 
 		<b-container style="background-color: #fff; color: black; overflow: hidden; border-radius: 0px 0px 0px 15px" class="p-4">
-			<vue-editor v-model="textsheet.content" @imageAdded="handleImageAdded" :editorToolbar="customToolbar" style="height: 1000px;"></vue-editor>
+			<vue-editor v-model="sheet.content" @imageAdded="handleImageAdded" :editorToolbar="customToolbar" :disabled="!enabled" style="height: 1000px;"></vue-editor>
 		</b-container>
 	</div>
 </template>
@@ -45,6 +58,7 @@
 	import {VueEditor} from 'vue2-editor';
 	import {axios} from 'axios';
 	import Textsheet from '../models/textsheet'
+	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
 
 	export default {
@@ -54,7 +68,9 @@
 
 		data() {
 			return {
-				textsheet: new Textsheet(),
+				sheet: undefined,
+				isNew: true,
+				enabled: true,
 				customToolbar: [
 					[{ 'size': ['small', false, 'large', 'huge'] }],
 					['bold', 'italic', 'underline', 'strike'],
@@ -72,10 +88,28 @@
 		computed: {
 			...mapState('user', ['username']),
 			experiment() {
-				return this.$store.state.experiments.find(experiment => experiment.title = this.$route.params.experimentTitle)
+				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
 			}
 		},
 		methods: {
+			getSheet() {
+				const sheetTitle = this.$route.params.sheetTitle
+				if (sheetTitle === 'new-entry') {
+					this.sheet = new Textsheet()
+				}
+				else {
+					try{
+						
+						this.sheet = this.experiment.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)
+						this.isNew = false
+						this.enabled = false
+					} catch(error) {
+						console.error(error)
+						alert('An error occured during loading.')
+					}
+				}	
+			},
+
 			handleImageAdded(file, Editor, cursorLocation, resetUploader) {
 				var formData = new FormData();
 				formData.append('image', file)
@@ -95,18 +129,70 @@
 					console.log(err);
 				})
 			},
+
 			saveContent() {
 				this.saving = true
-				this.textsheet.creator = this.username
-				this.textsheet.lastUser = this.username
-				console.log(this.textsheet)
-				this.experiment.textsheets.push(this.textsheet)
-				console.log(this.experiment.textsheets)
-				setTimeout(() => { this.saving = false }, 2000)
-				
-				console.log('saved')
+				if (this.isNew) {
+					this.sheet.creator = this.username
+					this.sheet.creationDate = new Date()
+					this.sheet.lastUser = this.username
+					this.sheet.LastModifiedDate = new Date()
+					try {
+						if (this.sheet.title === "") {
+								throw 'Please choose a title for your texsheet.'
+							}
+						for (var textsheet of this.experiment.textsheets) {
+							if (textsheet.title === this.sheet.title) {
+								throw 'A textsheet with this title already exists. Please choose another title.'
+							}
+						}
+
+						this.experiment.textsheets.push(this.sheet)
+						setTimeout(() => { this.saving = false }, 500)
+						console.log('saved')
+						console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).textsheets)
+						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+this.sheet.title)
+						this.isNew = false
+					} 
+					catch(error) {
+						alert(error)
+					}
+					finally {
+						this.saving = false
+					}
+				}
+				else {
+					this.sheet.lastUser = this.username
+					this.sheet.LastModifiedDate = DateFormat.dateString()
+					setTimeout(() => {this.saving = false}, 500)
+					console.log('saved')
+					console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).textsheets)
+				}	
+			},
+			toggleToolbar(checked) {
+				const toolbar = document.getElementsByClassName('ql-toolbar')[0]
+				if (checked) toolbar.classList.remove('hidden')
+				else toolbar.classList.add('hidden')
+			},
+			initToolbar() {
+				if (!this.$refs['enabledInput'].checked) {
+					const toolbar = document.getElementsByClassName('ql-toolbar')[0]
+					toolbar.classList.add('hidden')
+				}
 			}
+		},
+
+		created() {
+			this.getSheet()
+		},
+		mounted() {
+			this.initToolbar()
 		}
 	}
 </script>
 
+<style>
+	.ql-toolbar.hidden {
+		display: none
+	}
+</style>

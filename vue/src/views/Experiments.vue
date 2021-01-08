@@ -39,7 +39,7 @@ export default {
 	},
 
 	computed: {
-		...mapState(['experiments'])
+		...mapState('experiment', ['experiments'])
 	},
 
 	methods: {

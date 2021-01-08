@@ -3,6 +3,10 @@
 import http from "./http.common";
 
 class ProcedureService {
+	// getProcedureTypes() {
+	// 	return http.get("/")
+	// }
+
 	getProcedures() {
 		return http.get("/activities/procedures/")
 	}

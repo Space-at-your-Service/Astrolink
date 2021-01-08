@@ -9,18 +9,17 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { auth } from './auth.module'
-// import { experiment } from './experiment.module'
+import { experiment } from './experiment.module'
 // import { inventory } from './inventory.module'
 // import { procedure } from './procedure.module'
 import { user } from './user.module'
-import Textsheet from '../models/textsheet'
 
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
 	modules: {
 		auth,
-		// experiment,
+		experiment,
 		// inventory,
 		// procedure,
 		user
@@ -28,14 +27,6 @@ const store = new Vuex.Store({
 
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
-		experiments: [
-			{index: 0, title: "Experiment 1", state: "complete", supervisor: "John", img: '../assets/bluenova.jpg', infoShort:"This describes the experiment in one sentence.",info: "This is a detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", textsheets:[new Textsheet('First Datasheet', 'This is a placeholder content. Should be replaced with some data.')]},
-			{index: 1, title: "experiment2", state: "aborted", supervisor: "Mary", infoShort:"This describes the experiment in one sentence.",info: "The detailed description.", protocol: "../assets/logo.png", datasheets:[]},
-			{index: 2, title: "experiment3", state: "planned", supervisor: "Bill", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]},
-			{index: 3, title: "Experiment 1", state: "complete", supervisor: "John", img: '../assets/bluenova.jpg', infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", textsheets:[new Textsheet('First Datasheet', 'This is a placeholder content. Should be replaced with some data.')]},
-			{index: 4, title: "experiment2", state: "aborted", supervisor: "Mary", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]},
-			{index: 5, title: "experiment3", state: "planned", supervisor: "Bill", infoShort:"This describes the experiment in one sentence.",info: "This is a more detailed description.This iscription.This is a more detailed description.This is a more detailed description.This is a more detailed description.", protocol: "../assets/logo.png", datasheets:[]}
-		],
 		procedureTypes: [
 			{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
 			{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},

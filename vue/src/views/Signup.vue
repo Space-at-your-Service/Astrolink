@@ -12,15 +12,11 @@
                     <b-form-input id="lastName" type="text"></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Role" label-for="role">
-                    <b-form-input id="role" type="text"></b-form-input>
-                </b-form-group>
-
                 <b-form-group label="Password" label-for="password">
                     <b-form-input id="password" type="password"></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Repeat Password" label-for="passwordRepeat">
+                <b-form-group label="Confirm Password" label-for="passwordRepeat">
                     <b-form-input id="passwordRepeat" type="password"></b-form-input>
                 </b-form-group>
 
@@ -49,9 +45,6 @@
             }
         },
         computed: {
-            loggedIn() {
-                return this.$store.state.auth.status.loggedIn;
-    }
         },
         methods: {
             handleRegister() {
