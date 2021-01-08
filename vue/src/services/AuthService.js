@@ -13,7 +13,7 @@ class AuthService {
 		.then(response => {
 			const token = response.data.token
 			if (token) {
-				localStorage.setItem('token', token);
+				sessionStorage.setItem('token', token);
 				axios.defaults.headers.common['Authorization'] = 'Token ' + token
 			}
 			return response.data;
@@ -21,7 +21,7 @@ class AuthService {
 	}
 
 	logout() {
-		localStorage.removeItem('token');
+		sessionStorage.removeItem('token');
 	}
 
 	register(user) {
