@@ -1,6 +1,5 @@
 <template>
 	<div class="main-container">
-		{{enabled}}
 		<h3 class="section-title"><em>{{ experiment.title }}</em> data</h3>
 		<b-form-checkbox
 			ref = "enabledInput"

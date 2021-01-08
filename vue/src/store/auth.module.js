@@ -2,7 +2,7 @@
 
 import AuthService from '../services/AuthService'
 
-const token = localStorage.getItem('token')
+const token = sessionStorage.getItem('token')
 const initialState = token
 ? { status: { loggedIn: true } }
 : { status: { loggedIn: false } }
