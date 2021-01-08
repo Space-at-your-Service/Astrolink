@@ -70,18 +70,9 @@ class Datasheet(models.Model):
     contents = models.FileField(max_length = 100)
 
 
-class Planning(models.Model):
-
-    holder = models.OneToOneField(get_user_model(), on_delete = models.CASCADE, null = True)
-
-    def __str__(self):
-
-        return f"{self.holder}'s planning"
-
-
 class Task(models.Model):
 
-    planning = models.ManyToManyField(Planning, related_name = "tasks")
+    holder = models.OneToOneField(get_user_model(), on_delete = models.CASCADE, null = True)
     procedures = models.ManyToManyField(Procedure, related_name = "tasks")
 
     start = models.DateTimeField(default = datetime.now)
@@ -100,4 +91,4 @@ class Task(models.Model):
 
     def __str__(self):
 
-        return f"[{self.planning.get().holder.username}] {self.title}"
+        return f"[{self.holder.username}] {self.title}"

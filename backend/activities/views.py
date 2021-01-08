@@ -4,8 +4,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
 
-from .models import Procedure, ProcedureType, ProcedureSubtype, Planning, Task
-from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer, PlanningSerializer
+from .models import Procedure, ProcedureType, ProcedureSubtype, Task
+from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer, TaskSerializer
 
 
 class ProceduresView(APIView):
@@ -57,7 +57,7 @@ class ProcedureView(APIView):
 
         procedure.pdfFile.save(f.name, f, save = True)
 
-        return JsonResponse({"message" : "Upload was done successfully"}, status = status.HTTP_202_ACCEPTED)
+        return HttpResponse("Upload successful", status = status.HTTP_202_ACCEPTED)
 
     def delete(self, request, pk):
 
@@ -66,7 +66,7 @@ class ProcedureView(APIView):
         procedure = Procedure.objects.get(pk = pk)
         procedure.delete()
 
-        return JsonResponse({"message" : "Item was deleted successfully"}, status = status.HTTP_204_NO_CONTENT)
+        return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)
 
 
 class ProcedureSubtypeView(APIView):
@@ -86,10 +86,12 @@ class PlanningView(APIView):
 
     def get(self, request):
 
-        request.user.check_perms(("activities.view_planning",))
+        planning = Task.objects.filter(holder = request.user)
 
-        planning = Planning.objects.get(holder = request.user)
+        if not planning:
 
-        ser = PlanningSerializer(planning, context = {"request" : request})
+            return HttpResponse("This user has nothing to do !", status = status.HTTP_204_NO_CONTENT)
+
+        ser = TaskSerializer(planning, many = True)
 
         return JsonResponse(ser.data, safe = False)
