@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth import get_user_model
 
@@ -61,8 +63,8 @@ class Experiment(models.Model):
 class Datasheet(models.Model):
 
     title = models.CharField(max_length = 50, default = "This is a title")
-    creationDate = models.DateTimeField(auto_now_add=True)
-    lastModifiedDate = models.DateTimeField(auto_now_add=True)
+    creationDate = models.DateTimeField(auto_now_add = True)
+    lastModifiedDate = models.DateTimeField(default = datetime.now)
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created", null = True)
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     contents = models.FileField(max_length = 100)
@@ -72,14 +74,18 @@ class Planning(models.Model):
 
     holder = models.OneToOneField(get_user_model(), on_delete = models.CASCADE, null = True)
 
+    def __str__(self):
+
+        return f"{self.holder}'s planning"
+
 
 class Task(models.Model):
 
     planning = models.ManyToManyField(Planning, related_name = "tasks")
     procedures = models.ManyToManyField(Procedure, related_name = "tasks")
 
-    start = models.DateTimeField(auto_now_add=True)
-    end = models.DateTimeField(auto_now_add=True)
+    start = models.DateTimeField(default = datetime.now)
+    end = models.DateTimeField(default = datetime.now)
     title = models.CharField(max_length = 50, default = "This is a title")
     content = models.CharField(max_length = 300, default = "Content")
     category = models.CharField(max_length = 20, choices = [("Break", "Break"),
@@ -91,3 +97,7 @@ class Task(models.Model):
 
     background = models.BooleanField(default = False)
     allDay = models.BooleanField(default = False)
+
+    def __str__(self):
+
+        return f"[{self.planning.get().holder.username}] {self.title}"

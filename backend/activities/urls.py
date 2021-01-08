@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import ProceduresView, ProcedureView, ProcedureSubtypeView
+from .views import ProceduresView, ProcedureView, ProcedureSubtypeView, PlanningView
 
 
 urlpatterns = [
@@ -9,5 +9,7 @@ urlpatterns = [
     path("procedures/<slug:pk>", ProcedureView.as_view()),
 
     path("procedure_types/", ProcedureSubtypeView.as_view()),
+
+    path("planning/", PlanningView.as_view())
 
 ]

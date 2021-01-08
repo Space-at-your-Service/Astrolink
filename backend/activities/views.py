@@ -4,8 +4,8 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
 
-from .models import Procedure, ProcedureType, ProcedureSubtype
-from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer
+from .models import Procedure, ProcedureType, ProcedureSubtype, Planning, Task
+from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer, PlanningSerializer
 
 
 class ProceduresView(APIView):
@@ -78,5 +78,18 @@ class ProcedureSubtypeView(APIView):
         alltypes = ProcedureType.objects.all()
 
         ser = ProcedureTypeSerializer(alltypes, many = True, context = {"request" : request})
+
+        return JsonResponse(ser.data, safe = False)
+
+
+class PlanningView(APIView):
+
+    def get(self, request):
+
+        request.user.check_perms(("activities.view_planning",))
+
+        planning = Planning.objects.get(holder = request.user)
+
+        ser = PlanningSerializer(planning, context = {"request" : request})
 
         return JsonResponse(ser.data, safe = False)
