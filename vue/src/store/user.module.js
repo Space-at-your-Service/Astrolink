@@ -20,7 +20,8 @@ export const user = {
 	},
 
 	mutations: {
-		SET_USER(state, user) {
+		SET_USER(state, payload) {
+			const user = payload.user
 			state.username = user.username
 			state.firstName = user.first_name
 			state.lastName = user.last_name
@@ -33,9 +34,11 @@ export const user = {
 
 	actions: {
 		getUserState({ commit }) {
+			const payload = {user: undefined}
 			ProfileService.getUserProfile()
 			.then(response => {
-				commit('SET_USER', response.data)
+				payload.user = response.data
+				commit('SET_USER', payload)
 			})
 		}
 	}

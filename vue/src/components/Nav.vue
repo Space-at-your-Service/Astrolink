@@ -48,12 +48,9 @@
 			...mapState('user', ['permissions', 'username'])
 		},
 		methods: { 
-			...mapActions('auth', [
-                'logout'
-            ]),
-            ...mapActions('user', [
-				'getUserState'
-			]),
+			...mapActions(['loadAll']),
+			...mapActions('auth', ['logout']),
+            ...mapActions('user', ['getUserState']),
 			handleLogout() {
 				this.logout()
 				.then(this.$router.push('/login'))
@@ -61,6 +58,7 @@
 		},
 		created() {
 			this.getUserState()
+			this.loadAll()
 		}
 	}
 </script>

@@ -11,7 +11,7 @@ import Vuex from 'vuex'
 import { auth } from './auth.module'
 import { experiment } from './experiment.module'
 // import { inventory } from './inventory.module'
-// import { procedure } from './procedure.module'
+import { procedure } from './procedure.module'
 import { user } from './user.module'
 
 Vue.use(Vuex)
@@ -21,27 +21,12 @@ const store = new Vuex.Store({
 		auth,
 		experiment,
 		// inventory,
-		// procedure,
+		procedure,
 		user
 	},
 
 	state: {
-		missionStartDate: new Date(2021,4,15,0,0,0),
-		procedureTypes: [
-			{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
-			{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},
-			{primaryType: 'MCC', subtypes: ['Main']}, 
-			{primaryType: 'Emergencies', subtypes: ['Main']}, 
-			{primaryType: 'Others', subtypes: ['Main']}
-		],
-		proceduresList: [
-			{nick: 'mas-lunar-base-evacuation', title: 'MAS Lunar Base Evacuation', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: 'C:/Users/Valentin/Documents/EPFL/Cours M3/Projet Astrolink/Astrolink/vue/public/lib/procedures/2020_SC_SOP_0001_MAS_Lunar_Base_Evacuation.docx.pdf'},
-			{nick: 'geophysical-experiment', title: 'Geophysical Experiment', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_Geophysical_experiment.docx.pdf'},
-			{nick: 'georemap', title: 'GeoReMap', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_GeoReMap.docx.pdf'},
-			{nick: 'hydration', title: 'Hydration', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_Hydration.docx.pdf'},
-			{nick: 'lexicon', title: 'Lexicon', type: 'Contacts', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_LEXICON_Experiment.docx.pdf'},
-			{nick: 'redmars', title: 'RedMars', type: 'Contacts', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/RedMars_SOP.docx.pdf'}
-		]
+		missionStartDate: new Date(2021,4,15,0,0,0)
 	},
 
 	getters: {
@@ -56,7 +41,9 @@ const store = new Vuex.Store({
 	},
 
 	actions: {
-		
+		loadAll({ dispatch }) {
+			dispatch('procedure/getProcedureState', null,  {root: true})
+		}
 	}
 })
 

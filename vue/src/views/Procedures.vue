@@ -1,11 +1,11 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Procedures</h3>
-		{{ procedures }}
-		<b-container-fluid class="m-0 p-0">
+
+		<b-container class="m-0 p-0">
 			<b-row class="no-gutters">
 				<b-col>
-					<b-button v-b-modal.uploadModal size="lg" variant="info" v-if="permissions.includes('activities.add_procedure')" class="my-3" style="border-radius: 15px">
+					<b-button v-b-modal.createModal size="lg" variant="info" v-if="permissions.includes('activities.add_procedure')" class="my-3" style="border-radius: 15px">
 						<b-icon icon="plus-circle-fill" ></b-icon>
 						New procedure
 					</b-button>
@@ -24,7 +24,7 @@
 					</b-form-checkbox>
 				</b-col> -->
 			</b-row>
-		</b-container-fluid>
+		</b-container>
 
 		<b-card no-body>
 			<b-tabs content-class="my-3" justified active-nav-item-class="font-weight-bold text-uppercase text-dark" card>
@@ -129,7 +129,7 @@
 						</b-tab>
 
 						<template #tabs-end>
-							<b-nav-item v-b-modal.createSubtypeModal><span class="text-dark" style="font-weight: bold; font-variant-caps: small-caps;"><b-icon icon="folder-plus" class="mr-2"></b-icon>new subtype</span></b-nav-item>
+							<b-nav-item v-b-modal.createSubtypeModal disabled><span class="text-dark" style="font-weight: bold; font-variant-caps: small-caps;"><b-icon icon="folder-plus" class="mr-2"></b-icon>new subtype</span></b-nav-item>
 						</template>
 					</b-tabs>
 
@@ -216,7 +216,7 @@
 			</form>
 		</b-modal>
 
-		<b-modal id="uploadModal" title="Create a Procedure" centered @ok="okUpload">
+		<b-modal id="createModal" title="Create a Procedure" centered @ok="okCreate">
 			<form>
 
 				<b-form-group
@@ -314,21 +314,22 @@
 
 <script>
 	import ProcedureService from '../services/ProcedureService'
+	import Dialog from '../utils/Dialog.js'
 	import { mapState } from 'vuex'
-	// import { mapActions } from 'vuex'
+	import { mapGetters } from 'vuex'
+	import { mapActions } from 'vuex'
 
 	export default {
 		components: {
 		},
 		data() {
 			return {
-				procedures: [],
-				procedureSections: [],
+				// procedures: [],
+				// procedureSections: [],
 				createdProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
 				editedProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
 				subtypesOptions: [],
 				isUploading: false,
-				uploadProgress: 0,
 				fileInfos: [],
 				typesColorVariants : [
 				{type: 'Logistics', colorVariant: 'dark'},
@@ -340,19 +341,22 @@
 				createdSubtype: ""
 			}
 		},
+
 		computed: {
-			...mapState(['procedureTypes']),
+			...mapState('procedure', ['procedures', 'procedureTypes', 'uploadProgress']),
 			...mapState('user', ['permissions']),
-			procedurePrimaryTypes() {
-				var procedurePrimaryTypes = []
-				for (var type of this.procedureTypes) {
-					procedurePrimaryTypes.push(type.primaryType)
-				}
-				return procedurePrimaryTypes
-			}
+			...mapGetters('procedure', {procedureSections: 'proceduresByType', procedurePrimaryTypes: 'procedurePrimaryTypes'}),
+			// procedurePrimaryTypes() {
+			// 	var procedurePrimaryTypes = []
+			// 	for (var type of this.procedureTypes) {
+			// 		procedurePrimaryTypes.push(type.primaryType)
+			// 	}
+			// 	return procedurePrimaryTypes
+			// }
 		},
+
 		methods: {
-			// ...mapActions('procedure',['deleteProcedure']),
+			...mapActions('procedure',['getProcedureState']),
 			formatProcedure(procedure) {
 				let formData = new FormData()
 				formData.append('nick', procedure.nick)
@@ -363,11 +367,6 @@
 				formData.append('pdfFile', procedure.file)
 				return formData
 			},
-			deleteProcedure(procedure) {
-				ProcedureService.deleteProcedure(procedure)
-				this.refreshProcedures()
-				this.$bvModal.hide('editModal')
-			},
 			editModal(procedure) {
 				this.editedProcedure = procedure
 			},
@@ -377,39 +376,10 @@
 				else 
 					this.$set(this.favoritesList, nick, true)
 			},
-			splitProcedureSections() {
-				this.procedureSections = []
-				for (var type of this.procedureTypes) {
-					var colorVariant = 'primary'
-					var typeColorPair = this.typesColorVariants.find(typeColorPair => typeColorPair.type === type.primaryType)
-					if (typeColorPair) {
-						colorVariant = typeColorPair.colorVariant
-					}
-
-					var section = {type: type.primaryType, colorVariant: colorVariant, subsections: []}
-					var proceduresOfType = this.procedures.filter(procedure => procedure.type === type.primaryType)
-
-					for (var subtype of type.subtypes) {
-						var proceduresOfSubtype = proceduresOfType.filter(procedure => procedure.subtype === subtype)
-						var subsection = {type: subtype, procedures: proceduresOfSubtype}
-						section.subsections.push(subsection)
-					}
-
-					this.procedureSections.push(section)
-				}
-			},
 			refreshSubtypesOptions() {
-				const type = this.procedureTypes.find(type => type.primaryType == this.createdProcedure.type)
+				const type = this.procedureTypes.find(type => type.primaryType === this.createdProcedure.type)
 				if (type) this.subtypesOptions = type.subtypes
 			},
-			// getFileURL(nick) {
-			// 	ProcedureService.getFile(nick)
-			// 	.then(response => {
-			// 		const file = new Blob([response.data])
-			// 		const fileURL = URL.createObjectURL(file)
-			// 		return fileURL
-			// 	})
-			// },
 			openPDF(nick) {
 				ProcedureService.getFile(nick)
 				.then(response => {
@@ -442,69 +412,44 @@
 				}
 				else return (this.checkTitle(procedure) && this.checkAbstract(procedure))
 			},
-			okUpload() {
+			okCreate() {
 				this.generateNick()
 				if (!this.checkProcedure(this.createdProcedure)) return
-				else this.fileUpload()
+				else this.createProcedure(this.createdProcedure)
+			},
+			createProcedure(procedure) {
+				this.isUploading = true;
+				this.$store.dispatch('procedure/createProcedure', procedure)
+				.then(() => {
+					this.isUploading = false
+				})
 			},
 			okEdit() {
 				if (!this.checkProcedure(this.editedProcedure)) return
-				else this.fileReupload()
+				else this.editProcedure(this.editedProcedure)
 			},
-			fileUpload() {
-				this.progress = 0
+			editProcedure(procedure){
 				this.isUploading = true;
-				ProcedureService.postProcedure(this.formatProcedure(this.createdProcedure), event => {
-					this.uploadProgress = Math.round((100*event.loaded) / event.total)
-				})
-				.then(() => {
-					this.refreshProcedures()
-				})
-				.catch(() => {
-					alert("An error occured during file upload.")
-				})
+				this.$store.dispatch('procedure/updateProcedure', procedure)
 				.then(() => {
 					this.isUploading = false
-					this.uploadProgress = 0
 				})
-				
 			},
-			fileReupload(){
-				this.progress = 0
-				this.isUploading = true;
-				ProcedureService.updateProcedure(this.editedProcedure.nick, this.formatProcedure(this.editedProcedure), event => {
-					this.uploadProgress = Math.round((100*event.loaded) / event.total)
-				})
-				.then(() => {
-					this.refreshProcedures()
-				})
-				.catch(() => {
-					alert("An error occured during file upload.")
-				})
-				.then(() => {
-					this.isUploading = false
-					this.uploadProgress = 0
+			deleteProcedure(procedure) {
+				Dialog.confirmDelete(this, 'Do you really want to remove this procedure from the database ?')
+				.then((value)=> {
+					if (value) {
+						this.$store.dispatch('procedure/deleteProcedure', procedure)
+						this.$bvModal.hide('editModal')
+					}
 				})
 			},
 			okCreateSubtype() {
 				return
 			},
-			refreshProcedures() {
-				this.getProceduresFromServer()
-			},
-			getProceduresFromServer() {
-				ProcedureService.getProcedures()
-				.then(response => {
-					this.procedures = response.data
-					this.splitProcedureSections()
-				})
-				.catch(e => {
-					console.log(e)
-				})
-			}
-		},
-		beforeMount() {
-			this.getProceduresFromServer()
+			// reloadProcedures() {
+			// 	this.getProcedureState()
+			// }
 		}
 	}
 </script>

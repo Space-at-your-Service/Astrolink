@@ -3,7 +3,7 @@
 	<div class="main-container">
 		<h3 class="section-title">Inventory</h3>	
 
-		<b-container-fluid class="m-0 p-0">
+		<b-container class="m-0 p-0">
 			<b-row no-gutters class="my-3">
 				<b-col>
 					<b-button v-b-modal.createModal size="lg" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
@@ -36,7 +36,7 @@
 					</b-input-group>
 				</b-col>
 			</b-row>
-		</b-container-fluid>
+		</b-container>
 
 		<b-pagination
 			v-model="currentPage"
