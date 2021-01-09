@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Procedure, ProcedureType, ProcedureSubtype, Task
+from django.contrib.auth import get_user_model
 
 
 class SimpleProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -83,17 +84,28 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
 
-    #holder = serializers.CharField(max_length = 150)
-    procedures = ProcedureSerializer(many = True)
+    holder = serializers.CharField(max_length = 150)
 
     class Meta:
 
         model = Task
-        fields = ("procedures", "holder", "start", "end", "title", "content", "category", "background", "allDay")
+        fields = ("title", "holder", "start", "end", "content", "category", "background", "allDay", "procedures")
 
 
-#    def create(self, validated_data):
-#
-#        holder = get_user_model().objects.get(username = validated_data["holder"])
-#
-#        return Task.objects.create(holder = holder)
+    def create(self, validated_data):
+
+        holder = get_user_model().objects.get(username = validated_data.pop("holder"))
+        procedures = validated_data.pop("procedures")
+
+        newtask = Task.objects.create(holder = holder, **validated_data)
+        for p in procedures:
+            newtask.procedures.add(p)
+
+        return newtask
+
+
+    def to_representation(self, instance):
+
+        self.fields["procedures"] = ProcedureSerializer(many = True)
+
+        return serializers.ModelSerializer.to_representation(self, instance)

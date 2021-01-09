@@ -72,7 +72,7 @@ class Datasheet(models.Model):
 
 class Task(models.Model):
 
-    holder = models.OneToOneField(get_user_model(), on_delete = models.CASCADE, null = True)
+    holder = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     procedures = models.ManyToManyField(Procedure, related_name = "tasks")
 
     start = models.DateTimeField(default = datetime.now)
