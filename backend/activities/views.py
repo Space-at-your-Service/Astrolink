@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
+from django.contrib.auth import get_user_model
 
 from .models import Procedure, ProcedureType, ProcedureSubtype, Task
 from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer, TaskSerializer
@@ -69,7 +70,7 @@ class ProcedureView(APIView):
         return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)
 
 
-class ProcedureSubtypeView(APIView):
+class ProcedureTypesView(APIView):
 
     def get(self, request):
 
@@ -95,3 +96,37 @@ class PlanningView(APIView):
         ser = TaskSerializer(planning, many = True)
 
         return JsonResponse(ser.data, safe = False)
+
+    def post(self, request):
+
+        request.user.check_perms(("activities.add_task",))
+
+        ser = TaskSerializer(data = request.data)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+class FlightplanView(APIView):
+
+    def get(self, request):
+
+        astronauts = get_user_model().objects.filter(groups__name = "Astronauts") #TODO : don't hardcode this
+
+        fp = {}
+        for a in astronauts:
+            ser = TaskSerializer(Task.objects.filter(holder = a), many = True)
+            fp.update({a.username : ser.data})
+
+        return JsonResponse(fp, status = status.HTTP_200_OK)
+
+
+#class ExperimentsView(APIView):
+#
+#    def get(self, request):
+#
+#        
