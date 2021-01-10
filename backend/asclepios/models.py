@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, Permission, Group
+from django.contrib.auth.models import AbstractUser, Group
 
 from rest_framework.exceptions import PermissionDenied
 
@@ -20,8 +20,14 @@ ASCLEPIOS_ROLES = [("MCC", (("FLIGHT", "Flight Director"),
 
                    ("Scientists", (("PI", "Principal Investigator"),
                                    ),
-                    ),]
+                    ),
 
+                   ("Misc", (("GUEST", "Guest"),
+                             )
+                    ),
+                   ]
+
+Group.add_to_class("prefix", models.CharField(max_length = 20, choices = ASCLEPIOS_ROLES, default = "GUEST"))
 
 class Asclepian(AbstractUser):
 
