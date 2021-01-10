@@ -216,7 +216,7 @@
 			</form>
 		</b-modal>
 
-		<b-modal id="createModal" title="Create a Procedure" centered @ok="okCreate">
+		<b-modal id="createModal" title="Upload a Procedure" centered @ok="okCreate">
 			<form>
 
 				<b-form-group
@@ -250,7 +250,7 @@
 
 				<b-form-group
 				label="Abstract"
-				label-for="createdDetailsInput"
+				label-for="createdAbstractInput"
 				>
 					<b-form-textarea id="createdAbstractInput" v-model="createdProcedure.abstract" size="sm" no-resize></b-form-textarea>
 				</b-form-group>
@@ -264,8 +264,8 @@
 					accept=".pdf"
 					size="md"
 					placeholder="Drop the procedure PDF file here"
-					drop-placeholder="Drop it !"
-					no-drop-placeholder="Only PDF files are accepted"
+					drop-placeholder="Yosh, got it !"
+					no-drop-placeholder="Only PDF format is accepted"
 					>
 						<template slot="file-name" slot-scope="{ names }">
 							<b-badge v-for="name in names" :key="name" pill variant="dark">{{ name }}</b-badge>
@@ -315,6 +315,8 @@
 <script>
 	import ProcedureService from '../services/ProcedureService'
 	import Dialog from '../utils/Dialog.js'
+	import StringFormat from '../utils/StringFormat.js'
+	import Procedure from '../models/procedure.js'
 	import { mapState } from 'vuex'
 	import { mapGetters } from 'vuex'
 	import { mapActions } from 'vuex'
@@ -326,8 +328,8 @@
 			return {
 				// procedures: [],
 				// procedureSections: [],
-				createdProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
-				editedProcedure: {nick: '', title: '', type: '', subtype: '', abstract: '', file: undefined},
+				createdProcedure: new Procedure(),
+				editedProcedure: new Procedure(),
 				subtypesOptions: [],
 				isUploading: false,
 				fileInfos: [],
@@ -392,9 +394,7 @@
 				})
 			},
 			generateNick() {
-				this.createdProcedure.nick = this.createdProcedure.title
-				.toLowerCase()
-				.replace(/ /g, "-");
+				this.createdProcedure.nick = StringFormat.toNick(this.createdProcedure.title)
 			},
 			checkTitle(procedure) {
 				return (procedure.title.length > 0)

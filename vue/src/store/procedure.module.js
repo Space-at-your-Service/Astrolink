@@ -44,6 +44,20 @@ export const procedure = {
 				procedureSections.push(section)
 			}
 		return procedureSections
+		},
+		proceduresAsOptions : (state, getters) =>  {
+			var options = []
+			const proceduresByType = getters.proceduresByType
+			for (var section of proceduresByType) {
+				const optionGroup = { label: section.type, options: [] }
+				for (var subsection of section.subsections) {
+					for (var procedure of subsection.procedures) {
+						optionGroup.options.push({value: procedure.nick, text: '[' + subsection.type + '] ' + procedure.title})
+					}
+				}
+				options.push(optionGroup)
+			}
+			return options
 		}
 	},
 
@@ -83,7 +97,6 @@ export const procedure = {
 				payload.procedures = response.data
 				// ProcedureService.getProcedureTypes()
 				// .then(response => {
-					// console.log(response)
 					// payload.procedureTypes = response.data
 					commit('SET_STATE', payload)
 					console.log('procedures loaded')
