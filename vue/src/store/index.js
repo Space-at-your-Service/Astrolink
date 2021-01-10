@@ -26,7 +26,8 @@ const store = new Vuex.Store({
 	},
 
 	state: {
-		missionStartDate: new Date(2021,4,15,0,0,0)
+		missionStartDate: new Date(2021,4,15,0,0,0),
+		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline']
 	},
 
 	getters: {
