@@ -1,4 +1,4 @@
-// Store module that contains the inventory of base items
+// Store module that contains the inventory of Base items
 
 import InventoryService from '../services/InventoryService.js'
 

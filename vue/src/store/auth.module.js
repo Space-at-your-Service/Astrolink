@@ -1,4 +1,4 @@
-// Store module that contains the "logged in" state
+// Store module that contains the authentication state
 
 import AuthService from '../services/AuthService'
 
