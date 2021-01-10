@@ -78,7 +78,8 @@ export const procedure = {
 		},
 		UPDATE_SUCCESS(state, payload) {
 			const nick = payload.nick
-			const index = state.procedures.findIndex((procedure) => { procedure.nick === nick  })
+			const index = state.procedures.findIndex(procedure => { return procedure.nick === nick })
+			console.log(state.procedures[index])
 			if (index > -1) {
 				state.procedures.splice(index, 1)
 
@@ -131,7 +132,6 @@ export const procedure = {
 			})
 		},
 		updateProcedure({ commit, state }, procedure) {
-			const nick = procedure.nick
 			const formData = new FormData()
 			formData.append('nick', procedure.nick)
 			formData.append('title', procedure.title)
@@ -140,11 +140,11 @@ export const procedure = {
 			formData.append('abstract', procedure.abstract)
 			formData.append('pdfFile', procedure.file)
 
-			ProcedureService.updateProcedure(nick, formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
+			ProcedureService.updateProcedure(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
 			.then(() => { 
 				commit('UPDATE_SUCCESS', procedure)
 				state.uploadProgress = 0
-				console.log('procedure ' + procedure.title + ' uploaded') 
+				console.log('procedure ' + procedure.title + ' updated') 
 			})
 		}
 	}

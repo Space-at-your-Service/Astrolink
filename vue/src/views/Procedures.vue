@@ -47,29 +47,32 @@
 							
 							class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
 								<b-row no-gutters>
-									<b-col class="hover-bg-grey hover-pointer" @click="openPDF(procedure.nick)">
+									<b-col :id="procedure.nick+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.nick)">
 										{{ procedure.title }}
 									</b-col>
+									<tooltip :target="procedure.nick+'_file'" msg="Open the procedure PDF in a new tab"/>
 
-									<b-col cols=1 :id="procedure.nick" class="hover-bg-grey text-center">
+									<b-col cols=1 :id="procedure.nick+'_info'" class="hover-bg-grey text-center">
 										<b-icon icon="info-circle"></b-icon>
 									</b-col>
+									<b-tooltip :target="procedure.nick+'_info'" triggers="hover" placement="topleft">
+										<strong class="text-primary">{{ procedure.title }}</strong>
+										<br/>
+										{{ procedure.abstract }}
+									</b-tooltip>
 
-									<b-col cols=1 class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure.nick)">
+									<b-col cols=1 :id="procedure.nick+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure.nick)">
 										<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
 										<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
 									</b-col>
+									<tooltip :target="procedure.nick+'_fav'" msg="Add/remove from favorites"/>
 
-									<b-col cols=1 v-b-modal.editModal class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="permissions.includes('activities.change_procedure')">
+									<b-col cols=1 v-b-modal.editModal :id="procedure.nick+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="permissions.includes('activities.change_procedure')">
 										<b-icon icon="pencil-square" variant="info"></b-icon>
 									</b-col>
+									<tooltip :target="procedure.nick+'_edit'" msg="Edit the procedure"/>
 								</b-row>
 
-								<b-tooltip :target="procedure.nick" triggers="hover"  placement="topleft">
-									<strong class="text-info">{{ procedure.title }}</strong>
-									<br/>
-									{{ procedure.abstract }}
-								</b-tooltip>
 							</b-container>
 
 									<!-- <b-card-group deck>
@@ -317,12 +320,13 @@
 	import Dialog from '../utils/Dialog.js'
 	import StringFormat from '../utils/StringFormat.js'
 	import Procedure from '../models/procedure.js'
+	import tooltip from '../components/tooltip.vue'
 	import { mapState } from 'vuex'
 	import { mapGetters } from 'vuex'
-	import { mapActions } from 'vuex'
 
 	export default {
 		components: {
+			tooltip
 		},
 		data() {
 			return {
@@ -358,7 +362,6 @@
 		},
 
 		methods: {
-			...mapActions('procedure',['getProcedureState']),
 			formatProcedure(procedure) {
 				let formData = new FormData()
 				formData.append('nick', procedure.nick)
@@ -447,9 +450,9 @@
 			okCreateSubtype() {
 				return
 			},
-			// reloadProcedures() {
-			// 	this.getProcedureState()
-			// }
+			reloadProcedures() {
+				this.$store.dispatch('getProcedureState')
+			}
 		}
 	}
 </script>

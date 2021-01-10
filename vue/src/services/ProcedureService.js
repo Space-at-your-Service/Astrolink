@@ -32,8 +32,8 @@ class ProcedureService {
 		})
 	}
 
-	updateProcedure(nick, formData, onUploadProgress) {
-		return http.put("/activities/procedures/"+nick, formData, {
+	updateProcedure(formData, onUploadProgress) {
+		return http.put("/activities/procedures/"+formData.get('nick'), formData, {
 			headers: {
 				"Content-Type": "multipart/form-data"
 			},
