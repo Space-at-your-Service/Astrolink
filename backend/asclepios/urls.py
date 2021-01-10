@@ -1,11 +1,10 @@
 from django.urls import path
 
-from . import views
+from .views import ProfileView
 
 
 urlpatterns = [
 
-    path("permissions_lexicon/", views.PermiView.as_view()),
-    path("profile/", views.UserView.as_view()),
+    path("profile/", ProfileView.as_view()),
 
 ]
