@@ -6,7 +6,7 @@ export const inventory = {
 	namespaced: true,
 
 	state: {
-		inventory: [],
+		items: [],
 	},
 
 	getters: {
@@ -14,7 +14,7 @@ export const inventory = {
 
 	mutations: {
 		SET_STATE(state, payload) {
-			state.inventory = payload
+			state.items = payload
 		},
 		// ADD_ITEM_UNIT(state, item) {
 		// 	item.quantity++;
@@ -22,16 +22,26 @@ export const inventory = {
 		// REMOVE_ITEM_UNIT(state, item) {
 		// 	item.quantity--;
 		// },
-		// DELETE_ITEM(state, index) {
-		// 	state.inventory.splice(index, 1);
-		// },
-		// CREATE_NEW_ITEM(state, payload) {
-		// 	state.inventory.push({id: payload.id, name: payload.name, type: payload.type, quantity: payload.quantity})
-		// },
-		// INVENTORY_REGISTER_ENTRY(state, msg) {
-		// 	var date = new Date();
-		// 	state.inventoryHistory.push(date+": "+msg)
-		// }
+		CREATE_SUCCESS(state, payload) {
+			const item = {...payload}
+			state.items.push(item)
+		},
+		DELETE_SUCCESS(state, payload) {
+			const index = state.items.indexOf(payload)
+			if (index > -1) {
+				state.items.splice(index, 1)
+			}
+		},
+		UPDATE_SUCCESS(state, payload) {
+			const id = payload.id
+			const index = state.items.findIndex(item => { return item.id === id })
+			if (index > -1) {
+				state.items.splice(index, 1)
+
+				const item = {...payload}
+				state.items.push(item)
+			}
+		}
 	},
 
 	actions: {
@@ -39,7 +49,7 @@ export const inventory = {
 			var payload = undefined
 			InventoryService.getItems()
 			.then(response => {
-				payload = response
+				payload = response.data
 				commit('SET_STATE', payload)
 				console.log('inventory loaded')
 			})
@@ -70,15 +80,26 @@ export const inventory = {
 		// 		console.log("no item with id "+id)
 		// 	}
 		// },
-		// deleteItem(context, id) {
-		// 	var item = context.state.inventory.findIndex(element => element.id === id);
-		// 	var index = context.state.inventory.indexOf(item);
-		// 	context.commit("DELETE_ITEM", index);
-		// 	context.commit("INVENTORY_REGISTER_ENTRY", context.state.currentAccount.name+" deleted the item "+item.name)
-		// },
-		// createNewItem(context, payload) {
-		// 	context.commit("CREATE_NEW_ITEM", {id: payload.id, name: payload.name, type: payload.type, quantity: payload.quantity})
-		// 	context.commit("INVENTORY_REGISTER_ENTRY", context.state.currentAccount.name+" created the item "+payload.name)
-		// }
+		createItem({ commit }, item) {
+			InventoryService.postItem(item)
+			.then(() => { 
+				commit('CREATE_SUCCESS', item)
+				console.log('item ' + item.name + ' created') 
+			})
+		},
+		deleteItem({ commit }, item) {
+			InventoryService.deleteItem(item)
+			.then(() => { 
+				commit('DELETE_SUCCESS', item)
+				console.log('item ' + item.name + ' deleted') 
+			})
+		},
+		updateItem({ commit }, item) {
+			InventoryService.updateItem(item)
+			.then(() => { 
+				commit('UPDATE_SUCCESS', item)
+				console.log('item ' + item.name + ' updated') 
+			})
+		}
 	}
 }

@@ -2,8 +2,7 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Inventory</h3>	
-		{{isBusy}}
-
+		
 		<b-container class="m-0 p-0">
 			<b-row no-gutters class="my-3">
 				<b-col>
@@ -112,7 +111,7 @@
 									<b-button v-b-modal.editModal size="sm" variant="info" @click="editModal(row.item)" class="mr-1" v-if="permissions.includes('inventory.change_item')">
 										<b-icon icon="pencil-square"></b-icon>
 									</b-button>
-									<b-button size="sm" variant="danger" @click="deleteThisItem(row.item)" class="ml-1" v-if="permissions.includes('inventory.delete_item')">
+									<b-button size="sm" variant="danger" @click="deleteItem(row.item)" class="ml-1" v-if="permissions.includes('inventory.delete_item')">
 										<b-icon icon="trash"></b-icon>
 									</b-button>
 								</b-button-group>
@@ -221,12 +220,11 @@
 	export default {
 		data() {
 			return {
-				items: [],
 				fields: [
 					{ key: 'id', label: 'Item ID', sortable: true, sortDirection: 'desc' },
 					{ key: 'name', label: 'Name', sortable: true },
 					{ key: 'quantity', label: 'Quantity', sortable: false },
-					{key: 'details', label: 'Details', sortable: false}
+					{ key: 'details', label: 'Details', sortable: false }
 				],
 				sortBy: '',
 				sortDesc: false,
@@ -241,14 +239,13 @@
 				currentPage: 1,
 				perPage: 10,
 				isBusy: false,
-
 				createdItem: { id: '', name: '', details: '', quantity: 0 },
 				editedItem: { id: '', name: '', details: '', quantity: 0 }
 			}
 		},
 		computed: {
-			...mapState(['inventoryHistory']),
 			...mapState('user', ['permissions']),
+			...mapState('inventory', ['items']),
 			sortOptions() {
 				return this.fields
 					.filter(f => f.sortable)
@@ -282,10 +279,8 @@
 				)
 				.catch(e => {
 					console.log(e),
-					this.refreshInventory()
+					this.refreshTable()
 				})	
-
-				// this.addItemUnit(id);
 			},
 			removeUnit(item) {
 				if (item.quantity > 0) {
@@ -300,10 +295,8 @@
 					)
 					.catch(e => {
 						console.log(e),
-						this.refreshInventory()
+						this.refreshTable()
 					})	
-
-					// this.removeItemUnit(id);
 				}
 			},
 			editModal(item) {
@@ -355,99 +348,78 @@
 			},
 			okCreate() {
 				if (!this.checkItem(this.createdItem)) return
-				else this.confirmCreate()
+				else this.confirmCreate(this.createdItem)
 			},
 			okEdit() {
 				if (!this.checkItem(this.editedItem)) return
-				else this.confirmEdit()
+				else this.confirmEdit(this.editedItem)
 			},
-			confirmCreate() {
-				console.log("^^^^^^^^^^^^^")
-				console.log(this.createdItem)
-				InventoryService.postItem(this.createdItem)
-				.then(
+			confirmCreate(item) {
+				this.$store.dispatch('inventory/createItem', item)
+				.then(() => {
 					this.$nextTick(() => {
 						this.$bvModal.hide('createModal')
-
 						this.$bvToast.toast('Your item has been successfully created.', {
 							title: `Item created`,
 							variant: 'success',
 							solid: true
 						})
-
-						this.refreshInventory()
-					}),
-				)
-				.catch(e => {
-					console.log(e)
+					})
+				})
+				.catch(error => {
+					console.log(error)
 				})	
 			},
-			confirmEdit() {
-				InventoryService.updateItem(this.editedItem)
-				.then(
+			confirmEdit(item) {
+				this.$store.dispatch('inventory/updateItem', item)
+				.then(() => {
 					this.$nextTick(() => {
 						this.$bvModal.hide('editModal')
-
 						this.$bvToast.toast('Your item has been successfully edited.', {
 							title: `Item edited`,
 							variant: 'success',
 							solid: true
 						})
-
-						this.refreshInventory()
-					}),
-				)
+					})
+				})
 				.catch(e => {
 					console.log(e)
 				})	
 			},
-			deleteThisItem(item) {			
-				InventoryService.deleteItem(item)
-				.then(
+			deleteItem(item) {
+				this.$store.dispatch('inventory/deleteItem', item)
+				.then(() => {
 					this.$nextTick(() => {
 						this.$bvToast.toast('Your item has been successfully deleted.', {
 							title: `Item deleted`,
 							variant: 'success',
 							solid: true
 						})
-
-						this.refreshInventory()
 					})
-				)
-				.catch(e => {
-					console.log(e)
-				})	
-
-				// this.deleteItem(item.id);
-			},
-			refreshInventory() {
-	
-				this.getItemsFromServer()
-			},
-			getItemsFromServer() {
-				this.isBusy = true
-				InventoryService.getItems()
-				.then(response => {
-					console.log('GET SUCCESS')
-					this.items = response.data
 				})
-				.catch(e => {
-					console.log(e)
-
-					this.$bvToast.toast('An error has occured during load. Please retry.', {
-						title: `Load error`,
+				.catch(error => {
+					console.log(error)
+				})	
+			},
+			reloadInventory() {
+				this.isBusy = true
+				this.getInventoryState()
+				.catch(error => {
+					console.log(error)
+					this.$bvToast.toast('An error has occured during loading. Please retry.', {
+						title: `Loading error`,
 						variant: 'danger',
 						solid: true
 					})
 				})	
 				.then(() => {
-					this.$refs.inventory.refresh()
-					setTimeout(() =>{this.isBusy = false},2000)
+					this.refreshTable()
+					this.isBusy = false
 				})
+			},
+			refreshTable() {
+				this.$refs.inventory.refresh()
 			}
-		},
-		mounted() {
-			this.getItemsFromServer()
 		}
 	}
 
@@ -456,6 +428,6 @@
 
 <style>
 	table#inventory .flip-list-move {
-		transition: transform 0s;
+		transition: transform 0.2s;
 	}
 </style>
