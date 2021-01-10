@@ -16,7 +16,7 @@
 			<b-row>
 				<b-col cols=10>
 					<form>
-						<b-form-input id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
+						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
 						</b-form-input>
 					</form>
 				</b-col>
@@ -94,12 +94,12 @@
 			getSheet() {
 				const sheetTitle = this.$route.params.sheetTitle
 				if (sheetTitle === 'new-entry') {
-					this.sheet = new Textsheet()
+					this.sheet = new Textsheet(this.username)
 				}
 				else {
 					try{
-						
-						this.sheet = this.experiment.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)
+						console.log(this.experiment)
+						this.sheet = this.experiment.data.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)
 						this.isNew = false
 						this.enabled = false
 					} catch(error) {
@@ -132,24 +132,22 @@
 			saveContent() {
 				this.saving = true
 				if (this.isNew) {
-					this.sheet.creator = this.username
-					this.sheet.creationDate = new Date()
 					this.sheet.lastUser = this.username
-					this.sheet.LastModifiedDate = new Date()
+					this.sheet.LastModifiedDate = DateFormat.dateString()
 					try {
 						if (this.sheet.title === "") {
 								throw 'Please choose a title for your texsheet.'
 							}
-						for (var textsheet of this.experiment.textsheets) {
+						for (var textsheet of this.experiment.data.textsheets) {
 							if (textsheet.title === this.sheet.title) {
 								throw 'A textsheet with this title already exists. Please choose another title.'
 							}
 						}
 
-						this.experiment.textsheets.push(this.sheet)
+						this.experiment.data.textsheets.push(this.sheet)
 						setTimeout(() => { this.saving = false }, 500)
 						console.log('saved')
-						console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).textsheets)
+						console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).data.textsheets)
 						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+this.sheet.title)
 						this.isNew = false
 					} 
@@ -165,7 +163,7 @@
 					this.sheet.LastModifiedDate = DateFormat.dateString()
 					setTimeout(() => {this.saving = false}, 500)
 					console.log('saved')
-					console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).textsheets)
+					console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).data.textsheets)
 				}	
 			},
 			toggleToolbar(checked) {
@@ -186,6 +184,7 @@
 		},
 		mounted() {
 			this.initToolbar()
+			this.$refs['titleInput'].focus()
 		}
 	}
 </script>
