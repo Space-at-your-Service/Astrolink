@@ -4,21 +4,37 @@
             <h3 class="text-center">New account</h3>
                
             <form class="mt-3" @submit.prevent="handleRegister">
-                <b-form-group label="First Name" label-for="firstName">
-                    <b-form-input id="firstName" type="text"></b-form-input>
+                 <b-form-group label="Username" label-for="username">
+                    <b-form-input id="username" v-model="user.username" type="text" placeholder="xXLittleAstronaut69Xx"></b-form-input>
                 </b-form-group>
 
-                <b-form-group label="Last Name" label-for="lastName">
-                    <b-form-input id="lastName" type="text"></b-form-input>
-                </b-form-group>
+                <b-row>
+                    <b-col>
+                        <b-form-group label="First Name" label-for="firstName">
+                            <b-form-input id="firstName" v-model="user.first_name" type="text" placeholder="Neil"></b-form-input>
+                        </b-form-group>
+                    </b-col>
 
-                <b-form-group label="Password" label-for="password">
-                    <b-form-input id="password" type="password"></b-form-input>
-                </b-form-group>
+                    <b-col>
+                        <b-form-group label="Last Name" label-for="lastName">
+                            <b-form-input id="lastName" v-model="user.last_name" type="text" placeholder="Armstrong"></b-form-input>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
 
-                <b-form-group label="Confirm Password" label-for="passwordRepeat">
-                    <b-form-input id="passwordRepeat" type="password"></b-form-input>
-                </b-form-group>
+                <b-row>
+                    <b-col>
+                        <b-form-group label="Password" label-for="password">
+                            <b-form-input id="password" v-model="user.password" type="password"></b-form-input>
+                        </b-form-group>
+                    </b-col>
+
+                    <b-col>
+                        <b-form-group label="Confirm Password" label-for="passwordRepeat">
+                            <b-form-input id="passwordRepeat" type="password"></b-form-input>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
 
                 <b-button type="submit" size="lg" variant="dark" block>Register</b-button>
             </form>
