@@ -5,15 +5,28 @@
 
       <router-view />
 
+      <b-overlay :show="overlay.show" no-wrap fixed spinner-variant="info">
+        <template #overlay>
+          <div class="text-center">
+            <strong style="font-size: large;">{{ overlay.message }}</strong><br/><br/>
+            <b-spinner variant="primary" type="grow" label="Spinning"></b-spinner>
+          </div>
+        </template>
+      </b-overlay>
+
     </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   import Nav from './components/Nav.vue';
   export default {
     name: 'app',
     components: {
       Nav
+    },
+    computed: {
+      ...mapState(['overlay'])
     }
   }
 </script>

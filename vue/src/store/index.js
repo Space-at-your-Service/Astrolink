@@ -10,8 +10,8 @@ import Vuex from 'vuex'
 
 import { auth } from './auth.module'
 import { experiment } from './experiment.module'
-// import { inventory } from './inventory.module'
-// import { procedure } from './procedure.module'
+import { inventory } from './inventory.module'
+import { procedure } from './procedure.module'
 import { user } from './user.module'
 
 Vue.use(Vuex)
@@ -20,28 +20,15 @@ const store = new Vuex.Store({
 	modules: {
 		auth,
 		experiment,
-		// inventory,
-		// procedure,
+		inventory,
+		procedure,
 		user
 	},
 
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
-		procedureTypes: [
-			{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
-			{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},
-			{primaryType: 'MCC', subtypes: ['Main']}, 
-			{primaryType: 'Emergencies', subtypes: ['Main']}, 
-			{primaryType: 'Others', subtypes: ['Main']}
-		],
-		proceduresList: [
-			{nick: 'mas-lunar-base-evacuation', title: 'MAS Lunar Base Evacuation', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: 'C:/Users/Valentin/Documents/EPFL/Cours M3/Projet Astrolink/Astrolink/vue/public/lib/procedures/2020_SC_SOP_0001_MAS_Lunar_Base_Evacuation.docx.pdf'},
-			{nick: 'geophysical-experiment', title: 'Geophysical Experiment', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_Geophysical_experiment.docx.pdf'},
-			{nick: 'georemap', title: 'GeoReMap', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_GeoReMap.docx.pdf'},
-			{nick: 'hydration', title: 'Hydration', type: 'Logistics', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_Hydration.docx.pdf'},
-			{nick: 'lexicon', title: 'Lexicon', type: 'Contacts', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/2021_GE_SOP_LEXICON_Experiment.docx.pdf'},
-			{nick: 'redmars', title: 'RedMars', type: 'Contacts', abstract: 'Aims as achieving this and this by doing this. The expected results are this and that.', path: '../../public/lib/procedures/RedMars_SOP.docx.pdf'}
-		]
+		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
+		overlay: {show: false, message: ''}
 	},
 
 	getters: {
@@ -52,11 +39,49 @@ const store = new Vuex.Store({
 	},
 
 	mutations: {
-		
+		SHOW_OVERLAY(state) {
+			state.overlay.show = true
+		},
+		HIDE_OVERLAY(state) {
+			state.overlay.show = false
+		},
+		MSG_OVERLAY(state, message) {
+			state.overlay.message = message
+		}
 	},
 
 	actions: {
-		
+		loadAll({ dispatch }) {
+			return dispatch('displayOverlay', 'Loading USER')
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('user/getUserState', null,  {root: true}) })
+			.then(() => { dispatch('displayOverlay', 'Loading INVENTORY') })
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('inventory/getInventoryState', null,  {root: true}) })
+			.then(() => { dispatch('displayOverlay', 'Loading PROCEDURES') })
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('procedure/getProcedureState', null,  {root: true}) })
+			.then(() => { dispatch('hideOverlay') })
+		},
+		displayOverlay({ commit }, message) {
+			commit('SHOW_OVERLAY')
+			commit('MSG_OVERLAY', message)
+		},
+		hideOverlay({ commit }) {
+			commit('HIDE_OVERLAY')
+		}
 	}
 })
 

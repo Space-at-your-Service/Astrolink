@@ -168,14 +168,19 @@
 							</b-form-checkbox>
 						</b-form-group>
 
-						<div class="text-primary hover-pointer" @click="showLinkToInput=true">
+						<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
 							<b-icon icon="link45deg"></b-icon>
-							Add a link to a procedure
+							Link to procedures
 						</div>
-						<b-form-group>
-							<b-form-select v-if="showLinkToInput" id="linkToInput" options="this.$store.state.proceduresList" v-model="linkToProcedure" size="sm">
+
+						<b-form-group
+						label="Link to"
+						label-for="createdProceduresInput"
+						v-if="showLinkToInput"
+						>
+							<b-form-select id="createdProceduresInput" v-model="linkedProcedures" :options="proceduresAsOptions" multiple :select-size="10" >
 								<template #first>
-									<b-form-select-option value="" disabled>Select a procedure to link to</b-form-select-option>
+									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
 								</template>
 							</b-form-select>
 						</b-form-group>
@@ -294,11 +299,13 @@
 				selectedEventEveryday: false,
 				showMoreOptions: false,
 				showLinkToInput: false,
-				isEditingEvent: false
+				isEditingEvent: false,
+				linkedProcedures: []
 			}
 		},
 		computed: {
 			...mapState(['missionStartDate']),
+			...mapGetters('procedure', ['proceduresAsOptions']),
 			...mapGetters(['currentAccountRights', 'missionDayNumber']),
 			minDate () {
 				return new Date().subtractDays(10)
@@ -386,6 +393,7 @@
 				this.showLinkToInput = false
 				this.selectedEventSplits = []
 				this.selectedEventEveryday = false
+				this.showLinkToInput = false
 			}
 		}
 

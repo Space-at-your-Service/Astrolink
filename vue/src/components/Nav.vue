@@ -31,6 +31,7 @@
 				</b-navbar-nav>
 			</b-collapse>
 		</b-navbar>
+
 	</div>
 </template>
 
@@ -41,6 +42,7 @@
 	export default {
 		data() {
 			return {
+				loading: false,
 				isActive: ''
 			}
 		},
@@ -48,19 +50,16 @@
 			...mapState('user', ['permissions', 'username'])
 		},
 		methods: { 
-			...mapActions('auth', [
-                'logout'
-            ]),
-            ...mapActions('user', [
-				'getUserState'
-			]),
+			...mapActions(['loadAll', 'displayOverlay', 'hideOverlay']),
+			...mapActions('auth', ['logout']),
+            ...mapActions('user', ['getUserState']),
 			handleLogout() {
 				this.logout()
 				.then(this.$router.push('/login'))
 			}
 		},
 		created() {
-			this.getUserState()
+			this.$store.dispatch('loadAll')
 		}
 	}
 </script>

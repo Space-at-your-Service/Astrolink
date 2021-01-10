@@ -2,8 +2,9 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Inventory</h3>	
+		{{isBusy}}
 
-		<b-container-fluid class="m-0 p-0">
+		<b-container class="m-0 p-0">
 			<b-row no-gutters class="my-3">
 				<b-col>
 					<b-button v-b-modal.createModal size="lg" variant="info" class="float-left" style="border-radius: 15px;" v-if="permissions.includes('inventory.add_item')">
@@ -36,7 +37,7 @@
 					</b-input-group>
 				</b-col>
 			</b-row>
-		</b-container-fluid>
+		</b-container>
 
 		<b-pagination
 			v-model="currentPage"
@@ -47,93 +48,96 @@
 			class="my-0"
 		></b-pagination>
 
-		<b-table 
-		id="inventory"
-		ref="inventory"
-		primary-key="id"
-		:items="items" 
-		:fields="fields"
-		:filter="filter"
-		:filter-included-fields="filterOn"
-		:sort-by.sync="sortBy"
-		:sort-desc.sync="sortDesc"
-		:current-page="currentPage"
-		:per-page="perPage"
-		:busy="isBusy"
-		fixed
-		hover
-		striped
-		bordered
-		head-variant="dark"
-		table-variant="light"
-		:tbody-tr-class="rowClass"
-		:tbody-transition-props="transProps"
+		<b-overlay :show="isBusy" variant="white" spinner-variant="primary" spinner-type="grow" rounded="sm">
+			<b-table 
+			id="inventory"
+			ref="inventory"
+			primary-key="id"
+			:items="items" 
+			:fields="fields"
+			:filter="filter"
+			:filter-included-fields="filterOn"
+			:sort-by.sync="sortBy"
+			:sort-desc.sync="sortDesc"
+			:current-page="currentPage"
+			:per-page="perPage"
+			:busy="isBusy"
+			fixed
+			hover
+			striped
+			bordered
+			head-variant="dark"
+			table-variant="light"
+			:tbody-tr-class="rowClass"
+			:tbody-transition-props="transProps"
 
-		@row-selected="onRowSelected"
-		>
+			@row-selected="onRowSelected"
+			>
 
-			<template #cell(quantity)="row">
-				<div class="container">
-					<div class="row">
-						<div class="col">
-							{{ row.item.quantity }}
-						</div>
-						<div class="col">
-							<b-button-group class="float-right">
-								<b-badge v-if="row.item.quantity == 0" variant="danger" class="m-auto">empty</b-badge>
-								<b-button size="sm" @click="removeUnit(row.item)" class="mr-1" variant="" v-if="row.item.quantity > 0 && permissions.includes('inventory.modify_item_qty')">
-									<b-icon icon="dash"></b-icon>
-								</b-button>
-								<b-button size="sm" @click="addUnit(row.item)" class="ml-1" variant="" v-if="permissions.includes('inventory.modify_item_qty')">
-									<b-icon icon="plus"></b-icon>
-								</b-button>
-							</b-button-group>
-						</div>
-					</div>
-				</div>
-			</template> 
-
-			<template #cell(details)="row">
-				<b-button size="sm" @click="row.toggleDetails" class="float-right" variant="">
-				{{ row.detailsShowing ? 'Hide' : 'Show'}}
-				</b-button>
-			</template>
-
-			<template #row-details="row">
-				<div class="container p-0 ">
-					<div class="row justify-content-between">
-						<div class="col">
-							<b class="text-info">{{ row.item.details }}</b>
-						</div>
-						<div class="col-1">
-							<b-button-group class="float-right">
-								<b-button v-b-modal.editModal size="sm" variant="info" @click="editModal(row.item)" class="mr-1" v-if="permissions.includes('inventory.change_item')">
-									<b-icon icon="pencil-square"></b-icon>
-								</b-button>
-								<b-button size="sm" variant="danger" @click="deleteThisItem(row.item)" class="ml-1" v-if="permissions.includes('inventory.delete_item')">
-									<b-icon icon="trash"></b-icon>
-								</b-button>
-							</b-button-group>
+				<template #cell(quantity)="row">
+					<div class="container">
+						<div class="row">
+							<div class="col">
+								{{ row.item.quantity }}
+							</div>
+							<div class="col">
+								<b-button-group class="float-right">
+									<b-badge v-if="row.item.quantity == 0" variant="danger" class="m-auto">empty</b-badge>
+									<b-button size="sm" @click="removeUnit(row.item)" class="mr-1" variant="" v-if="row.item.quantity > 0 && permissions.includes('inventory.modify_item_qty')">
+										<b-icon icon="dash"></b-icon>
+									</b-button>
+									<b-button size="sm" @click="addUnit(row.item)" class="ml-1" variant="" v-if="permissions.includes('inventory.modify_item_qty')">
+										<b-icon icon="plus"></b-icon>
+									</b-button>
+								</b-button-group>
+							</div>
 						</div>
 					</div>
-				</div>
-			</template>
+				</template> 
 
-			<template #table-colgroup="scope">
-				<col
-				v-for="field in scope.fields"
-				:key="field.key"
-				:style="{ width: field.key !== 'name' ? '80px' : '180px' }"
-				>
-			</template>
+				<template #cell(details)="row">
+					<b-button size="sm" @click="row.toggleDetails" class="float-right" variant="">
+					{{ row.detailsShowing ? 'Hide' : 'Show'}}
+					</b-button>
+				</template>
 
-			<template #table-busy>
-				<div class="text-center text-info my-2">
-					<b-spinner type="grow" class="align-middle"></b-spinner>
-					<strong>Loading...</strong>
-				</div>
-			</template>
-		</b-table>
+				<template #row-details="row">
+					<div class="container p-0 ">
+						<div class="row justify-content-between">
+							<div class="col">
+								<b class="text-info">{{ row.item.details }}</b>
+							</div>
+							<div class="col-1">
+								<b-button-group class="float-right">
+									<b-button v-b-modal.editModal size="sm" variant="info" @click="editModal(row.item)" class="mr-1" v-if="permissions.includes('inventory.change_item')">
+										<b-icon icon="pencil-square"></b-icon>
+									</b-button>
+									<b-button size="sm" variant="danger" @click="deleteThisItem(row.item)" class="ml-1" v-if="permissions.includes('inventory.delete_item')">
+										<b-icon icon="trash"></b-icon>
+									</b-button>
+								</b-button-group>
+							</div>
+						</div>
+					</div>
+				</template>
+
+				<template #table-colgroup="scope">
+					<col
+					v-for="field in scope.fields"
+					:key="field.key"
+					:style="{ width: field.key !== 'name' ? '80px' : '180px' }"
+					>
+				</template>
+
+				<template #table-busy>
+					<div class="text-center text-info my-2">
+						<b-spinner type="grow" class="align-middle"></b-spinner>
+						<strong>Loading...</strong>
+					</div>
+				</template>
+			</b-table>
+		</b-overlay>
+
 
 		<b-modal id="createModal" title="New item" centered @ok.prevent="okCreate" @hidden="resetCreatedItem">
 			<form>
@@ -438,11 +442,11 @@
 				})	
 				.then(() => {
 					this.$refs.inventory.refresh()
-					this.isBusy = false
+					setTimeout(() =>{this.isBusy = false},2000)
 				})
 			}
 		},
-		beforeMount() {
+		mounted() {
 			this.getItemsFromServer()
 		}
 	}

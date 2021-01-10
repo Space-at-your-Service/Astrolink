@@ -7,16 +7,22 @@
 		>
 			<template #header>
 				<h2 style=" font-variant-caps: small-caps;">{{ experiment.title }}</h2> 
-				<span :class="['badge', 'ml-2', {'badge-success': experiment.state === 'complete'}, {'badge-primary': experiment.state === 'planned'}, {'badge-danger': experiment.state === 'aborted'}]">{{experiment.state}}</span>
+				<expBadge :status="experiment.status"/>
 			</template>
 			
 			<b-card-text class="p-3">
 				<img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
 
 				<b-container class="mb-2 py-3">
-					<h4>Description</h4>
-					{{ experiment.info }}
+					<h4>Abstract</h4>
+					{{ experiment.abstract }}
 				</b-container>
+
+				<b-container class="mb-2 py-3">
+					<h4>Description</h4>
+					{{ experiment.description }}
+				</b-container>
+
 				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
 					<h4>Procedure(s)</h4>
 					<ul>
@@ -33,7 +39,7 @@
 						<b-col cols=6>
 							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
 							<ul>
-								<li v-for="textsheet in experiment.textsheets" :key="textsheet.title" class="my-3">
+								<li v-for="textsheet in experiment.data.textsheets" :key="textsheet.title" class="my-3">
 									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.title">
 										{{ textsheet.title }}
 									</router-link><br/>
@@ -74,8 +80,13 @@
 </template>
 
 <script>
+	import expBadge from '../components/expBadge.vue'
 
 	export default {
+		components: {
+			expBadge
+		},
+
 		data() {
 			return {
 
@@ -85,8 +96,7 @@
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
 			}
-		},
-		mounted() {console.log(this.experiment)}
+		}
 	}
 </script>
 

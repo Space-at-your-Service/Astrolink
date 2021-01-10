@@ -3,24 +3,27 @@
 	header-tag="header" 
 	class="text-dark text-center hover-glow" 
 	no-body
-	style="min-width: 18em; margin-bottom: 2em">
+	style="min-width: 18em; max-width: 30em; margin-bottom: 2em">
 		<template #header>
-			<span style="font-size: 1.5em; font-variant-caps: all-small-caps;">{{ experiment.title }}</span> 
-			<span :class="['badge', 'ml-2', {'badge-success': experiment.state === 'complete'}, {'badge-primary': experiment.state === 'planned'}, {'badge-danger': experiment.state === 'aborted'}]">{{experiment.state}}</span>
+			<span style="font-size: 1.5em; font-variant-caps: all-small-caps;" class="mr-2">{{ experiment.title }}</span> 
+			<expBadge :status="experiment.status"/>
 		</template>
 
 		<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
 			<img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
 
-			{{ experiment.info }}
+			{{ experiment.abstract }}
 		</b-card-text>
 	</b-card>
 </template>
 
 <script>
+	import expBadge from '../components/expBadge.vue'
+
 	export default {
 		name: 'ExperimentCard',
 		props: ['experiment'],
+		components: { expBadge },
 
 		methods: {
 			gotoExperimentDetails(experimentTitle) {

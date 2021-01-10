@@ -41,6 +41,11 @@ export const inventory = {
 			.then(response => {
 				payload = response
 				commit('SET_STATE', payload)
+				console.log('inventory loaded')
+			})
+			.catch(error => {
+				console.log(error)
+				throw 'loading error (inventory)'
 			})
 		},
 		// addItemUnit(context, id) {
