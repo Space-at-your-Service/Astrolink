@@ -37,9 +37,10 @@ class Procedure(models.Model):
 
     nick = models.SlugField(max_length = 50, primary_key = True, unique = True)
     title = models.CharField(max_length = 50)
-    types = models.ForeignKey(ProcedureSubtype, on_delete = models.CASCADE, related_name = "procedures", null = True)
+    types = models.ForeignKey(ProcedureSubtype, on_delete = models.PROTECT, related_name = "procedures", null = True)
     abstract = models.CharField(max_length = 140)
     pdfFile = models.FileField(max_length = 100)
+    favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures")
 
     def __str__(self):
 
@@ -59,15 +60,25 @@ class Experiment(models.Model):
     supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", null = True)
     protocol = models.ManyToManyField(Procedure, related_name = "experiments_using")
 
+    def __str__(self):
 
-class Datasheet(models.Model):
+        return self.title
 
+
+class Textsheet(models.Model):
+
+    experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
     title = models.CharField(max_length = 50, default = "This is a title")
     creationDate = models.DateTimeField(auto_now_add = True)
     lastModifiedDate = models.DateTimeField(default = datetime.now)
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created", null = True)
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     contents = models.FileField(max_length = 100)
+
+
+class Spreadsheet(models.Model):
+
+    experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "spreadsheets")
 
 
 class Task(models.Model):

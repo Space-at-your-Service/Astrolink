@@ -5,8 +5,8 @@ from rest_framework.views import APIView
 from wsgiref.util import FileWrapper
 from django.contrib.auth import get_user_model
 
-from .models import Procedure, ProcedureType, ProcedureSubtype, Task
-from .serializers import ProcedureSerializer, ProcedureTypeSerializer, ProcedureSubtypeSerializer, TaskSerializer
+from .models import Procedure, ProcedureType, Task, Experiment
+from .serializers import ProcedureSerializer, ProcedureTypeSerializer, TaskSerializer, ExperimentSerializer
 
 
 class ProceduresView(APIView):
@@ -115,18 +115,26 @@ class FlightplanView(APIView):
 
     def get(self, request):
 
+        #TODO: add permission
+
         astronauts = get_user_model().objects.filter(groups__name = "Astronauts") #TODO : don't hardcode this
 
         fp = {}
         for a in astronauts:
+
             ser = TaskSerializer(Task.objects.filter(holder = a), many = True)
             fp.update({a.username : ser.data})
 
         return JsonResponse(fp, status = status.HTTP_200_OK)
 
 
-#class ExperimentsView(APIView):
-#
-#    def get(self, request):
-#
-#        
+class ExperimentsView(APIView):
+
+    def get(self, request):
+
+        request.user.check_perms(("activities.view_experiment",))
+
+        all_experiments = Experiment.objects.all()
+        ser = ExperimentSerializer(all_experiments, many = True)
+
+        return JsonResponse(ser.data, safe = False)

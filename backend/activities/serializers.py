@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Procedure, ProcedureType, ProcedureSubtype, Task
+from .models import Procedure, ProcedureType, ProcedureSubtype, Task, Experiment, Textsheet
 from django.contrib.auth import get_user_model
 
 
@@ -109,3 +109,32 @@ class TaskSerializer(serializers.ModelSerializer):
         self.fields["procedures"] = ProcedureSerializer(many = True)
 
         return serializers.ModelSerializer.to_representation(self, instance)
+
+
+class TextsheetSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Textsheet
+        fields = ("title", "creationDate", "lastModifiedDate", "creator", "lastUser", "contents")
+
+
+class ExperimentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Experiment
+        fields = ("title", "status", "abstract", "description", "operators", "supervisor", "protocol", "textsheets")
+
+
+    def to_representation(self, instance):
+
+        rep = serializers.ModelSerializer.to_representation(self, instance)
+
+        rep["operators"] = list(instance.operators.all().values_list("username", flat = True))
+        rep["supervisor"] = instance.supervisor.username
+
+        rep["data"] = {"textsheets" : instance.textsheets.all().get(),
+                       "spreadsheets" : instance.spreadsheets.all().get()}
+
+        return rep
