@@ -8,11 +8,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import { auth } from './auth.module'
-import { experiment } from './experiment.module'
-import { inventory } from './inventory.module'
-import { procedure } from './procedure.module'
-import { user } from './user.module'
+import { auth } from './auth.module.js'
+import { experiment } from './experiment.module.js'
+import { flightplan } from './flightplan.module.js'
+import { inventory } from './inventory.module.js'
+import { procedure } from './procedure.module.js'
+import { user } from './user.module.js'
 
 Vue.use(Vuex)
 
@@ -20,6 +21,7 @@ const store = new Vuex.Store({
 	modules: {
 		auth,
 		experiment,
+		flightplan,
 		inventory,
 		procedure,
 		user
@@ -73,6 +75,13 @@ const store = new Vuex.Store({
 				})
 			})
 			.then(() => { dispatch('procedure/getProcedureState', null,  {root: true}) })
+			.then(() => { dispatch('displayOverlay', 'Loading FLIGHTPLAN') })
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('flightplan/getFlightplanState', null,  {root: true}) })
 			.then(() => { dispatch('hideOverlay') })
 		},
 		displayOverlay({ commit }, message) {
