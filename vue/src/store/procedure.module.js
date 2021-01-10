@@ -104,8 +104,7 @@ export const procedure = {
 			})
 			.catch(error => {
 				console.log(error)
-				alert('oups')
-				throw 'An error occured during load'
+				throw 'loading error (procedures)'
 			})
 		},
 		createProcedure({ commit, state }, procedure) {

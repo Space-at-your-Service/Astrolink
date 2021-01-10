@@ -31,6 +31,7 @@
 				</b-navbar-nav>
 			</b-collapse>
 		</b-navbar>
+
 	</div>
 </template>
 
@@ -41,6 +42,7 @@
 	export default {
 		data() {
 			return {
+				loading: false,
 				isActive: ''
 			}
 		},
@@ -48,7 +50,7 @@
 			...mapState('user', ['permissions', 'username'])
 		},
 		methods: { 
-			...mapActions(['loadAll']),
+			...mapActions(['loadAll', 'displayOverlay', 'hideOverlay']),
 			...mapActions('auth', ['logout']),
             ...mapActions('user', ['getUserState']),
 			handleLogout() {
@@ -57,8 +59,7 @@
 			}
 		},
 		created() {
-			this.getUserState()
-			this.loadAll()
+			this.$store.dispatch('loadAll')
 		}
 	}
 </script>

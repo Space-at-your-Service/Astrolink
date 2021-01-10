@@ -10,7 +10,7 @@ import Vuex from 'vuex'
 
 import { auth } from './auth.module'
 import { experiment } from './experiment.module'
-// import { inventory } from './inventory.module'
+import { inventory } from './inventory.module'
 import { procedure } from './procedure.module'
 import { user } from './user.module'
 
@@ -20,14 +20,15 @@ const store = new Vuex.Store({
 	modules: {
 		auth,
 		experiment,
-		// inventory,
+		inventory,
 		procedure,
 		user
 	},
 
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
-		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline']
+		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
+		overlay: {show: false, message: ''}
 	},
 
 	getters: {
@@ -38,12 +39,48 @@ const store = new Vuex.Store({
 	},
 
 	mutations: {
-		
+		SHOW_OVERLAY(state) {
+			state.overlay.show = true
+		},
+		HIDE_OVERLAY(state) {
+			state.overlay.show = false
+		},
+		MSG_OVERLAY(state, message) {
+			state.overlay.message = message
+		}
 	},
 
 	actions: {
 		loadAll({ dispatch }) {
-			dispatch('procedure/getProcedureState', null,  {root: true})
+			return dispatch('displayOverlay', 'Loading USER')
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('user/getUserState', null,  {root: true}) })
+			.then(() => { dispatch('displayOverlay', 'Loading INVENTORY') })
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('inventory/getInventoryState', null,  {root: true}) })
+			.then(() => { dispatch('displayOverlay', 'Loading PROCEDURES') })
+			.then(() => {
+				return new Promise(resolve => {
+					setTimeout(() => {resolve()}, 300); // (*)
+				})
+			})
+			.then(() => { dispatch('procedure/getProcedureState', null,  {root: true}) })
+			.then(() => { dispatch('hideOverlay') })
+		},
+		displayOverlay({ commit }, message) {
+			commit('SHOW_OVERLAY')
+			commit('MSG_OVERLAY', message)
+		},
+		hideOverlay({ commit }) {
+			commit('HIDE_OVERLAY')
 		}
 	}
 })

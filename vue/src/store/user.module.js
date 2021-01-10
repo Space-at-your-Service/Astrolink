@@ -39,6 +39,11 @@ export const user = {
 			.then(response => {
 				payload.user = response.data
 				commit('SET_USER', payload)
+				console.log('user loaded')
+			})
+			.catch(error => {
+				console.log(error)
+				throw 'loading error (user)'
 			})
 		}
 	}

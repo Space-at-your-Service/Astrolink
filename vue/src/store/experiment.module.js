@@ -38,6 +38,11 @@ export const experiment = {
 			.then(response => {
 				payload = response
 				commit('SET_STATE', payload)
+				console.log('experiments loaded')
+			})
+			.catch(error => {
+				console.log(error)
+				throw 'loading error (experiments)'
 			})
 		}
 	}
