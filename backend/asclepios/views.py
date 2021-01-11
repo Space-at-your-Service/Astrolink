@@ -14,19 +14,6 @@ class ProfileView(APIView):
 
         return JsonResponse(ser.data, safe = False)
 
-    def post(self, request):
-
-        request.user.check_perms(("asclepios.add_asclepian",))
-
-        ser = AsclepianSerializer(data = request.data)
-
-        if ser.is_valid():
-
-            ser.save()
-            return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
-
-        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
-
     def put(self, request):
 
         rep = {}
