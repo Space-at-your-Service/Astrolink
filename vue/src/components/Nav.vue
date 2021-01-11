@@ -1,5 +1,4 @@
 <template>
-	<div>
 		<b-navbar toggleable="lg" class="bg-white">
 			<b-navbar-brand href="https://asclepios.ch/" target="_blank">
 				<img src="../assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/>
@@ -13,11 +12,11 @@
 				</b-navbar-nav>
 
 				<b-navbar-nav class="ml-auto">
-					<b-nav-item to="/home" :class="{ active : isActive === 'home' }" @click="isActive = 'home'">Planning</b-nav-item>
-					<b-nav-item to="/procedures" :class="{ active : isActive === 'procedures' }" @click="isActive = 'procedures'" v-if="permissions.includes('activities.view_procedure')">Procedures</b-nav-item>
-					<b-nav-item to="/experiments" :class="{ active : isActive === 'experiments' }" @click="isActive = 'experiments'">Experiments</b-nav-item>
-					<b-nav-item to="/inventory" :class="{ active : isActive === 'inventory' }" @click="isActive = 'inventory'" v-if="permissions.includes('inventory.view_item')">Inventory</b-nav-item>
-					<b-nav-item to="/psyforms" :class="{ active : isActive === 'psyforms' }" @click="isActive = 'psyforms'">Psychological</b-nav-item>
+					<b-nav-item to="/flightplan" :class="{ active : isActive === 'flightplan' }" @click="isActive = 'flightplan'">Flightplan</b-nav-item>
+					<b-nav-item to="/procedures" :class="{ active : isActive === 'procedures' }" @click="isActive = 'procedures'" v-if="isAllowed('activities.view_procedure')">Procedures</b-nav-item>
+					<b-nav-item to="/experiments" :class="{ active : isActive === 'experiments' }" @click="isActive = 'experiments'" v-if="isAllowed('activities.view_experiment')">Experiments</b-nav-item>
+					<b-nav-item to="/inventory" :class="{ active : isActive === 'inventory' }" @click="isActive = 'inventory'" v-if="isAllowed('inventory.view_item')">Inventory</b-nav-item>
+					<!-- <b-nav-item to="/psyforms" :class="{ active : isActive === 'psyforms' }" @click="isActive = 'psyforms'">Psychological</b-nav-item> -->
 
 					<b-nav-item-dropdown right class="ml-lg-5">
 						<template #button-content>
@@ -31,13 +30,12 @@
 				</b-navbar-nav>
 			</b-collapse>
 		</b-navbar>
-
-	</div>
 </template>
 
 <script>
 	import { mapActions } from 'vuex'
 	import { mapState } from 'vuex'
+	import { mapGetters } from 'vuex'
 
 	export default {
 		data() {
@@ -47,7 +45,8 @@
 			}
 		},
 		computed: {
-			...mapState('user', ['permissions', 'username'])
+			...mapState('user', ['username']),
+			...mapGetters('user', ['isAllowed'])
 		},
 		methods: { 
 			...mapActions(['loadAll', 'displayOverlay', 'hideOverlay']),

@@ -1,4 +1,4 @@
-// Store module that contains procedures
+// Store module that contains the procedures
 
 import ProcedureService from '../services/ProcedureService.js'
 
@@ -52,7 +52,7 @@ export const procedure = {
 				const optionGroup = { label: section.type, options: [] }
 				for (var subsection of section.subsections) {
 					for (var procedure of subsection.procedures) {
-						optionGroup.options.push({value: procedure.nick, text: '[' + subsection.type + '] ' + procedure.title})
+						optionGroup.options.push({value: procedure, text: '[' + subsection.type + '] ' + procedure.title})
 					}
 				}
 				options.push(optionGroup)

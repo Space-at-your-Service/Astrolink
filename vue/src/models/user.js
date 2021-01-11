@@ -6,8 +6,6 @@ export default class User {
 		this.password = password
 		this.groups = []
 		this.permissions = []
-		// this.favProcedures = []
-		// this.planning = []
-
+		this.favoriteProcedures = []
 	}
 }

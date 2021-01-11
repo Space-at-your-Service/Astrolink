@@ -5,7 +5,7 @@
 		<b-container class="p-0 m-0 text-left">	
 			<b-row>
 				<b-col cols="sm-4">	
-					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" block size="lg">
+					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" size="lg">
 						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New experiment
 					</b-button>

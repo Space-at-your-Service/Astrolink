@@ -5,7 +5,7 @@
 		<b-container class="m-0 p-0">
 			<b-row class="no-gutters">
 				<b-col>
-					<b-button v-b-modal.createModal size="lg" variant="info" v-if="permissions.includes('activities.add_procedure')" class="my-3" style="border-radius: 15px">
+					<b-button v-b-modal.createModal size="lg" variant="info" v-if="isAllowed('activities.add_procedure')" class="my-3" style="border-radius: 15px">
 						<b-icon icon="plus-circle-fill" ></b-icon>
 						New procedure
 					</b-button>
@@ -67,7 +67,7 @@
 									</b-col>
 									<tooltip :target="procedure.nick+'_fav'" msg="Add/remove from favorites"/>
 
-									<b-col cols=1 v-b-modal.editModal :id="procedure.nick+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="permissions.includes('activities.change_procedure')">
+									<b-col cols=1 v-b-modal.editModal :id="procedure.nick+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
 										<b-icon icon="pencil-square" variant="info"></b-icon>
 									</b-col>
 									<tooltip :target="procedure.nick+'_edit'" msg="Edit the procedure"/>
@@ -109,7 +109,7 @@
 															<b-icon icon="eye-fill" variant="dark"></b-icon>
 														</b-container>
 													</b-col>
-													<b-col v-if="permissions.includes('activities.change_procedure')">
+													<b-col v-if="isAllowed('activities.change_procedure')">
 														<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
 															<b-icon icon="pencil-square" variant="info"  
 															></b-icon>
@@ -182,7 +182,7 @@
 													<b-icon icon="eye-fill" variant="dark"></b-icon>
 												</b-container>
 											</b-col>
-											<b-col v-if="permissions.includes('activities.change_procedure')">
+											<b-col v-if="isAllowed('activities.change_procedure')">
 												<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
 													<b-icon icon="pencil-square" variant="info"  
 													></b-icon>
@@ -301,7 +301,7 @@
 				</b-form-group>
 			</form>
 
-			<b-button size="sm" variant="danger" @click="deleteProcedure(editedProcedure)" class="ml-1" v-if="permissions.includes('activities.delete_procedure')">
+			<b-button size="sm" variant="danger" @click="deleteProcedure(editedProcedure)" class="ml-1" v-if="isAllowed('activities.delete_procedure')">
 				<b-icon icon="trash"></b-icon>
 				Delete procedure
 			</b-button>
@@ -350,15 +350,9 @@
 
 		computed: {
 			...mapState('procedure', ['procedures', 'procedureTypes', 'uploadProgress']),
-			...mapState('user', ['permissions']),
+			...mapState('user', ['favoriteProcedures']),
 			...mapGetters('procedure', {procedureSections: 'proceduresByType', procedurePrimaryTypes: 'procedurePrimaryTypes'}),
-			// procedurePrimaryTypes() {
-			// 	var procedurePrimaryTypes = []
-			// 	for (var type of this.procedureTypes) {
-			// 		procedurePrimaryTypes.push(type.primaryType)
-			// 	}
-			// 	return procedurePrimaryTypes
-			// }
+			...mapGetters('user', ['isAllowed'])
 		},
 
 		methods: {
@@ -369,7 +363,7 @@
 				formData.append('type', procedure.type)
 				formData.append('subtype', procedure.subtype)
 				formData.append('abstract', procedure.abstract)
-				formData.append('pdfFile', procedure.file)
+				formData.append('pdfFile', procedure.file, procedure.file.name)
 				return formData
 			},
 			editModal(procedure) {
@@ -393,7 +387,7 @@
 					return fileURL
 				})
 				.then(fileURL => {
-					window.open(fileURL, '__blank')
+					window.open(fileURL, nick)
 				})
 			},
 			generateNick() {

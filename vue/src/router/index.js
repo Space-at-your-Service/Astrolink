@@ -41,9 +41,9 @@ const routes = [
     component: () => import('../views/Signup.vue')
   },
   {
-    path: '/home',
-    name: 'home',
-    component: () => import('../views/Home.vue')
+    path: '/flightplan',
+    name: 'flightplan',
+    component: () => import('../views/Flightplan.vue')
   },
   {
     path: '/procedures',
