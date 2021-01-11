@@ -29,11 +29,30 @@ class ProfileView(APIView):
 
     def put(self, request):
 
-        ser = AsclepianFavoritesSerializer(request.user, data = request.data)
+        rep = {}
 
-        if ser.is_valid():
+        if "favoriteProcedures" in request.data:
 
-            ser.save()
-            return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
+            ser = AsclepianFavoritesSerializer(request.user, data = request.data)
+
+            if ser.is_valid():
+
+                ser.save()
+                rep.update(ser.data)
+
+        if "oldPassword" in request.data and "newPassword" in request.data:
+
+            if request.user.check_password(request.data["oldPassword"]):
+
+                request.user.set_password(request.data["newPassword"])
+                rep.update({"password" : "successfully updated"})
+
+            else:
+
+                rep.update({"password" : "old password incorrect !"})
+
+        if rep:
+
+            return JsonResponse(rep, status = status.HTTP_202_ACCEPTED)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
