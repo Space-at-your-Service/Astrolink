@@ -44,7 +44,8 @@ class AsclepianSerializer(serializers.ModelSerializer):
             perm = Permission.objects.filter(codename = p.split('.')[1]).get()
             rep["permissions"].append({f"{perm.content_type.app_label}.{perm.codename}" : perm.name})
 
-        rep["favoriteProcedures"] = list(instance.favoriteProcedures.all().values_list("nick", flat = True))
+        favorites = instance.favoriteProcedures.all().order_by("types__masterType", "types__subtype", "title")
+        rep["favoriteProcedures"] = list(favorites.values_list("nick", flat = True))
 
         del rep["password"]
 
