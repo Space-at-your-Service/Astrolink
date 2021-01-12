@@ -34,15 +34,36 @@ export const experiment = {
 	actions: {
 		getExperimentState({ commit }) {
 			var payload = undefined
-			ExperimentService.getExperiments()
+			return ExperimentService.getExperiments()
 			.then(response => {
-				payload = response
+				payload = response.data
 				commit('SET_STATE', payload)
 				console.log('experiments loaded')
 			})
 			.catch(error => {
 				console.log(error)
 				throw 'loading error (experiments)'
+			})
+		},
+		createExperiment({ commit }, experiment) {
+			ExperimentService.postExperiment(experiment)
+			.then(() => { 
+				commit('CREATE_SUCCESS', experiment)
+				console.log('experiment ' + experiment.title + ' created') 
+			})
+		},
+		deleteExperiment({ commit }, experiment) {
+			ExperimentService.deleteExperiment(experiment)
+			.then(() => { 
+				commit('DELETE_SUCCESS', experiment)
+				console.log('experiment ' + experiment.title + ' deleted') 
+			})
+		},
+		updateExperiment({ commit }, experiment) {
+			ExperimentService.updateExperiment(experiment)
+			.then(() => { 
+				commit('UPDATE_SUCCESS', experiment)
+				console.log('experiment ' + experiment.title + ' updated') 
 			})
 		}
 	}

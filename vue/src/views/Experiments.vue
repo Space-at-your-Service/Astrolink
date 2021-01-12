@@ -1,6 +1,7 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Experiments</h3>
+		<!-- {{experiments}} -->
 
 		<b-container class="p-0 m-0 text-left">	
 			<b-row>
@@ -125,8 +126,22 @@ export default {
 	methods: {
 		gotoExperimentDetails(experimentTitle) {
 			this.$router.push({ path: 'experiments/'+experimentTitle })
-		}
+		},
+		checkExperiment() {
+			return true
+		},
+		okCreate() {
+				if (!this.checkExperiment(this.createdExperiment)) return
+				else this.createExperiment(this.createdExperiment)
+		},
+		createExperiment(experiment) {
+			this.isUploading = true;
+			this.$store.dispatch('experiment/createExperiment', experiment)
+			.then(() => {
+				this.isUploading = false
+			})
+		},
 	}
-};
+}
 </script>
 
