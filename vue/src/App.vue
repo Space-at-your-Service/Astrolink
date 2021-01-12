@@ -8,8 +8,10 @@
       <b-overlay :show="overlay.show" no-wrap fixed spinner-variant="info">
         <template #overlay>
           <div class="text-center">
-            <strong style="font-size: large;">{{ overlay.message }}</strong><br/><br/>
-            <b-spinner variant="primary" type="grow" label="Spinning"></b-spinner>
+
+            <img :src="overlay.img" alt="[Loading]" width="50px" v-if="overlay.img"/><br/><br/>
+            <strong style="font-size: large;" v-if="overlay.msg">{{ overlay.msg }}</strong><br/><br/>
+            <b-spinner variant="primary" type="grow" label="Spinning" v-if="!overlay.hideSpinner"></b-spinner>
           </div>
         </template>
       </b-overlay>
