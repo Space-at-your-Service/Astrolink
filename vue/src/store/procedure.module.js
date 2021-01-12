@@ -92,8 +92,7 @@ export const procedure = {
 	actions: {
 		getProcedureState({ commit }) {
 			var payload = {procedures: [], procedureTypes: []}
-
-			ProcedureService.getProcedures()
+			return ProcedureService.getProcedures()
 			.then(response => {
 				payload.procedures = response.data
 				// ProcedureService.getProcedureTypes()
