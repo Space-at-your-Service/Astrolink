@@ -35,12 +35,6 @@ const routes = [
     component: () => import('../views/Login.vue')
   },
   {
-    path: '/signup',
-    name: 'signup',
-    beforeEnter: ifNotLogged,
-    component: () => import('../views/Signup.vue')
-  },
-  {
     path: '/flightplan',
     name: 'flightplan',
     component: () => import('../views/Flightplan.vue')
