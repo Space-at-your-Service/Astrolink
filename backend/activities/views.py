@@ -74,7 +74,7 @@ class ProcedureTypesView(APIView):
 
     def get(self, request):
 
-        request.user.check_perms(("activities.view_proceduresubtype",))
+        request.user.check_perms(("activities.view_proceduretype",))
 
         alltypes = ProcedureType.objects.all()
 
@@ -135,15 +135,11 @@ class ExperimentsView(APIView):
         return JsonResponse(ser.data, safe = False)
 
 
-class TextsheetsView(APIView):
-
-    parser_classes = (MultiPartParser,)
-
     def post(self, request):
 
-        request.user.check_perms(("activities.add_textsheet",))
+        request.user.check_perms(("activities.add_experiment",))
 
-        ser = TextsheetSerializer(data = request.data)
+        ser = ExperimentSerializer(data = request.data)
 
         if ser.is_valid():
 
@@ -151,3 +147,41 @@ class TextsheetsView(APIView):
             return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+
+        experiment = Experiment.objects.get(pk = pk)
+
+        if "data" in request.data:
+
+            request.user.check_perms(("activities.add_textsheet", "activities.add_spreadsheet"))
+
+            textsheets = request.data["data"].get("textsheets", [])
+            spreadsheets = request.data["data"].get("spreadsheets", [])
+
+            rep = {}
+
+            if textsheets:
+
+                ser = TextsheetSerializer(data = textsheets, many = True)
+
+                if ser.is_valid():
+
+                    experiment.textsheets.add(*ser.save())
+                    experiment.save()
+
+                    rep.update({"textsheets" : ser.data})
+
+                else:
+
+                    rep.update({"textsheets" : ser.errors})
+
+            if spreadsheets:
+
+                pass #TODO not implemented
+
+            if rep:
+
+                return JsonResponse(rep, status = status.HTTP_202_ACCEPTED)
+
+        return JsonResponse({"errors" : "no data provided !"}, status = status.HTTP_400_BAD_REQUEST)

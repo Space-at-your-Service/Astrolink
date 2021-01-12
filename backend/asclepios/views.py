@@ -57,7 +57,7 @@ class ProfileView(APIView):
 
             return JsonResponse(rep, status = status.HTTP_202_ACCEPTED)
 
-        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"errors" : "Not enough data provided !"}, status = status.HTTP_400_BAD_REQUEST)
 
 
 class GroupView(APIView):
