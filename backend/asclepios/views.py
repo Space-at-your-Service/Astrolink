@@ -32,6 +32,7 @@ class ProfileView(APIView):
             if request.user.check_password(request.data["oldPassword"]):
 
                 request.user.set_password(request.data["newPassword"])
+                request.user.save()
                 rep.update({"password" : "successfully updated"})
 
             else:
