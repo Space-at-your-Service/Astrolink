@@ -2,9 +2,11 @@ from rest_framework.views import APIView
 from rest_framework import status
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
 from django.http.response import HttpResponse, JsonResponse
 
 from .serializers import AsclepianSerializer, AsclepianFavoritesSerializer, SimpleAsclepianSerializer
+from django.core.exceptions import ValidationError
 
 
 
@@ -37,9 +39,15 @@ class ProfileView(APIView):
 
             if request.user.check_password(request.data["oldPassword"]):
 
-                request.user.set_password(request.data["newPassword"])
-                request.user.save()
-                rep.update({"password" : "successfully updated"})
+                try:
+
+                    validate_password(request.data["newPassword"], user = request.user)
+                    request.user.set_password(request.data["newPassword"])
+                    request.user.save()
+                    rep.update({"password" : "successfully updated"})
+
+                except ValidationError as e:
+                    rep.update({"password" : e.messages})
 
             else:
 
