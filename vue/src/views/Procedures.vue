@@ -10,19 +10,6 @@
 						New procedure
 					</b-button>
 				</b-col>
-
-				<!-- <b-col>
-					<b-form-checkbox
-						id="showFavsOnlyInput"
-						v-model="showFavsOnly"
-						switch
-						size="lg"
-						class="float-right mt-4"
-						disabled
-						>
-						Show Favorites only
-					</b-form-checkbox>
-				</b-col> -->
 			</b-row>
 		</b-container>
 
@@ -43,91 +30,39 @@
 							</span>
 							</template>
 
-							<b-container v-for="procedure in subsection.procedures" :key="procedure.nick"
-							
-							class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
+							<b-container v-for="procedure in subsection.procedures" :key="procedure.title" 							class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
 								<b-row no-gutters>
-									<b-col :id="procedure.nick+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.nick)">
-										{{ procedure.title }}
+									<b-col :id="procedure.title+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.title)">
+										<strong>{{ procedure.title }}</strong>
 									</b-col>
-									<tooltip :target="procedure.nick+'_file'" msg="Open the procedure PDF in a new tab"/>
+									<tooltip :target="procedure.title+'_file'" msg="Open the procedure PDF in a new tab"/>
 
-									<b-col cols=1 :id="procedure.nick+'_info'" class="hover-bg-grey text-center">
+									<b-col cols=1 :id="procedure.title+'_info'" class="hover-bg-grey text-center">
 										<b-icon icon="info-circle"></b-icon>
 									</b-col>
-									<b-tooltip :target="procedure.nick+'_info'" triggers="hover" placement="topleft">
+									<b-tooltip :target="procedure.title+'_info'" triggers="hover" placement="topleft">
 										<strong class="text-primary">{{ procedure.title }}</strong>
 										<br/>
 										{{ procedure.abstract }}
 									</b-tooltip>
 
-									<b-col cols=1 :id="procedure.nick+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure.nick)">
-										<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
-										<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
+									<b-col cols=1 :id="procedure.title+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
+										<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure)"></b-icon>
+										<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure)"></b-icon>
 									</b-col>
-									<tooltip :target="procedure.nick+'_fav'" msg="Add/remove from favorites"/>
+									<tooltip :target="procedure.title+'_fav'" msg="Add/remove from favorites"/>
 
-									<b-col cols=1 v-b-modal.editModal :id="procedure.nick+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
+									<b-col cols=1 v-b-modal.editModal :id="procedure.title+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
 										<b-icon icon="pencil-square" variant="info"></b-icon>
 									</b-col>
-									<tooltip :target="procedure.nick+'_edit'" msg="Edit the procedure"/>
+									<tooltip :target="procedure.title+'_edit'" msg="Edit the procedure"/>
 								</b-row>
 
 							</b-container>
 
-									<!-- <b-card-group deck>
-										<b-card
-										v-for="procedure in subsection.procedures" :key="procedure.nick"
-										:id="procedure.nick"
-										:title="procedure.title"
-										footer-tag="footer"
-										header-tag="header"
-										class="text-dark text-center m-0 p-0"
-										v-b-tooltip.hover
-										style="
-										min-width: 200px;
-										max-width: 500px;"
-										>
-											<b-card-text>
-												{{ procedure.abstract }}
-											</b-card-text>
-
-											<template #header>
-												<strong style="font-size: larger;">{{ procedure.title }}</strong>
-											</template> 
-
-											<template #footer>
-												<b-row>
-													<b-col>
-														<b-container class="hover-grow hover-pointer" @click="toggleToFavorites(procedure.nick)">
-															<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
-															<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
-														</b-container>
-													</b-col>
-													<b-col>
-														<b-container class="hover-grow hover-pointer" @click="openPDF(procedure.nick)">
-															<b-icon icon="eye-fill" variant="dark"></b-icon>
-														</b-container>
-													</b-col>
-													<b-col v-if="isAllowed('activities.change_procedure')">
-														<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
-															<b-icon icon="pencil-square" variant="info"  
-															></b-icon>
-														</b-container>
-													</b-col>
-												</b-row>
-											</template>
-
-											<b-tooltip :target="procedure.nick" triggers="hover">
-												<strong class="text-info">{{ procedure.title }}</strong><br/>
-												{{ procedure.abstract }}
-											</b-tooltip>
-										</b-card>
-									</b-card-group> -->
-
-								<div v-if="subsection.procedures.length === 0" class="text-center text-dark">
-									This subsection is empty.
-								</div>
+							<div v-if="subsection.procedures.length === 0" class="text-center text-dark">
+								This subsection is empty.
+							</div>
 
 						</b-tab>
 
@@ -148,61 +83,38 @@
 						<strong  style="font-variant-caps: small-caps;">Favorites</strong>
 					</template>
 
-					<div class="container p-0">
-						<div class="row no-gutters justify-content-around">
-							<div v-for="procedure in procedures" :key="procedure.nick" class="col-4 m-2 text-center">
-								<b-card
-								v-if="favoritesList[procedure.nick]"
-								:id="procedure.nick"
-								:title="procedure.title"
-								footer-tag="footer"
-								header-tag="header"
-								class="text-dark m-0 p-0 h-100"
-								v-b-tooltip.hover
-								style="min-width: 200px"
-								>
-									<b-card-text>
-										{{ procedure.abstract }}
-									</b-card-text>
+					<b-container v-for="procedure in favoriteProcedures" :key="procedure.title" class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
+						<b-row no-gutters>
+							<b-col :id="procedure.title+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.title)">
+								[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
+							</b-col>
+							<tooltip :target="procedure.title+'_file'" msg="Open the procedure PDF in a new tab"/>
 
-									<!-- <template #header>
-										<strong style="font-size: larger;">{{ procedure.title }}</strong>
-									</template> -->
+							<b-col cols=1 :id="procedure.title+'_info'" class="hover-bg-grey text-center">
+								<b-icon icon="info-circle"></b-icon>
+							</b-col>
+							<b-tooltip :target="procedure.title+'_info'" triggers="hover" placement="topleft">
+								<strong class="text-primary">{{ procedure.title }}</strong>
+								<br/>
+								{{ procedure.abstract }}
+							</b-tooltip>
 
-									<template #footer>
-										<b-row>
-											<b-col>
-												<b-container class="hover-grow hover-pointer" @click="toggleToFavorites(procedure.nick)">
-													<b-icon icon="star" v-if="!favoritesList[procedure.nick]"></b-icon>
-													<b-icon icon="star-fill" variant="warning" v-if="favoritesList[procedure.nick]"></b-icon>
-												</b-container>
-											</b-col>
-											<b-col>
-												<b-container class="hover-grow hover-pointer" @click="openPDF(procedure.nick)">
-													<b-icon icon="eye-fill" variant="dark"></b-icon>
-												</b-container>
-											</b-col>
-											<b-col v-if="isAllowed('activities.change_procedure')">
-												<b-container v-b-modal.editModal @click="editModal(procedure)" class="hover-grow hover-pointer">
-													<b-icon icon="pencil-square" variant="info"  
-													></b-icon>
-												</b-container>
-											</b-col>
-										</b-row>
-									</template>
-								</b-card>
+							<b-col cols=1 :id="procedure.title+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
+								<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure)"></b-icon>
+								<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure)"></b-icon>
+							</b-col>
+							<tooltip :target="procedure.title+'_fav'" msg="Add/remove from favorites"/>
 
-								<!-- <b-tooltip :target="procedure.nick" triggers="hover">
-									<strong class="text-info">{{ procedure.title }}</strong>
-									<br/>
-									{{ procedure.abstract }}
-								</b-tooltip> -->
-							</div>
-						</div>
+							<b-col cols=1 v-b-modal.editModal :id="procedure.title+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
+								<b-icon icon="pencil-square" variant="info"></b-icon>
+							</b-col>
+							<tooltip :target="procedure.title+'_edit'" msg="Edit the procedure"/>
+						</b-row>
 
-						<div v-if="favoritesList.length === 0" class="text-center text-dark">
-							Your favorites are empty.
-						</div>
+					</b-container>
+
+					<div v-if="favoriteProcedures.length === 0" class="text-center text-primary">
+						<strong>Add</strong> some procedures <strong>to your favorites</strong> to see them here !
 					</div>
 				</b-tab>
 			</b-tabs>
@@ -318,7 +230,6 @@
 <script>
 	import ProcedureService from '../services/ProcedureService'
 	import Dialog from '../utils/Dialog.js'
-	import StringFormat from '../utils/StringFormat.js'
 	import Procedure from '../models/procedure.js'
 	import tooltip from '../components/tooltip.vue'
 	import { mapState } from 'vuex'
@@ -330,8 +241,6 @@
 		},
 		data() {
 			return {
-				// procedures: [],
-				// procedureSections: [],
 				createdProcedure: new Procedure(),
 				editedProcedure: new Procedure(),
 				subtypesOptions: [],
@@ -342,8 +251,6 @@
 				{type: 'Contacts', colorVariant: 'warning'},
 				{type: 'Emergencies', colorVariant: 'danger'},
 				],
-				favoritesList: {'test1': true},
-				showFavsOnly: false,
 				createdSubtype: ""
 			}
 		},
@@ -356,42 +263,26 @@
 		},
 
 		methods: {
-			formatProcedure(procedure) {
-				let formData = new FormData()
-				formData.append('nick', procedure.nick)
-				formData.append('title', procedure.title)
-				formData.append('type', procedure.type)
-				formData.append('subtype', procedure.subtype)
-				formData.append('abstract', procedure.abstract)
-				formData.append('pdfFile', procedure.file, procedure.file.name)
-				return formData
-			},
 			editModal(procedure) {
 				this.editedProcedure = procedure
 			},
-			toggleToFavorites(nick) {
-				if (nick in this.favoritesList) 
-					this.favoritesList[nick] = !this.favoritesList[nick]
-				else 
-					this.$set(this.favoritesList, nick, true)
+			toggleToFavorites(procedure) {
+				this.$store.dispatch('user/toggleToFavorites', procedure)
 			},
 			refreshSubtypesOptions() {
 				const type = this.procedureTypes.find(type => type.primaryType === this.createdProcedure.type)
 				if (type) this.subtypesOptions = type.subtypes
 			},
-			openPDF(nick) {
-				ProcedureService.getFile(nick)
+			openPDF(title) {
+				ProcedureService.getFile(title)
 				.then(response => {
 					const file = new Blob([response.data], {type: "application/pdf"})
 					const fileURL = URL.createObjectURL(file)
 					return fileURL
 				})
 				.then(fileURL => {
-					window.open(fileURL, nick)
+					window.open(fileURL, title)
 				})
-			},
-			generateNick() {
-				this.createdProcedure.nick = StringFormat.toNick(this.createdProcedure.title)
 			},
 			checkTitle(procedure) {
 				return (procedure.title.length > 0)
@@ -410,7 +301,6 @@
 				else return (this.checkTitle(procedure) && this.checkAbstract(procedure))
 			},
 			okCreate() {
-				this.generateNick()
 				if (!this.checkProcedure(this.createdProcedure)) return
 				else this.createProcedure(this.createdProcedure)
 			},

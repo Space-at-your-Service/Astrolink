@@ -15,8 +15,8 @@ class ProcedureService {
 	// 	return http.get('/activities/procedureTypes/')
 	// }
 
-	getFile(nick) {
-		return http.get('/activities/procedures/'+nick, {responseType: 'blob'})
+	getFile(title) {
+		return http.get('/activities/procedures/'+title, {responseType: 'blob'})
 	}
 
 	// getFavorites() {
@@ -33,7 +33,7 @@ class ProcedureService {
 	}
 
 	updateProcedure(formData, onUploadProgress) {
-		return http.put('/activities/procedures/'+formData.get('nick'), formData, {
+		return http.put('/activities/procedures/'+formData.get('title'), formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},
@@ -42,7 +42,7 @@ class ProcedureService {
 	}
 
 	deleteProcedure(procedure) {
-		return http.delete('/activities/procedures/'+procedure.nick)
+		return http.delete('/activities/procedures/'+procedure.title)
 	}
 }
 
