@@ -31,7 +31,7 @@
 		</b-container>
 
 		<b-container style="background-color: #fff; color: black; overflow: hidden; border-radius: 0px 0px 0px 15px" class="p-4">
-			<vue-editor v-model="sheet.content" @imageAdded="handleImageAdded" :editorToolbar="customToolbar" :disabled="!enabled" style="height: 1000px;"></vue-editor>
+			<vue-editor v-model="sheet.content" :editorToolbar="customToolbar" :disabled="!enabled" style="height: 1000px;"></vue-editor>
 		</b-container>
 	</div>
 </template>
@@ -54,8 +54,7 @@
 </style>
 
 <script>
-	import {VueEditor} from 'vue2-editor';
-	import {axios} from 'axios';
+	import { VueEditor } from 'vue2-editor';
 	import Textsheet from '../models/textsheet'
 	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
@@ -109,25 +108,25 @@
 				}	
 			},
 
-			handleImageAdded(file, Editor, cursorLocation, resetUploader) {
-				var formData = new FormData();
-				formData.append('image', file)
+			// handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+			// 	var formData = new FormData();
+			// 	formData.append('image', file)
 
-				axios({
-					url: 'https://fakeapi.yoursite.com/images',
-					method: 'POST',
-					data: formData
-				})
-				.then(result => {
-					console.log(result.data)
-					let url = result.data.url // Get url from response
-					Editor.insertEmbed(cursorLocation, 'image', url);
-					resetUploader();
-				})
-				.catch(err => {
-					console.log(err);
-				})
-			},
+			// 	axios({
+			// 		url: 'https://fakeapi.yoursite.com/images',
+			// 		method: 'POST',
+			// 		data: formData
+			// 	})
+			// 	.then(result => {
+			// 		console.log(result.data)
+			// 		let url = result.data.url // Get url from response
+			// 		Editor.insertEmbed(cursorLocation, 'image', url);
+			// 		resetUploader();
+			// 	})
+			// 	.catch(err => {
+			// 		console.log(err);
+			// 	})
+			// },
 
 			saveContent() {
 				this.saving = true

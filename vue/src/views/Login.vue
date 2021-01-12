@@ -23,13 +23,8 @@
                         ></b-form-input>
                     </b-form-group>
 
-                     <b-button type="submit" size="lg" variant="dark" block>Log in</b-button>
+                    <b-button type="submit" size="lg" variant="dark" block>Log in</b-button>
                 </b-form>
-
-                <p class="forgot-password text-right">
-                    Create 
-                    <router-link :to="{name: 'signup'}">new account</router-link>
-                </p>
             </div>
 
             <div v-else>

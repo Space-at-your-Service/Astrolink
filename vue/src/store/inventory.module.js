@@ -47,7 +47,7 @@ export const inventory = {
 	actions: {
 		getInventoryState({ commit }) {
 			var payload = undefined
-			InventoryService.getItems()
+			return InventoryService.getItems()
 			.then(response => {
 				payload = response.data
 				commit('SET_STATE', payload)
@@ -58,28 +58,6 @@ export const inventory = {
 				throw 'loading error (inventory)'
 			})
 		},
-		// addItemUnit(context, id) {
-		// 	var item = context.state.inventory.find(element => element.id === id);
-		// 	if (typeof item !== 'undefined') {
-		// 		context.commit("ADD_ITEM_UNIT", item);
-		// 		context.commit("INVENTORY_REGISTER_ENTRY", context.state.currentAccount.name+" added 1 unit of "+item.name)
-		// 	}
-		// 	else {
-		// 		console.log("no item with id "+id)
-		// 	}
-		// },
-		// removeItemUnit(context, id) {
-		// 	var item = context.state.inventory.find(element => element.id === id);
-		// 	if (typeof item !== 'undefined') {
-		// 		if (item.quantity>0) {
-		// 			context.commit("REMOVE_ITEM_UNIT", item);
-		// 			context.commit("INVENTORY_REGISTER_ENTRY", context.state.currentAccount.name+" removed 1 unit of "+item.name)
-		// 		}
-		// 	}
-		// 	else {
-		// 		console.log("no item with id "+id)
-		// 	}
-		// },
 		createItem({ commit }, item) {
 			InventoryService.postItem(item)
 			.then(() => { 

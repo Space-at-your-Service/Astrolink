@@ -4,19 +4,19 @@ import http from './http.common';
 
 class ExperimentService {
 	getExperiments() {
-		return http.get("/");
+		return http.get('/activities/experiments/');
 	}
 	
 	postExperiments(experiment) {
-		return http.post("/", experiment)
+		return http.post('/activities/experiments/', experiment)
 	}
 
 	updateExperiments(experiment) {
-		return http.put("/", experiment)
+		return http.put('/activities/experiments/' + experiment.nick, experiment)
 	}
 
 	deleteExperiments(experiment) {
-		return http.delete("/", experiment)
+		return http.delete('/activities/experiments/' + experiment.nick)
 	}
 }
 

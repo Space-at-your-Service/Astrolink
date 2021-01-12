@@ -13,15 +13,12 @@ export const auth = {
   state: initialState,
 
   mutations: {
-    loginSuccess(state) {
+    LOGIN_SUCCESS(state) {
       state.status.loggedIn = true
     },
-    logout(state) {
+    LOGOUT(state) {
       state.status.loggedIn = false
-    },
-    registerSuccess() {
-
-    },
+    }
   },
 
   actions: {
@@ -39,20 +36,7 @@ export const auth = {
     },
     logout({ commit }) {
       AuthService.logout()
-      commit('logout')
-    },
-    register({ commit }, user) {
-      return AuthService.register(user)
-      .then(
-        response => {
-          commit('registerSuccess')
-          return Promise.resolve(response.data)
-        },
-        error => {
-          alert('register failed')
-          return Promise.reject(error)
-        }
-      )
+      commit('LOGOUT')
     }
   }
 }

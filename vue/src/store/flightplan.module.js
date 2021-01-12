@@ -21,7 +21,7 @@ export const flightplan = {
 	actions: {
 		getFlightplanState({ commit }) {
 			var payload = undefined
-			TaskService.getFlightplan()
+			return TaskService.getFlightplan()
 			.then(response => {
 				payload = response
 				commit('SET_STATE', payload)

@@ -14,6 +14,7 @@ import { flightplan } from './flightplan.module.js'
 import { inventory } from './inventory.module.js'
 import { procedure } from './procedure.module.js'
 import { user } from './user.module.js'
+import Debug from '../utils/Debug.js'
 
 Vue.use(Vuex)
 
@@ -30,7 +31,7 @@ const store = new Vuex.Store({
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
 		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
-		overlay: {show: false, message: ''}
+		overlay: {show: false, msg: '', img: '', hideSpinner: false}
 	},
 
 	getters: {
@@ -41,52 +42,47 @@ const store = new Vuex.Store({
 	},
 
 	mutations: {
-		SHOW_OVERLAY(state) {
+		SHOW_OVERLAY(state, hideSpinner) {
 			state.overlay.show = true
+			state.overlay.hideSpinner = hideSpinner
 		},
 		HIDE_OVERLAY(state) {
 			state.overlay.show = false
+			state.overlay.msg = ''
+			state.overlay.img = ''
 		},
-		MSG_OVERLAY(state, message) {
-			state.overlay.message = message
+		MSG_OVERLAY(state, msg) {
+			state.overlay.msg = msg
+		},
+		IMG_OVERLAY(state, img) {
+			state.overlay.img = img
 		}
 	},
 
 	actions: {
-		loadAll({ dispatch }) {
-			return dispatch('displayOverlay', 'Loading USER')
-			.then(() => {
-				return new Promise(resolve => {
-					setTimeout(() => {resolve()}, 300); // (*)
-				})
-			})
-			.then(() => { dispatch('user/getUserState', null,  {root: true}) })
-			.then(() => { dispatch('displayOverlay', 'Loading INVENTORY') })
-			.then(() => {
-				return new Promise(resolve => {
-					setTimeout(() => {resolve()}, 300); // (*)
-				})
-			})
-			.then(() => { dispatch('inventory/getInventoryState', null,  {root: true}) })
-			.then(() => { dispatch('displayOverlay', 'Loading PROCEDURES') })
-			.then(() => {
-				return new Promise(resolve => {
-					setTimeout(() => {resolve()}, 300); // (*)
-				})
-			})
-			.then(() => { dispatch('procedure/getProcedureState', null,  {root: true}) })
-			.then(() => { dispatch('displayOverlay', 'Loading FLIGHTPLAN') })
-			.then(() => {
-				return new Promise(resolve => {
-					setTimeout(() => {resolve()}, 300); // (*)
-				})
-			})
-			.then(() => { dispatch('flightplan/getFlightplanState', null,  {root: true}) })
+		async loadAll({ dispatch }) {
+			return dispatch('displayOverlay', {msg: 'Loading USER', img: 'https://cdn.onlinewebfonts.com/svg/img_210318.png'})
+			.then(() => Debug.sleep(200))
+			.then(async () => await dispatch('user/getUserState', null,  {root: true}) )
+			.then(() => { dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'}) })
+			.then(() => Debug.sleep(200))
+			.then(async () => await dispatch('inventory/getInventoryState', null,  {root: true}))
+			.then(() => { dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'}) })
+			.then(() => Debug.sleep(200))
+			.then(async () => await dispatch('procedure/getProcedureState', null,  {root: true}))
+			.then(() => { dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: 'https://cdn.onlinewebfonts.com/svg/img_563113.png'}) })
+			.then(() => Debug.sleep(200))
+			.then(async () => await dispatch('flightplan/getFlightplanState', null,  {root: true}))
+			// .then(() => { dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: 'https://cdn.onlinewebfonts.com/svg/img_490832.png'}) })
+			// .then(() => Debug.sleep(200))
+			// .then(async () => await dispatch('experiment/getExperimentState', null,  {root: true}))
 			.then(() => { dispatch('hideOverlay') })
+			.catch(() => { dispatch('displayOverlay', {msg: 'SERVER ERROR', img: 'https://cdn.onlinewebfonts.com/svg/img_505377.png', hideSpinner: true}) })
 		},
-		displayOverlay({ commit }, message) {
-			commit('SHOW_OVERLAY')
-			commit('MSG_OVERLAY', message)
+		displayOverlay({ commit }, { msg, img, hideSpinner }) {
+			commit('MSG_OVERLAY', msg)
+			commit('IMG_OVERLAY', img)
+			commit('SHOW_OVERLAY', hideSpinner)
 		},
 		hideOverlay({ commit }) {
 			commit('HIDE_OVERLAY')

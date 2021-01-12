@@ -3,11 +3,12 @@
 import axios from 'axios'
 
 // add the user's authentication token to all requests if logged in
-const token = localStorage.getItem('token')
+const token = sessionStorage.getItem('token')
 if (token) {
   axios.defaults.headers.common['Authorization'] = 'Token ' + token
 }
 
 export default axios.create({
-	baseURL: "http://localhost:8000"
+	baseURL: 'http://localhost:8000',
+	timeout: 3000
 });
