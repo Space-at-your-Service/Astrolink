@@ -1,6 +1,6 @@
 <template>
-  <div class="main-container">
-    <h3 class="section-title">{{ username }}'s Profile</h3>
+  <div class="main-container" style="position: relative">
+    <h3 class="section-title">{{ username }}'s Profile </h3>
 
     <div class="inner-block" style="position: relative;">
           <div style="letter-spacing: 2px">   
@@ -35,6 +35,66 @@
             <b-icon id="avatarEdit" icon="zoom-in"></b-icon>
           </b-avatar>
     </div>
+
+    <div style="font-size: x-large; position: absolute; top: 30px; right: 100px;">
+      <b-dropdown variant="link" no-caret>
+        <template #button-content>
+          <span style="color: white"><b-icon icon='gear-fill' class="float-right"></b-icon></span>
+        </template>
+
+        <b-dropdown-item v-b-modal.passwordModal>Change password</b-dropdown-item>
+      </b-dropdown>
+    </div>
+
+    <b-modal 
+      id="passwordModal"
+      ref="passwordModal"
+      title="Change your password"
+      @hidden="resetPasswordModal"
+      @ok="okPassword"
+      centered
+      header-bg-variant="warning"
+      ok-variant="warning"
+      size="sm">
+
+      <form @submit.stop.prevent="okPassword">
+        <b-form-group
+          label="Current password"
+          label-for="currentPasswordInput"
+        >
+          <b-form-input
+            id="currentPasswordInput"
+            v-model="passwordForm.currentPassword"
+            type="password"
+            required>
+          </b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label="New password"
+          label-for="newPasswordInput"
+        >
+          <b-form-input
+            id="newPasswordInput"
+            v-model="passwordForm.newPassword"
+            type="password"
+            required>
+          </b-form-input>
+        </b-form-group>
+
+        <b-form-group
+          label="Confirm new password"
+          label-for="confirmPasswordInput"
+        >
+          <b-form-input
+            id="confirmPasswordInput"
+            v-model="passwordForm.confirmPassword"
+            type="password"
+            required>
+          </b-form-input>
+        </b-form-group>
+      </form>
+    </b-modal>
   </div>
 </template>
 
@@ -45,6 +105,7 @@
   export default {
     data() {
       return {
+        passwordForm: {currentPassword: '', newPassword: '', confirmPassword: ''}
       }
     },
 
@@ -54,6 +115,16 @@
     },
 
     methods: {
+      checkPassword() {
+        return true
+      },
+      okPassword() {
+        if (!this.checkPassword()) return
+        else this.changePassword({oldPassword: this.passwordForm.currentPassword, newPassword: this.passwordForm.newPassword})
+      },
+      changePassword(payload) {
+        this.$store.dispatch('user/changePassword', payload)
+      }
     },
 
     mounted() {
