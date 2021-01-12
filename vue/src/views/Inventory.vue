@@ -82,10 +82,10 @@
 							<div class="col">
 								<b-button-group class="float-right">
 									<b-badge v-if="row.item.quantity == 0" variant="danger" class="m-auto">empty</b-badge>
-									<b-button size="sm" @click="removeUnit(row.item)" class="mr-1" variant="" v-if="row.item.quantity > 0 && isAllowed('inventory.modify_item_qty')">
+									<b-button size="sm" @click="decrementItem(row.item)" class="mr-1" variant="" v-if="row.item.quantity > 0 && isAllowed('inventory.modify_item_qty')">
 										<b-icon icon="dash"></b-icon>
 									</b-button>
-									<b-button size="sm" @click="addUnit(row.item)" class="ml-1" variant="" v-if="isAllowed('inventory.modify_item_qty')">
+									<b-button size="sm" @click="incrementItem(row.item)" class="ml-1" variant="" v-if="isAllowed('inventory.modify_item_qty')">
 										<b-icon icon="plus"></b-icon>
 									</b-button>
 								</b-button-group>
@@ -212,11 +212,9 @@
 </template>
 
 <script>
-	import {mapState} from 'vuex'
-	import {mapGetters} from 'vuex'
-	import {mapActions} from 'vuex'
-	import InventoryService from '../services/InventoryService'
-
+	import { mapState } from 'vuex'
+	import { mapGetters } from 'vuex'
+	import Notif from '../utils/Notif.js'
 
 	export default {
 		data() {
@@ -227,7 +225,7 @@
 					{ key: 'quantity', label: 'Quantity', sortable: false },
 					{ key: 'details', label: 'Details', sortable: false }
 				],
-				sortBy: '',
+				sortBy: 'id',
 				sortDesc: false,
 				sortDirection: 'asc',
 				filter: null,
@@ -256,7 +254,6 @@
 			}
 		},
 		methods: {
-			...mapActions(['addItemUnit', 'removeItemUnit', 'deleteItem', 'createNewItem']),
 			onRowSelected(item) {
 				this.selected = item;
 			},
@@ -268,36 +265,16 @@
 				}
 				return res
 			},
-			addUnit(item) {
-				item.quantity++;
-				InventoryService.updateItem(item)
-				.then(
-					this.$bvToast.toast('Your item\'s quantity has been successfully edited.', {
-							title: `Item quantity edited`,
-							variant: 'success',
-							solid: true
-						})
-				)
-				.catch(e => {
-					console.log(e),
-					this.refreshTable()
-				})	
+			incrementItem(item) {
+				const editedItem = {...item}
+				editedItem.quantity++;
+				this.$store.dispatch('inventory/updateItem', editedItem)	
 			},
-			removeUnit(item) {
+			decrementItem(item) {
 				if (item.quantity > 0) {
-					item.quantity--;
-					InventoryService.updateItem(item)
-					.then(
-						this.$bvToast.toast('Your item\'s quantity has been successfully edited.', {
-							title: `Item quantity edited`,
-							variant: 'success',
-							solid: true
-						})
-					)
-					.catch(e => {
-						console.log(e),
-						this.refreshTable()
-					})	
+					const editedItem = {...item}
+					editedItem.quantity--;
+					this.$store.dispatch('inventory/updateItem', editedItem)
 				}
 			},
 			editModal(item) {
@@ -358,14 +335,8 @@
 			confirmCreate(item) {
 				this.$store.dispatch('inventory/createItem', item)
 				.then(() => {
-					this.$nextTick(() => {
-						this.$bvModal.hide('createModal')
-						this.$bvToast.toast('Your item has been successfully created.', {
-							title: `Item created`,
-							variant: 'success',
-							solid: true
-						})
-					})
+					this.$bvModal.hide('createModal')
+					Notif.toastSuccess(this, 'Test', 'test text')
 				})
 				.catch(error => {
 					console.log(error)
@@ -374,14 +345,8 @@
 			confirmEdit(item) {
 				this.$store.dispatch('inventory/updateItem', item)
 				.then(() => {
-					this.$nextTick(() => {
-						this.$bvModal.hide('editModal')
-						this.$bvToast.toast('Your item has been successfully edited.', {
-							title: `Item edited`,
-							variant: 'success',
-							solid: true
-						})
-					})
+					this.$bvModal.hide('editModal')
+					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully updated.')
 				})
 				.catch(e => {
 					console.log(e)
