@@ -11,41 +11,43 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Group
-        fields = ("name",)
+        fields = ("name", "unit")
+
 
     def to_representation(self, instance):
 
-        return instance.name
+        return {"role" : instance.name, "unit" : instance.unit.name}
 
 
 class SimpleAsclepianSerializer(serializers.ModelSerializer):
 
+    groups = GroupSerializer(many = True)
+
     class Meta:
 
         model = Asclepian
-        fields = ("username", "first_name", "last_name")
+        fields = ("username", "first_name", "last_name", "groups")
 
 
 class AsclepianSerializer(serializers.ModelSerializer):
 
+    groups = GroupSerializer(many = True)
+
     class Meta:
 
         model = Asclepian
-        fields = ("username", "first_name", "last_name")
+        fields = ("username", "first_name", "last_name", "groups")
 
 
     def to_representation(self, instance):
 
         rep = super().to_representation(instance)
-        perms = instance.get_all_permissions()
-        rep["permissions"] = []
+        user_perms_codenames = [p.split('.')[1] for p in instance.get_all_permissions()]
+        permissions = Permission.objects.filter(codename__in = user_perms_codenames)
 
-        for p in perms:
+        favorites = instance.favoriteProcedures.order_by("types__masterType", "types__subtype", "title")
 
-            perm = Permission.objects.filter(codename = p.split('.')[1]).get()
-            rep["permissions"].append({f"{perm.content_type.app_label}.{perm.codename}" : perm.name})
-
-        favorites = instance.favoriteProcedures.all().order_by("types__masterType", "types__subtype", "title")
+        rep["permissions"] = {f"{p.content_type.app_label}.{p.codename}" : p.name for p in permissions}
         rep["favoriteProcedures"] = ProcedureSerializer(favorites, many = True).data
 
         return rep

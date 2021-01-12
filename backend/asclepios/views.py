@@ -1,12 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework import status
 
-from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+from django.http.response import HttpResponse, JsonResponse
 
 from .serializers import AsclepianSerializer, AsclepianFavoritesSerializer, SimpleAsclepianSerializer
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.http.response import HttpResponse
+
 
 
 class ProfileView(APIView):
@@ -57,7 +56,7 @@ class GroupView(APIView):
 
     def get(self, request, pk):
 
-        users = get_user_model().objects.filter(groups__name = pk)
+        users = get_user_model().objects.filter(groups__unit__name = pk)
 
         if users:
 
