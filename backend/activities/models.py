@@ -25,39 +25,29 @@ class ProcedureSubtype(models.Model):
 
 class Procedure(models.Model):
 
-    """ Procedure
-    Represents a procedure (SOP) stored in the DB
-
-    @field nick (str) : A short name for the url (e.g base-cleaning, redmars-exp)
-    @field title (str) : The title of the procedure
-    @field types (ProcedureSubtype) : The type and subtypes of the procedure
-    @field abstract (str) : The quantity of this item currently in stock
-    @field pdfFile (str) : The path to the file associated
-    """
-
-    nick = models.SlugField(max_length = 50, primary_key = True, unique = True)
-    title = models.CharField(max_length = 50)
+    title = models.CharField(max_length = 50, primary_key = True)
     types = models.ForeignKey(ProcedureSubtype, on_delete = models.PROTECT, related_name = "procedures", null = True)
     abstract = models.CharField(max_length = 140)
-    pdfFile = models.FileField(max_length = 100)
+
     favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures")
+
+    pdfFile = models.FileField(max_length = 100)
 
     def __str__(self):
 
-        return f"[{self.types.masterType}] {self.title}"
+        return f"[{self.types}] {self.title}"
 
 
 class Experiment(models.Model):
 
-    title = models.CharField(max_length = 50, default = "This is a title")
-    status = models.CharField(max_length = 10, choices = [("complete", "complete"),
-                                                          ("planned", "planned"),
-                                                          ("aborted", "aborted")], default = "planned")
+    title = models.CharField(max_length = 50, primary_key = True)
+    status = models.CharField(max_length = 20)
+    abstract = models.CharField(max_length = 140)
+    description = models.CharField(max_length = 300)
 
-    abstract = models.CharField(max_length = 140, default = "This is an abstract")
-    description = models.CharField(max_length = 300, default = "This is a description")
     operators = models.ManyToManyField(get_user_model(), related_name = "experiments_operating")
-    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", null = True)
+    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising")
+
     protocol = models.ManyToManyField(Procedure, related_name = "experiments_using")
 
     def __str__(self):
@@ -67,28 +57,35 @@ class Experiment(models.Model):
 
 class Textsheet(models.Model):
 
+    title = models.CharField(max_length = 50, primary_key = True)
+
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
-    title = models.CharField(max_length = 50, default = "This is a title")
+
     creationDate = models.DateTimeField(auto_now_add = True)
     lastModifiedDate = models.DateTimeField(default = datetime.now)
-    creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created", null = True)
-    lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
+
+    creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created")
+    lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)
+
     contents = models.FileField(max_length = 100)
 
 
 class Spreadsheet(models.Model):
 
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "spreadsheets")
+    #TODO : This is yet to be implemented
 
 
 class Task(models.Model):
+
+    title = models.CharField(max_length = 50, primary_key = True)
 
     holder = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     procedures = models.ManyToManyField(Procedure, related_name = "tasks")
 
     start = models.DateTimeField(default = datetime.now)
     end = models.DateTimeField(default = datetime.now)
-    title = models.CharField(max_length = 50, default = "This is a title")
+
     content = models.CharField(max_length = 300, default = "Content")
     category = models.CharField(max_length = 20, choices = [("Break", "Break"),
                                                             ("Routine", "Routine"),
