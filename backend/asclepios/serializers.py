@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
 
 from .models import Asclepian
+from activities.serializers import ProcedureSerializer
 
 
 class GroupSerializer(serializers.ModelSerializer):
@@ -17,21 +18,21 @@ class GroupSerializer(serializers.ModelSerializer):
         return instance.name
 
 
+class SimpleAsclepianSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Asclepian
+        fields = ("username", "first_name", "last_name")
+
+
 class AsclepianSerializer(serializers.ModelSerializer):
 
     class Meta:
 
         model = Asclepian
-        fields = ("username", "first_name", "last_name", "password")
+        fields = ("username", "first_name", "last_name")
 
-
-    def create(self, validated_data):
-
-        new_user = Asclepian.objects.create_user(username = validated_data["username"], password = validated_data["password"])
-        new_user.first_name = validated_data["first_name"]
-        new_user.last_name = validated_data["last_name"]
-
-        return new_user
 
     def to_representation(self, instance):
 
@@ -45,9 +46,7 @@ class AsclepianSerializer(serializers.ModelSerializer):
             rep["permissions"].append({f"{perm.content_type.app_label}.{perm.codename}" : perm.name})
 
         favorites = instance.favoriteProcedures.all().order_by("types__masterType", "types__subtype", "title")
-        rep["favoriteProcedures"] = list(favorites.values_list("nick", flat = True))
-
-        del rep["password"]
+        rep["favoriteProcedures"] = ProcedureSerializer(favorites, many = True).data
 
         return rep
 
