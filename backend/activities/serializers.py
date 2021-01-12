@@ -56,7 +56,7 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Procedure
-        fields = ("nick", "title", "type", "subtype", "abstract", "pdfFile")
+        fields = ("title", "type", "subtype", "abstract", "pdfFile")
 
 
     def create(self, validated_data):
@@ -73,8 +73,7 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
 
-        rep = {"nick" : instance.nick,
-               "title" : instance.title,
+        rep = {"title" : instance.title,
                "type" : instance.types.masterType.type,
                "subtype" : instance.types.subtype,
                "abstract" : instance.abstract}
@@ -113,10 +112,18 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class TextsheetSerializer(serializers.ModelSerializer):
 
+    creator = serializers.CharField(max_length = 150)
+    lastUser = serializers.CharField(max_length = 150)
+
     class Meta:
 
         model = Textsheet
         fields = ("title", "creationDate", "lastModifiedDate", "creator", "lastUser", "contents")
+
+
+    def create(self, validated_data):
+
+        pass
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
@@ -124,7 +131,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Experiment
-        fields = ("title", "status", "abstract", "description", "operators", "supervisor", "protocol", "textsheets")
+        fields = ("title", "status", "abstract", "description", "operators", "supervisor", "protocol")
 
 
     def to_representation(self, instance):
@@ -134,7 +141,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
         rep["operators"] = list(instance.operators.all().values_list("username", flat = True))
         rep["supervisor"] = instance.supervisor.username
 
-        rep["data"] = {"textsheets" : instance.textsheets.all().get(),
-                       "spreadsheets" : instance.spreadsheets.all().get()}
+        rep["data"] = {"textsheets" : list(instance.textsheets.all()),
+                       "spreadsheets" : list(instance.spreadsheets.all())}
 
         return rep

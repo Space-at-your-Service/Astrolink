@@ -117,15 +117,10 @@ class FlightplanView(APIView):
 
         #TODO: add permission
 
-        astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this
+        astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this, create method get_astronauts under asclepian for instance
+        ser = TaskSerializer(Task.objects.filter(holder__in = astronauts), many = True)
 
-        fp = {}
-        for a in astronauts:
-
-            ser = TaskSerializer(Task.objects.filter(holder = a), many = True)
-            fp.update(ser.data)
-
-        return JsonResponse(fp, status = status.HTTP_200_OK)
+        return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
 
 
 class ExperimentsView(APIView):
