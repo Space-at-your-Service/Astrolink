@@ -163,7 +163,7 @@ class ExperimentsView(APIView):
                 t["experiment"] = experiment.title
 
             rep = {}
-            status = 0
+            stus = 0
 
             if textsheets:
 
@@ -175,19 +175,19 @@ class ExperimentsView(APIView):
                     experiment.save()
 
                     rep.update({"textsheets" : ser.data})
-                    status = status.HTTP_201_CREATED
+                    stus = status.HTTP_201_CREATED
 
                 else:
 
                     rep.update({"textsheets" : ser.errors})
-                    status = status.HTTP_400_BAD_REQUEST
+                    stus = status.HTTP_400_BAD_REQUEST
 
             if spreadsheets:
 
                 pass #TODO not implemented
 
-            if rep and status != 0:
+            if rep and stus != 0:
 
-                return JsonResponse(rep, status = status)
+                return JsonResponse(rep, status = stus)
 
         return JsonResponse({"errors" : "no data provided !"}, status = status.HTTP_400_BAD_REQUEST)
