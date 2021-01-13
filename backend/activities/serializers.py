@@ -97,8 +97,7 @@ class TaskSerializer(serializers.ModelSerializer):
         procedures = validated_data.pop("procedures")
 
         newtask = Task.objects.create(holder = holder, **validated_data)
-        for p in procedures:
-            newtask.procedures.add(p)
+        newtask.procedures.add(*procedures)
 
         return newtask
 
@@ -118,15 +117,21 @@ class TextsheetSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Textsheet
-        fields = ("title", "creationDate", "lastModifiedDate", "creator", "lastUser", "contents")
+        fields = ("title", "experiment", "creationDate", "lastModifiedDate", "creator", "lastUser", "content")
 
 
     def create(self, validated_data):
 
-        pass
+        creator = get_user_model().objects.get(username = validated_data.pop("creator"))
+        lastUser = get_user_model().objects.get(username = validated_data.pop("lastUser"))
+
+        return Textsheet.objects.create(creator = creator, lastUser = lastUser, **validated_data)
 
 
 class ExperimentSerializer(serializers.ModelSerializer):
+
+    operators = serializers.ListField(child = serializers.CharField(max_length = 150))
+    supervisor = serializers.CharField(max_length = 150)
 
     class Meta:
 
@@ -134,14 +139,29 @@ class ExperimentSerializer(serializers.ModelSerializer):
         fields = ("title", "status", "abstract", "description", "operators", "supervisor", "protocol")
 
 
+    def create(self, validated_data):
+
+        operators = get_user_model().objects.filter(username__in = validated_data.pop("operators"))
+        supervisor = get_user_model().objects.get(username = validated_data.pop("supervisor"))
+        procedures = Procedure.objects.filter(title__in = validated_data.pop("protocol"))
+
+        new_experiment = Experiment.objects.create(supervisor = supervisor, **validated_data)
+
+        new_experiment.operators.add(*operators)
+        new_experiment.protocol.add(*procedures)
+
+        return new_experiment
+
     def to_representation(self, instance):
 
-        rep = serializers.ModelSerializer.to_representation(self, instance)
+        rep = {"title" : instance.title,
+               "status" : instance.status,
+               "abstract" : instance.abstract,
+               "description" : instance.description,
+               "operators" : list(instance.operators.all().values_list("username", flat = True)),
+               "supervisor" : instance.supervisor.username}
 
-        rep["operators"] = list(instance.operators.all().values_list("username", flat = True))
-        rep["supervisor"] = instance.supervisor.username
-
-        rep["data"] = {"textsheets" : list(instance.textsheets.all()),
+        rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
                        "spreadsheets" : list(instance.spreadsheets.all())}
 
         return rep

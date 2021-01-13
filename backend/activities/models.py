@@ -67,7 +67,11 @@ class Textsheet(models.Model):
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created")
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)
 
-    contents = models.FileField(max_length = 100)
+    content = models.TextField()
+
+    def __str__(self):
+
+        return f"[{self.experiment.title}] {self.title}"
 
 
 class Spreadsheet(models.Model):
