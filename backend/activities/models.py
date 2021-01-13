@@ -41,14 +41,17 @@ class Procedure(models.Model):
 class Experiment(models.Model):
 
     title = models.CharField(max_length = 50, primary_key = True)
-    status = models.CharField(max_length = 20)
+    status = models.CharField(max_length = 20, choices = (("planned", "planned"),
+                                                          ("ongoing", "ongoing"),
+                                                          ("complete", "complete"),
+                                                          ("aborted", "aborted")))
     abstract = models.CharField(max_length = 140)
     description = models.CharField(max_length = 300)
 
     operators = models.ManyToManyField(get_user_model(), related_name = "experiments_operating")
-    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising")
+    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", null = True)
 
-    protocol = models.ManyToManyField(Procedure, related_name = "experiments_using")
+    procedures = models.ManyToManyField(Procedure, related_name = "experiments_using")
 
     def __str__(self):
 

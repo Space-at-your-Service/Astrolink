@@ -136,19 +136,19 @@ class ExperimentSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Experiment
-        fields = ("title", "status", "abstract", "description", "operators", "supervisor", "protocol")
+        fields = ("title", "status", "abstract", "description", "operators", "supervisor", "procedures")
 
 
     def create(self, validated_data):
 
         operators = get_user_model().objects.filter(username__in = validated_data.pop("operators"))
         supervisor = get_user_model().objects.get(username = validated_data.pop("supervisor"))
-        procedures = Procedure.objects.filter(title__in = validated_data.pop("protocol"))
+        procedures = Procedure.objects.filter(title__in = validated_data.pop("procedures"))
 
         new_experiment = Experiment.objects.create(supervisor = supervisor, **validated_data)
 
         new_experiment.operators.add(*operators)
-        new_experiment.protocol.add(*procedures)
+        new_experiment.procedures.add(*procedures)
 
         return new_experiment
 
@@ -159,7 +159,8 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "abstract" : instance.abstract,
                "description" : instance.description,
                "operators" : list(instance.operators.all().values_list("username", flat = True)),
-               "supervisor" : instance.supervisor.username}
+               "supervisor" : instance.supervisor.username,
+               "procedures" : instance.procedure}
 
         rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
                        "spreadsheets" : list(instance.spreadsheets.all())}
