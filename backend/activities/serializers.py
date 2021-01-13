@@ -131,7 +131,7 @@ class TextsheetSerializer(serializers.ModelSerializer):
 class ExperimentSerializer(serializers.ModelSerializer):
 
     operators = serializers.ListField(child = serializers.CharField(max_length = 150))
-    supervisor = serializers.CharField(max_length = 150)
+    supervisor = serializers.CharField(max_length = 150, required = False)
 
     class Meta:
 
@@ -142,10 +142,13 @@ class ExperimentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
 
         operators = get_user_model().objects.filter(username__in = validated_data.pop("operators"))
-        supervisor = get_user_model().objects.get(username = validated_data.pop("supervisor"))
+
+        if "supervisor" in validated_data:
+            validated_data["supervisor"] = get_user_model().objects.get(username = validated_data.pop("supervisor"))
+
         procedures = Procedure.objects.filter(title__in = validated_data.pop("procedures"))
 
-        new_experiment = Experiment.objects.create(supervisor = supervisor, **validated_data)
+        new_experiment = Experiment.objects.create(**validated_data)
 
         new_experiment.operators.add(*operators)
         new_experiment.procedures.add(*procedures)
@@ -159,7 +162,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "abstract" : instance.abstract,
                "description" : instance.description,
                "operators" : list(instance.operators.all().values_list("username", flat = True)),
-               "supervisor" : instance.supervisor.username,
+               "supervisor" : "" if not instance.supervisor else instance.supervisor.username,
                "procedures" : ProcedureSerializer(instance.procedures.all(), many = True).data}
 
         rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
