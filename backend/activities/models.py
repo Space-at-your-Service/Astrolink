@@ -49,7 +49,7 @@ class Experiment(models.Model):
     description = models.CharField(max_length = 300)
 
     operators = models.ManyToManyField(get_user_model(), related_name = "experiments_operating")
-    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", null = True)
+    supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", blank = True, null = True)
 
     procedures = models.ManyToManyField(Procedure, related_name = "experiments_using")
 
