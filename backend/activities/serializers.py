@@ -160,7 +160,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "description" : instance.description,
                "operators" : list(instance.operators.all().values_list("username", flat = True)),
                "supervisor" : instance.supervisor.username,
-               "procedures" : instance.procedure}
+               "procedures" : instance.procedures}
 
         rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
                        "spreadsheets" : list(instance.spreadsheets.all())}
