@@ -1,14 +1,25 @@
-// Boilerplate for all http requests, including url and authentication token
+// Boilerplate for all http requests, including base url and authentication token
 
 import axios from 'axios'
 
-// add the user's authentication token to all requests if logged in
-const token = sessionStorage.getItem('token')
-if (token) {
-  axios.defaults.headers.common['Authorization'] = 'Token ' + token
-}
-
-export default axios.create({
+const http = axios.create({
 	baseURL: 'http://localhost:8000',
 	timeout: 3000
 });
+
+// add the user's authentication token to all requests if logged in
+http.interceptors.request.use(
+	config => {
+		console.log('hey')
+		const token = sessionStorage.getItem('token');
+		if (token) {
+			config.headers.common['Authorization'] = 'Token ' + token;
+		}
+		return config;
+	},
+	error => {
+		return Promise.reject(error);
+	}
+);
+
+export default http

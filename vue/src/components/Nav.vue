@@ -20,7 +20,7 @@
 
 					<b-nav-item-dropdown right class="ml-lg-5">
 						<template #button-content>
-							{{ username }}
+							<em>{{ username }}</em>
 						</template>
 						<b-dropdown-item to="/profile" class="text-center" @click="isActive = 'profile'"><b-icon icon="person-circle"></b-icon> <strong>Profile</strong></b-dropdown-item>
 						<b-dropdown-item to="/planning" class="text-center" @click="isActive = 'planning'"><b-icon icon="calendar-range"></b-icon> <strong>Planning</strong></b-dropdown-item>
@@ -57,7 +57,7 @@
 				.then(this.$router.push('/login'))
 			}
 		},
-		created() {
+		mounted() {
 			this.$store.dispatch('loadAll')
 		}
 	}

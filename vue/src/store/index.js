@@ -14,7 +14,7 @@ import { flightplan } from './flightplan.module.js'
 import { inventory } from './inventory.module.js'
 import { procedure } from './procedure.module.js'
 import { user } from './user.module.js'
-import Debug from '../utils/Debug.js'
+// import Debug from '../utils/Debug.js'
 
 Vue.use(Vuex)
 
@@ -31,6 +31,7 @@ const store = new Vuex.Store({
 	state: {
 		missionStartDate: new Date(2021,4,15,0,0,0),
 		astronautsCrew: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
+		units: ['Astronauts', 'MCC', 'Scientists'],
 		overlay: {show: false, msg: '', img: '', hideSpinner: false}
 	},
 
@@ -62,19 +63,14 @@ const store = new Vuex.Store({
 	actions: {
 		async loadAll({ dispatch }) {
 			return dispatch('displayOverlay', {msg: 'Loading USER', img: 'https://cdn.onlinewebfonts.com/svg/img_210318.png'})
-			.then(() => Debug.sleep(200))
 			.then(async () => await dispatch('user/getUserState', null,  {root: true}) )
 			.then(() => { dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'}) })
-			.then(() => Debug.sleep(200))
 			.then(async () => await dispatch('inventory/getInventoryState', null,  {root: true}))
 			.then(() => { dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'}) })
-			.then(() => Debug.sleep(200))
 			.then(async () => await dispatch('procedure/getProcedureState', null,  {root: true}))
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: 'https://cdn.onlinewebfonts.com/svg/img_563113.png'}) })
-			.then(() => Debug.sleep(200))
-			.then(async () => await dispatch('flightplan/getFlightplanState', null,  {root: true}))
+			// .then(() => { dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: 'https://cdn.onlinewebfonts.com/svg/img_563113.png'}) })
+			// .then(async () => await dispatch('flightplan/getFlightplanState', null,  {root: true}))
 			// .then(() => { dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: 'https://cdn.onlinewebfonts.com/svg/img_490832.png'}) })
-			// .then(() => Debug.sleep(200))
 			// .then(async () => await dispatch('experiment/getExperimentState', null,  {root: true}))
 			.then(() => { dispatch('hideOverlay') })
 			.catch(() => { dispatch('displayOverlay', {msg: 'SERVER ERROR', img: 'https://cdn.onlinewebfonts.com/svg/img_505377.png', hideSpinner: true}) })
