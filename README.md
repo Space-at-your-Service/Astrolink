@@ -49,6 +49,11 @@ cd vue
 npm run serve
 ```
 
+### REST API
+
+The postman documentation of our REST API is available here
+https://documenter.getpostman.com/view/14209680/TVzVhFGv
+
 ## Dependencies
 
 ### Backend
