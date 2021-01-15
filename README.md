@@ -59,6 +59,8 @@ https://documenter.getpostman.com/view/14209680/TVzVhFGv
 ### Backend
 
 The exact conda environment used to run the django backend can be found in the file backend/conda.txt
+Use `conda create -n astrolink --file conda.txt`
+To automatically create the right environment.
 
 ### Frontend
 
