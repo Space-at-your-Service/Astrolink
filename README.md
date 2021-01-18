@@ -49,11 +49,18 @@ cd vue
 npm run serve
 ```
 
+### REST API
+
+The postman documentation of our REST API is available here
+https://documenter.getpostman.com/view/14209680/TVzVhFGv
+
 ## Dependencies
 
 ### Backend
 
 The exact conda environment used to run the django backend can be found in the file backend/conda.txt
+Use `conda create -n astrolink --file conda.txt`
+To automatically create the right environment.
 
 ### Frontend
 
