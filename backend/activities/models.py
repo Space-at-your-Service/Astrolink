@@ -48,10 +48,10 @@ class Experiment(models.Model):
     abstract = models.CharField(max_length = 140)
     description = models.CharField(max_length = 300)
 
-    operators = models.ManyToManyField(get_user_model(), related_name = "experiments_operating")
+    operators = models.ManyToManyField(get_user_model(), related_name = "experiments_operating", blank = True)
     supervisor = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "experiments_supervising", blank = True, null = True)
 
-    procedures = models.ManyToManyField(Procedure, related_name = "experiments_using")
+    procedures = models.ManyToManyField(Procedure, related_name = "experiments_using", blank = True)
 
     def __str__(self):
 
@@ -65,12 +65,12 @@ class Textsheet(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
 
     creationDate = models.DateTimeField(auto_now_add = True)
-    lastModifiedDate = models.DateTimeField(default = datetime.now)
+    lastModifiedDate = models.DateTimeField(auto_now_add = True)
 
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created")
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)
 
-    content = models.TextField()
+    content = models.TextField(blank = True)
 
     def __str__(self):
 
@@ -88,7 +88,7 @@ class Task(models.Model):
     title = models.CharField(max_length = 50, primary_key = True)
 
     holder = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
-    procedures = models.ManyToManyField(Procedure, related_name = "tasks")
+    procedures = models.ManyToManyField(Procedure, related_name = "tasks", blank = True)
 
     start = models.DateTimeField(default = datetime.now)
     end = models.DateTimeField(default = datetime.now)
