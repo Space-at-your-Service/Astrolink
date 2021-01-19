@@ -24,12 +24,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = [".localhost"]
+#ALLOWED_HOSTS = [".localhost"]
 
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:8080", #Allow requests from Vue
-)
+#CORS_ORIGIN_ALLOW_ALL = False
+#CORS_ORIGIN_WHITELIST = (
+#    "http://localhost:8080", #Allow requests from Vue
+#)
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
