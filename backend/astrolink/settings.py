@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-#ALLOWED_HOSTS = [".localhost"]
+ALLOWED_HOSTS = ["astrolink.earth"]
 
 #CORS_ORIGIN_ALLOW_ALL = False
 #CORS_ORIGIN_WHITELIST = (
