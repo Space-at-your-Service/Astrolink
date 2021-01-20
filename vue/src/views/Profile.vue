@@ -8,14 +8,16 @@
             <ul>
               <li><strong>First name: </strong>{{ firstName }}</li>
               <li><strong>Last name: </strong>{{ lastName }}</li>
+              <li><strong>Age: </strong>{{ lastName }}</li>
+              <li><strong>Nationality: </strong>{{ lastName }}</li>
             </ul>
           </div>
 
           <div style="letter-spacing: 2px">
-            <h2>Group</h2>
+            <h2>Role</h2>
             <ul>
-              <li v-for="role in groups" :key="role">
-                {{ role }}
+              <li v-for="group in groups" :key="group.role">
+                <strong>{{group.unit}}</strong> {{ group.role }} 
               </li>
             </ul>
           </div>
@@ -133,6 +135,10 @@
 </script>
 
 <style scoped>
+  h2 {
+    color: navy;
+  }
+
   ul {
     list-style: none;
   }
