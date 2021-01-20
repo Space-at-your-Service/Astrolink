@@ -12,16 +12,15 @@ export const user = {
 		lastName: '',
 		groups: [],
 		permissions: [],
-		favoriteProcedures: [],
+		favoriteProcedures: [{nick: 'fake-procedure', title: 'Fake Procedure', type: 'Type', subtype: 'Subtype'}],
 		planning: []
 	},
 
 	getters: {
 		rights: state => {
 			var rights = []
-			for (var permission of state.permissions) {
-				for (var key in permission)
-					rights.push(key)
+			for (var key in state.permissions) {
+				rights.push(key)
 			}
 			return rights
 		},
@@ -29,12 +28,7 @@ export const user = {
 			return getters.rights.includes(right)
 		},
 		permissionsReadable: state => {
-			var permissionsReadable = []
-			for (var permission of state.permissions) {
-				for (var key in permission)
-					permissionsReadable.push(permission[key])
-			}
-			return permissionsReadable
+			return Object.values(state.permissions)
 		}
 	},
 
@@ -51,13 +45,24 @@ export const user = {
 		},
 		SET_PLANNING(state, payload) {
 			state.planning = payload
+		},
+		ADD_FAV_SUCCESS(state, procedure) {
+			state.favoriteProcedures.push(procedure)
+		},
+		REMOVE_FAV_SUCCESS(state, procedure) {
+			const index = state.favoriteProcedures.indexOf(procedure)
+			if (index > -1) {
+				state.favoriteProcedures.splice(index, 1)
+			}
+		},
+		PASSWORD_CHANGED() {
 		}
 	},
 
 	actions: {
 		getUserState({ commit }) {
 			var payload = undefined
-			ProfileService.getUserProfile()
+			return ProfileService.getUserProfile()
 			.then(response => {
 				payload = response.data
 				commit('SET_USER', payload)
@@ -76,6 +81,33 @@ export const user = {
 			.catch(error => {
 				console.log(error)
 				throw 'loading error (user planning)'
+			})
+		},
+		toggleToFavorites({ commit, state }, procedure) {
+			const index = state.favoriteProcedures.indexOf(procedure)
+			var favoriteProcedures = [...state.favoriteProcedures]
+			if (index === -1) {
+				favoriteProcedures.push(procedure)
+				ProfileService.updateFavorites(favoriteProcedures)
+				.then(() => {
+					commit('ADD_FAV_SUCCESS', procedure)
+					console.log('procedure ' + procedure.title + ' added to user favorites')
+				})
+			}
+			else {
+				favoriteProcedures.splice(index, 1)
+				ProfileService.updateFavorites(favoriteProcedures)
+				.then(() => {
+					commit('REMOVE_FAV_SUCCESS', procedure)
+					console.log('procedure ' + procedure.title + ' removed from user favorites')
+				})
+			}
+		},
+		changePassword({ commit }, {oldPassword, newPassword}) {
+			ProfileService.updatePassword(oldPassword, newPassword)
+			.then(() => {
+				commit('PASSWORD_CHANGED')
+				console.log('user password changed')
 			})
 		}
 	}
