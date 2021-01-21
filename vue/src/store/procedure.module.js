@@ -28,13 +28,7 @@ export const procedure = {
 		proceduresByType: state => {
 			var procedureSections = []
 			for (var type of state.procedureTypes) {
-				var colorVariant = 'primary'
-				// var typeColorPair = this.typesColorVariants.find(typeColorPair => typeColorPair.type === type.primaryType)
-				// if (typeColorPair) {
-				// 	colorVariant = typeColorPair.colorVariant
-				// }
-
-				var section = {type: type.primaryType, colorVariant: colorVariant, subsections: []}
+				var section = {type: type.primaryType, subsections: []}
 				var proceduresOfType = state.procedures.filter(procedure => procedure.type === type.primaryType)
 				for (var subtype of type.subtypes) {
 					var proceduresOfSubtype = proceduresOfType.filter(procedure => procedure.subtype === subtype)
@@ -52,7 +46,7 @@ export const procedure = {
 				const optionGroup = { label: section.type, options: [] }
 				for (var subsection of section.subsections) {
 					for (var procedure of subsection.procedures) {
-						optionGroup.options.push({value: procedure, text: '[' + subsection.type + '] ' + procedure.title})
+						optionGroup.options.push({value: procedure.title, text: '[' + subsection.type + '] ' + procedure.title})
 					}
 				}
 				options.push(optionGroup)
@@ -98,8 +92,8 @@ export const procedure = {
 				// ProcedureService.getProcedureTypes()
 				// .then(response => {
 					// payload.procedureTypes = response.data
-					commit('SET_STATE', payload)
-					console.log('procedures loaded')
+				commit('SET_STATE', payload)
+				console.log('procedures loaded')
 				// })
 			})
 			.catch(error => {

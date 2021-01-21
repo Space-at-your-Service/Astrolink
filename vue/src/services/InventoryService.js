@@ -3,19 +3,19 @@
 import http from './http.common';
 
 class InventoryService {
-	getItems() {
-		return http.get('/inventory/');
+	async getItems() {
+		return http.get('/inventory/')
 	}
 	
-	postItem(item) {
+	async postItem(item) {
 		return http.post('/inventory/', item)
 	}
 
-	updateItem(item) {
+	async updateItem(item) {
 		return http.put('/inventory/'+item.id.toString(), item)
 	}
 
-	deleteItem(item) {
+	async deleteItem(item) {
 		return http.delete('/inventory/'+item.id.toString())
 	}
 }
