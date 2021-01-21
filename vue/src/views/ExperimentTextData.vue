@@ -1,6 +1,6 @@
 <template>
 	<div class="main-container">
-		<h3 class="section-title"><em>{{ experiment.title }}</em> data</h3>
+		<h3 class="section-title">Data for <span style="color: darkred">{{ experiment.title }}</span></h3>
 		<b-form-checkbox
 			ref = "enabledInput"
 			v-model="enabled"
@@ -22,7 +22,7 @@
 				</b-col>
 
 				<b-col>
-					<b-button @click="saveContent" class="float-right" size="lg" variant="info" style="border-radius: 15px" :disabled="saving">
+					<b-button @click="okSave" class="float-right" size="lg" variant="info" style="border-radius: 15px" :disabled="saving">
 						<span v-if="!saving"><b-icon icon="cloud-upload" ></b-icon> Save</span>
 						<b-spinner type="grow" label="Spinning" v-if="saving"></b-spinner>
 					</b-button>
@@ -55,9 +55,10 @@
 
 <script>
 	import { VueEditor } from 'vue2-editor';
-	import Textsheet from '../models/textsheet'
+	import Textsheet from '../models/Textsheet'
 	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
+	import Dialog from '../utils/Dialog.js'
 
 	export default {
 		components: {
@@ -104,6 +105,7 @@
 					} catch(error) {
 						console.error(error)
 						alert('An error occured during loading.')
+						this.$router.push('/404')
 					}
 				}	
 			},
@@ -128,38 +130,44 @@
 			// 	})
 			// },
 
-			saveContent() {
-				this.saving = true
-				if (this.isNew) {
-					this.sheet.lastUser = this.username
-					this.sheet.LastModifiedDate = DateFormat.dateString()
-					try {
-						if (this.sheet.title === "") {
-								throw 'Please choose a title for your texsheet.'
-							}
-						for (var textsheet of this.experiment.data.textsheets) {
-							if (textsheet.title === this.sheet.title) {
-								throw 'A textsheet with this title already exists. Please choose another title.'
-							}
-						}
+			okSave() {
+				try {
+					this.checkSheet(this.sheet)
+					this.saveSheet(this.sheet)
+				}
+				catch(err) {
+					Dialog.okMessage(this, err)
+				}
+			},
 
-						this.experiment.data.textsheets.push(this.sheet)
-						setTimeout(() => { this.saving = false }, 500)
-						console.log('saved')
-						console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).data.textsheets)
-						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+this.sheet.title)
-						this.isNew = false
-					} 
-					catch(error) {
-						alert(error)
+			checkSheet(sheet) {
+				if (sheet.title === "") {
+					throw 'Please choose a title for your texsheet.'
 					}
-					finally {
-						this.saving = false
+				for (var textsheet of this.experiment.data.textsheets) {
+					if (textsheet.title === sheet.title) {
+						throw 'A textsheet with this title already exists. Please choose another title.'
 					}
 				}
+			},
+
+			saveSheet(sheet) {
+				this.saving = true
+				const experiment = {...this.experiment}
+				sheet.lastUser = this.username
+				sheet.LastModifiedDate = DateFormat.dateString()
+				if (this.isNew) {
+					experiment.data.textsheets.push(sheet)
+					this.$store.dispatch('experiment/updateExperiment', experiment)
+					.then(() => {
+						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+sheet.title)
+						this.isNew = false
+						this.saving = false
+					})
+				}
 				else {
-					this.sheet.lastUser = this.username
-					this.sheet.LastModifiedDate = DateFormat.dateString()
+					sheet.lastUser = this.username
+					sheet.LastModifiedDate = DateFormat.dateString()
 					setTimeout(() => {this.saving = false}, 500)
 					console.log('saved')
 					console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).data.textsheets)

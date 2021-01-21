@@ -1,7 +1,7 @@
 <template>
     <div class="App">
 
-      <Nav v-if="this.$store.state.auth.status.loggedIn"/>
+      <Nav v-if="status.loggedIn"/>
 
       <router-view />
 
@@ -16,19 +16,31 @@
         </template>
       </b-overlay>
 
+      <b-alert
+      :variant="alert.variant"
+      dismissible
+      fade
+      :show="alert.show"
+      @dismissed="this.$store.dispatch('hideAlert')"
+      >
+      {{ alert.msg }}
+      </b-alert>
+
     </div>
 </template>
 
 <script>
   import { mapState } from 'vuex'
   import Nav from './components/Nav.vue';
+
   export default {
     name: 'app',
     components: {
       Nav
     },
     computed: {
-      ...mapState(['overlay'])
+      ...mapState(['overlay', 'alert']),
+      ...mapState('auth', ['status'])
     }
   }
 </script>

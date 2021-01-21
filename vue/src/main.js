@@ -12,7 +12,7 @@ import VeeValidate from 'vee-validate';
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
-Vue.use(VeeValidate)
+Vue.use(VeeValidate, { fieldsBagName: 'vvFields' })
 
 Vue.config.productionTip = false
 

@@ -1,6 +1,7 @@
 export default class Task {
-	constructor(start='', end='', title='',
+	constructor(holder='', start='', end='', title='',
 	content='', category='', split='', procedures=[], background=false, allDay=false) {
+		this.holder = holder
 		this.start = start
 		this.end = end
 		this.title = title

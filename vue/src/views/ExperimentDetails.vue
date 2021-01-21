@@ -11,7 +11,7 @@
 			</template>
 			
 			<b-card-text class="p-3">
-				<img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+				<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="250px"/><br/>
 
 				<b-container class="mb-2 py-3">
 					<h4>Abstract</h4>
@@ -24,7 +24,7 @@
 				</b-container>
 
 				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
-					<h4>Procedure(s)</h4>
+					<h4>Protocol</h4>
 					<ul>
 						<li v-for="procedure in experiment.procedures"  :key="procedure.nick">
 							<router-link  to="/">
@@ -81,6 +81,7 @@
 
 <script>
 	import expBadge from '../components/expBadge.vue'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: {
@@ -93,6 +94,7 @@
 			}
 		},
 		computed: {
+			...mapState('experiment', ['defaultExperimentLogo']),
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
 			}
