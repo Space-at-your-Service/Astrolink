@@ -355,13 +355,7 @@
 			deleteItem(item) {
 				this.$store.dispatch('inventory/deleteItem', item)
 				.then(() => {
-					this.$nextTick(() => {
-						this.$bvToast.toast('Your item has been successfully deleted.', {
-							title: `Item deleted`,
-							variant: 'success',
-							solid: true
-						})
-					})
+					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully deleted.')
 				})
 				.catch(error => {
 					console.log(error)

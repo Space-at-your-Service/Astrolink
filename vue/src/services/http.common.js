@@ -10,7 +10,6 @@ const http = axios.create({
 // add the user's authentication token to all requests if logged in
 http.interceptors.request.use(
 	config => {
-		console.log('hey')
 		const token = sessionStorage.getItem('token');
 		if (token) {
 			config.headers.common['Authorization'] = 'Token ' + token;
