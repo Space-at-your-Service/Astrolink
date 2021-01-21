@@ -55,7 +55,7 @@
 
 <script>
 	import { VueEditor } from 'vue2-editor';
-	import Textsheet from '../models/textsheet'
+	import Textsheet from '../models/Textsheet'
 	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
 	import Dialog from '../utils/Dialog.js'

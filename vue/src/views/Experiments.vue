@@ -2,7 +2,7 @@
 	<div class="main-container">
 		<h3 class="section-title">Experiments</h3>
 
-		<b-container class="p-0 m-0 text-left">	
+		<b-container fluid class="p-0">	
 			<b-row>
 				<b-col cols="sm-4">	
 					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" size="lg">
