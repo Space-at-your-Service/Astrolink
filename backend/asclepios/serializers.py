@@ -48,7 +48,7 @@ class AsclepianSerializer(serializers.ModelSerializer):
         favorites = instance.favoriteProcedures.order_by("types__masterType", "types__subtype", "title")
 
         rep["permissions"] = {f"{p.content_type.app_label}.{p.codename}" : p.name for p in permissions}
-        rep["favoriteProcedures"] = ProcedureSerializer(favorites, many = True).data
+        rep["favoriteProcedures"] = list(favorites.values_list("title", flat = True))
 
         return rep
 
