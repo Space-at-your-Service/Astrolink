@@ -10,7 +10,7 @@
 		</template>
 
 		<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
-			<img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/>
+			<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="150px"/><br/>
 
 			{{ experiment.abstract }}
 		</b-card-text>
@@ -19,12 +19,15 @@
 
 <script>
 	import expBadge from '../components/expBadge.vue'
+	import { mapState } from 'vuex'
 
 	export default {
 		name: 'ExperimentCard',
 		props: ['experiment'],
 		components: { expBadge },
-
+		computed: {
+			...mapState('experiment', ['defaultExperimentLogo'])
+		},
 		methods: {
 			gotoExperimentDetails(experimentTitle) {
 				this.$router.push({ path: 'experiments/'+experimentTitle })
