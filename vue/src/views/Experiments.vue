@@ -1,7 +1,6 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Experiments</h3>
-		<!-- {{experiments}} -->
 
 		<b-container class="p-0 m-0 text-left">	
 			<b-row>
@@ -53,14 +52,14 @@
 					<b-form-checkbox-group
 					id="createdOperatorsInput"
 					v-model="createdExperiment.operators"
-					:options="astronautsCrew"
+					:options="astronautsNames"
 					inline
 					>
 					</b-form-checkbox-group>
 				</b-form-group>
 
 				<b-form-group
-				label="Procedures"
+				label="Protocol"
 				label-for="createdTypeInput"
 				>
 					<b-form-select v-model="createdExperiment.procedures" :options="proceduresAsOptions" multiple :select-size="10">
@@ -120,7 +119,10 @@ export default {
 	computed: {
 		...mapState(['astronautsCrew']),
 		...mapState('experiment', ['experiments']),
-		...mapGetters('procedure', ['proceduresAsOptions'])
+		...mapGetters('procedure', ['proceduresAsOptions']),
+		astronautsNames() {
+			return this.$store.getters['listUsernames']('astronauts')
+		},
 	},
 
 	methods: {
