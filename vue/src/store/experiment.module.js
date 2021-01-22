@@ -1,21 +1,12 @@
 // Store module that contains experiments, including datasheets
 
 import ExperimentService from '../services/ExperimentService.js'
-import Experiment from '../models/Experiment.js'
 
 export const experiment = {
 	namespaced: true,
 
 	state: {
-		experiments: [
-			new Experiment('Experiment 1', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 2', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 3', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 4', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 5', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 6', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-			new Experiment('Experiment 7', 'This is a short abstract less than 140 words.', 'This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. This description can be as long as you want, up to 1000 characters. '),
-		],
+		experiments: [],
 		statusOptions: ['planned', 'ongoing', 'complete', 'aborted'],
 		defaultExperimentLogo: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Apollo_program_insignia.png"
 	},
@@ -72,7 +63,7 @@ export const experiment = {
 		},
 
 		async createExperiment({ commit }, experiment) {
-			ExperimentService.postExperiment(experiment)
+			return ExperimentService.postExperiment(experiment)
 			.then(() => { 
 				commit('CREATE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' created') 
@@ -80,7 +71,7 @@ export const experiment = {
 		},
 
 		async deleteExperiment({ commit }, experiment) {
-			ExperimentService.deleteExperiment(experiment)
+			return ExperimentService.deleteExperiment(experiment)
 			.then(() => { 
 				commit('DELETE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' deleted') 
@@ -88,7 +79,7 @@ export const experiment = {
 		},
 
 		async updateExperiment({ commit }, experiment) {
-			ExperimentService.updateExperiment(experiment)
+			return ExperimentService.updateExperiment(experiment)
 			.then(() => { 
 				commit('UPDATE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' updated') 

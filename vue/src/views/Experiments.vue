@@ -4,7 +4,7 @@
 
 		<b-container fluid class="p-0">	
 			<b-row>
-				<b-col cols="sm-4">	
+				<b-col cols="sm-4" v-if="isAllowed('activities.add_experiment')">	
 					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" size="lg">
 						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New experiment
@@ -117,6 +117,7 @@ import { mapState } from 'vuex';
 import { mapGetters } from 'vuex';
 import Experiment from '../models/Experiment.js'
 import ExperimentCard from '../components/ExperimentCard.vue';
+import Notif from '../utils/Notif.js'
 
 export default {
 	components: {
@@ -133,6 +134,7 @@ export default {
 		...mapState(['astronautsCrew']),
 		...mapState('experiment', ['experiments']),
 		...mapGetters('procedure', ['proceduresAsOptions']),
+		...mapGetters('user', ['isAllowed']),
 		astronautsNames() {
 			return this.$store.getters['listUsernames']('astronauts')
 		},
@@ -155,6 +157,12 @@ export default {
 		createExperiment(experiment) {
 			this.isUploading = true;
 			this.$store.dispatch('experiment/createExperiment', experiment)
+			.then(() => {
+				Notif.toastSuccess(this, 'Experiment created', 'The experiment has been successfully created.')
+			})
+			.catch(() => {
+				Notif.toastError(this, 'Could not create', 'Could not create the experiment.')
+			})
 			.then(() => {
 				this.isUploading = false
 			})

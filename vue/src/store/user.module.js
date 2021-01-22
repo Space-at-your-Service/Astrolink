@@ -105,7 +105,7 @@ export const user = {
 			var favoriteProcedures = [...state.favoriteProcedures]
 			if (index === -1) {
 				favoriteProcedures.push(procedureTitle)
-				ProfileService.updateFavorites(favoriteProcedures)
+				return ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
 					commit('ADD_FAV_SUCCESS', procedureTitle)
 					console.log('procedure ' + procedureTitle + ' added to user favorites')
@@ -113,7 +113,7 @@ export const user = {
 			}
 			else {
 				favoriteProcedures.splice(index, 1)
-				ProfileService.updateFavorites(favoriteProcedures)
+				return ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
 					commit('REMOVE_FAV_SUCCESS', procedureTitle)
 					console.log('procedure ' + procedureTitle + ' removed from user favorites')
@@ -122,7 +122,7 @@ export const user = {
 		},
 
 		async changePassword({ commit }, {oldPassword, newPassword}) {
-			ProfileService.updatePassword(oldPassword, newPassword)
+			return ProfileService.updatePassword(oldPassword, newPassword)
 			.then(() => {
 				commit('PASSWORD_CHANGED')
 				console.log('user password changed')
