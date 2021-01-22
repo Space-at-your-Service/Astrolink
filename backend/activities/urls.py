@@ -1,3 +1,10 @@
+"""
+activities > urls
+Handles the routing 
+of the app's views
+"""
+
+
 from django.urls import path
 
 from .views import ProceduresView, ProcedureView, ProcedureTypesView, PlanningView, FlightplanView, ExperimentsView
@@ -15,4 +22,5 @@ urlpatterns = [
 
     path("experiments/", ExperimentsView.as_view()),
     path("experiments/<str:pk>", ExperimentsView().as_view()),
+
 ]
