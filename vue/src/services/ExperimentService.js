@@ -8,16 +8,15 @@ class ExperimentService {
 	}
 	
 	async postExperiment(experiment) {
-		return http.post('/activities/experiments/', experiment)
+		return http.post('/activities/experiments/', experiment);
 	}
 
 	async updateExperiment(experiment) {
-		console.log(experiment)
-		return http.put('/activities/experiments/' + experiment.title, experiment)
+		return http.put('/activities/experiments/' + experiment.title, experiment);
 	}
 
 	async deleteExperiment(experiment) {
-		return http.delete('/activities/experiments/' + experiment.title)
+		return http.delete('/activities/experiments/' + experiment.title);
 	}
 }
 

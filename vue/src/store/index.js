@@ -51,7 +51,9 @@ const store = new Vuex.Store({
 			return state.staff.astronauts
 		},
 		listUsernames: state => unit => {
-			return state.staff[unit].map(member => { return member.username })
+			const unitStaff = state.staff[unit]
+			if (unitStaff.length === 0) return []
+			return unitStaff.map(member => { return member.username })
 		}
 	},
 
@@ -120,7 +122,7 @@ const store = new Vuex.Store({
 				dispatch('hideOverlay')
 				if (errorFlag) {
 					const errorMessage = 'Failed to load the following resources: ' + errors.join(', ')
-					dispatch('displayAlert', {msg: errorMessage, variant: 'danger'}) 
+					dispatch('displayAlert', { msg: errorMessage, variant: 'danger' }) 
 				}
 			})
 			// https://cdn.onlinewebfonts.com/svg/img_505377.png
@@ -134,7 +136,6 @@ const store = new Vuex.Store({
 				await ProfileService.getUnit(unit)
 				.then(response => {
 					staff[key] = response.data
-					console.log(key)
 				})
 			}
 			commit('SET_STAFF', staff)

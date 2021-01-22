@@ -126,6 +126,9 @@
       },
       changePassword(payload) {
         this.$store.dispatch('user/changePassword', payload)
+      },
+      resetPasswordModal() {
+        
       }
     },
 

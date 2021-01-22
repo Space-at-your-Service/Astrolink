@@ -1,9 +1,8 @@
 <template>
 	<div class="main-container">
-		<h3 class="section-title">Flightplan</h3>	
-		{{ flightplan }}
+		<h3 class="section-title">Flightplan</h3>
 
-		<Planning />
+		<Planning :tasks="flightplan"/>
 	</div>
 </template>
 
@@ -20,8 +19,9 @@
 			}
 		},
 		computed: {
-			...mapState('flightplan', ['flightplan'])
+			...mapState('flightplan', ['flightplan']),
 		}
 	};
 </script>
+
 
