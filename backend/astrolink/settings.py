@@ -26,11 +26,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["astrolink.earth"]
 
-#CORS_ORIGIN_ALLOW_ALL = False
-#CORS_ORIGIN_WHITELIST = (
-#    "http://localhost:8080", #Allow requests from Vue
-#)
-
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
@@ -46,7 +41,6 @@ INSTALLED_APPS = [
     #Imported apps
     "rest_framework", #Enable Django Rest Framework (DRF)
     "rest_framework.authtoken", #Enable DRF's Token generation
-    "corsheaders", #Enable front-end REST requests
 
     #Custom apps
     "asclepios",
@@ -64,9 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    #Imported middleware
-    "corsheaders.middleware.CorsMiddleware",
 
 ]
 
