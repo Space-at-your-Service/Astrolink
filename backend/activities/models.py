@@ -65,7 +65,7 @@ class Procedure(models.Model):
     types = models.ForeignKey(ProcedureSubtype, on_delete = models.PROTECT, related_name = "procedures", null = True)
     abstract = models.CharField(max_length = 140)
 
-    favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures")
+    favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures", blank = True)
 
     pdfFile = models.FileField(max_length = 100, upload_to = procedure_path)
 
