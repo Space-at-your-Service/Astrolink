@@ -11,6 +11,7 @@
 			</template>
 			
 			<b-card-text class="p-3">
+
 				<b-row>
 					<b-col>
 						<strong>Supervised by</strong><br/>
@@ -26,6 +27,7 @@
 						<div v-for="operator in experiment.operators" :key="operator">{{ operator }}</div>
 					</b-col>
 				</b-row>
+
 
 				<b-container class="mb-2 py-3">
 					<h4>Abstract</h4>

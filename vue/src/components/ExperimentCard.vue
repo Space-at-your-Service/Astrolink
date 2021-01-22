@@ -10,7 +10,9 @@
 		</template>
 
 		<b-card-text class="p-3 hover-pointer" @click="gotoExperimentDetails(experiment.title)">
+
 			<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="150px"/><br/>
+
 
 			{{ experiment.abstract }}
 		</b-card-text>
