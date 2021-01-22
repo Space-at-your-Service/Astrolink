@@ -34,7 +34,7 @@ class ProceduresView(APIView):
         all_procedures = Procedure.objects.all()
         ser = ProcedureSerializer(all_procedures, context = {"request" : request}, many = True)
 
-        return JsonResponse(ser.data, safe = False)
+        return JsonResponse(ser.data, safe = False) #TODO: test with true
 
     def post(self, request):
 
