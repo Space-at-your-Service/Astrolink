@@ -1,3 +1,10 @@
+"""
+asclepios > views
+Defines all of the app's
+REST Endpoints
+"""
+
+
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.parsers import JSONParser
@@ -7,9 +14,14 @@ from .models import Item
 from .serializers import ItemSerializer
 
 
-class GlobalView(APIView):
+class ItemsView(APIView):
 
     def get(self, request):
+
+        """ GET inventory/
+
+            Retrieves all the items inventoried
+        """
 
         request.user.check_perms(("inventory.view_item",))
 
@@ -19,6 +31,11 @@ class GlobalView(APIView):
         return JsonResponse(ser.data, safe = False)
 
     def post(self, request):
+
+        """ POST inventory/
+
+            Adds a new item to the inventory
+        """
 
         request.user.check_perms(("inventory.add_item",))
 
@@ -33,9 +50,14 @@ class GlobalView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
-class SelectiveView(APIView):
+class ItemView(APIView):
 
     def put(self, request, pk):
+
+        """ PUT inventory/<item_id>
+
+            Edits a given item
+        """
 
         request.user.check_perms(("inventory.change_item",))
 
@@ -52,6 +74,11 @@ class SelectiveView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
+
+        """ DELETE inventory/<item_id>
+
+            Deletes a given item
+        """
 
         request.user.check_perms(("inventory.delete_item",))
 

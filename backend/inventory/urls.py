@@ -1,11 +1,18 @@
+"""
+inventory > urls
+Handles the routing 
+of the app's views
+"""
+
+
 from django.urls import path
 
-from . import views
+from .views import ItemsView, ItemView
 
 
 urlpatterns = [
 
-    path("", views.GlobalView.as_view()),
-    path("<slug:pk>", views.SelectiveView.as_view()),
+    path("", ItemsView.as_view()),
+    path("<slug:pk>", ItemView.as_view()),
 
 ]

@@ -13,6 +13,12 @@ from django.contrib.auth import get_user_model
 
 class ProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
 
+    """ ProcedureSubtype Serializer
+
+        Returns a simplified representation of a
+        subtype just in terms of its name
+    """
+
     class Meta:
 
         model = ProcedureSubtype
@@ -24,6 +30,8 @@ class ProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProcedureTypeSerializer(serializers.HyperlinkedModelSerializer):
+
+    """ ProcedureType Serializer """
 
     subtypes = ProcedureSubtypeSerializer(many = True)
 
