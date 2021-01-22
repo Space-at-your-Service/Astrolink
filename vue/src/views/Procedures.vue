@@ -85,30 +85,30 @@
 
 					<b-container v-for="procedure in favoriteProceduresObjects" :key="procedure.title" class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
 						<b-row no-gutters>
-							<b-col :id="procedure.title+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.title)">
+							<b-col :id="procedure.title+'_file_fav'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.title)">
 								[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
 							</b-col>
-							<tooltip :target="procedure.title+'_file'" msg="Open the procedure PDF in a new tab"/>
+							<tooltip :target="procedure.title+'_file_fav'" msg="Open the procedure PDF in a new tab"/>
 
-							<b-col cols=1 :id="procedure.title+'_info'" class="hover-bg-grey text-center">
+							<b-col cols=1 :id="procedure.title+'_info_fav'" class="hover-bg-grey text-center">
 								<b-icon icon="info-circle"></b-icon>
 							</b-col>
-							<b-tooltip :target="procedure.title+'_info'" triggers="hover" placement="topleft">
+							<b-tooltip :target="procedure.title+'_info_fav'" triggers="hover" placement="topleft">
 								<strong class="text-primary">{{ procedure.title }}</strong>
 								<br/>
 								{{ procedure.abstract }}
 							</b-tooltip>
 
-							<b-col cols=1 :id="procedure.title+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
+							<b-col cols=1 :id="procedure.title+'_fav_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
 								<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure.title)"></b-icon>
 								<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure.title)"></b-icon>
 							</b-col>
-							<tooltip :target="procedure.title+'_fav'" msg="Add/remove from favorites"/>
+							<tooltip :target="procedure.title+'_fav_fav'" msg="Add/remove from favorites"/>
 
-							<b-col cols=1 v-b-modal.editModal :id="procedure.title+'_edit'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
+							<b-col cols=1 v-b-modal.editModal :id="procedure.title+'_edit_fav'" class="hover-bg-grey hover-pointer text-center" @click="editModal(procedure)" v-if="isAllowed('activities.change_procedure')">
 								<b-icon icon="pencil-square" variant="info"></b-icon>
 							</b-col>
-							<tooltip :target="procedure.title+'_edit'" msg="Edit the procedure"/>
+							<tooltip :target="procedure.title+'_edit_fav'" msg="Edit the procedure"/>
 						</b-row>
 
 					</b-container>
