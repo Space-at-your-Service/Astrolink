@@ -14,14 +14,14 @@
 
 		<b-container class="p-0">
 			<b-row>
-				<b-col cols=10>
-					<form>
+				<b-col>
+					<b-form @submit.prevent.stop>
 						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
 						</b-form-input>
-					</form>
+					</b-form>
 				</b-col>
 
-				<b-col>
+				<b-col cols="3" v-if="enabled">
 					<b-button @click="okSave" class="float-right" size="lg" variant="info" style="border-radius: 15px" :disabled="saving">
 						<span v-if="!saving"><b-icon icon="cloud-upload" ></b-icon> Save</span>
 						<b-spinner type="grow" label="Spinning" v-if="saving"></b-spinner>
@@ -132,7 +132,7 @@
 
 			okSave() {
 				try {
-					this.checkSheet(this.sheet)
+					if (this.isNew) this.checkSheet(this.sheet)
 					this.saveSheet(this.sheet)
 				}
 				catch(err) {
