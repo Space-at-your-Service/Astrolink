@@ -8,7 +8,7 @@ class ProfileService {
   }
 
   async updatePassword(oldPassword, newPassword) {
-    return http.put('/asclepios/profile/', {oldPassword: oldPassword, newPassword: newPassword});
+    return http.put('/asclepios/password/', {oldPassword: oldPassword, newPassword: newPassword});
   }
 
   async updateFavorites(favoriteProceduresTitles) {
