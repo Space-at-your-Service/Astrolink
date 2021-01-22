@@ -22,6 +22,7 @@
             <img :src="overlay.img" alt="[Loading]" width="50px" v-if="overlay.img"/><br/><br/>
             <strong style="font-size: large;" v-if="overlay.msg">{{ overlay.msg }}</strong><br/><br/>
             <b-spinner variant="primary" type="grow" label="Spinning" v-if="!overlay.hideSpinner"></b-spinner>
+            <!-- <rocketSpinner/> -->
           </div>
         </template>
       </b-overlay>
@@ -32,11 +33,13 @@
 <script>
   import { mapState } from 'vuex'
   import Nav from './components/Nav.vue';
+  // import rocketSpinner from './components/rocketSpinner.vue'
 
   export default {
     name: 'app',
     components: {
-      Nav
+      Nav,
+      // rocketSpinner
     },
     computed: {
       ...mapState(['overlay', 'alert']),
