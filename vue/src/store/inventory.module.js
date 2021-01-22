@@ -59,21 +59,21 @@ export const inventory = {
 			})
 		},
 		createItem({ commit }, item) {
-			InventoryService.postItem(item)
+			return InventoryService.postItem(item)
 			.then(() => { 
 				commit('CREATE_SUCCESS', item)
 				console.log('item ' + item.name + ' created') 
 			})
 		},
 		deleteItem({ commit }, item) {
-			InventoryService.deleteItem(item)
+			return InventoryService.deleteItem(item)
 			.then(() => { 
 				commit('DELETE_SUCCESS', item)
 				console.log('item ' + item.name + ' deleted') 
 			})
 		},
 		updateItem({ commit }, item) {
-			InventoryService.updateItem(item)
+			return InventoryService.updateItem(item)
 			.then(() => { 
 				commit('UPDATE_SUCCESS', item)
 				console.log('item ' + item.name + ' updated') 

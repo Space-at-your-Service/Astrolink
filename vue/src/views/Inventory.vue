@@ -332,17 +332,17 @@
 				if (!this.checkItem(this.editedItem)) return
 				else this.confirmEdit(this.editedItem)
 			},
-			confirmCreate(item) {
+			async confirmCreate(item) {
 				this.$store.dispatch('inventory/createItem', item)
 				.then(() => {
 					this.$bvModal.hide('createModal')
-					Notif.toastSuccess(this, 'Test', 'test text')
+					Notif.toastSuccess(this, 'Item created', 'The item has been successfully created.')
 				})
 				.catch(error => {
 					console.log(error)
 				})	
 			},
-			confirmEdit(item) {
+			async confirmEdit(item) {
 				this.$store.dispatch('inventory/updateItem', item)
 				.then(() => {
 					this.$bvModal.hide('editModal')
@@ -352,7 +352,7 @@
 					console.log(e)
 				})	
 			},
-			deleteItem(item) {
+			async deleteItem(item) {
 				this.$store.dispatch('inventory/deleteItem', item)
 				.then(() => {
 					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully deleted.')
@@ -361,16 +361,11 @@
 					console.log(error)
 				})	
 			},
-			reloadInventory() {
+			async reloadInventory() {
 				this.isBusy = true
 				this.getInventoryState()
-				.catch(error => {
-					console.log(error)
-					this.$bvToast.toast('An error has occured during loading. Please retry.', {
-						title: `Loading error`,
-						variant: 'danger',
-						solid: true
-					})
+				.catch(() => {
+					Notif.toastError(this, 'Loading error', 'An error has occured during loading.')
 				})	
 				.then(() => {
 					this.refreshTable()
