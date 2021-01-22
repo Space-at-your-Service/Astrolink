@@ -8,7 +8,12 @@
 
 			<b-collapse id="nav-collapse" is-nav>
 				<b-navbar-nav>
-					<b-nav-text>Alpha Version 1.0</b-nav-text>							
+					<b-nav-text>
+						Alpha Version 0.8
+						<a href="https://github.com/Space-at-your-Service/Astrolink/issues" target="__blank" class="ml-2">
+							<b-icon icon="bug-fill"></b-icon>
+						</a>
+					</b-nav-text>							
 				</b-navbar-nav>
 
 				<b-navbar-nav class="ml-auto">
