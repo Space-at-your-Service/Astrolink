@@ -87,6 +87,30 @@ export const experiment = {
 				commit('UPDATE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' updated') 
 			})
+		},
+		createTextsheet({ commit }, { experiment, textsheet }) {
+			const updatedExperiment = {...experiment}
+			const updatedData = {...updatedExperiment.data}
+			const updatedTextsheets = [...updatedExperiment.data.textsheets]
+			updatedTextsheets.push({...textsheet})
+			updatedData.textsheets = updatedTextsheets
+			updatedExperiment.data = updatedData
+			return ExperimentService.updateExperiment(updatedExperiment)
+			.then(() => { 
+				commit('UPDATE_SUCCESS', updatedExperiment)
+				console.log('textsheet ' + textsheet.title + ' created for ' + updatedExperiment.title + ' updated') 
+			})
+		},
+		updateTextsheet({ commit }, { experiment, textsheet }) {
+			const updatedExperiment = {...experiment}
+			const index = updatedExperiment.data.textsheets.findIndex(sheet => sheet.title === textsheet.title)
+			updatedExperiment.data.textsheets.splice(index, 1)
+			updatedExperiment.data.textsheets.push({...textsheet})
+			return ExperimentService.updateExperiment(experiment)
+			.then(() => { 
+				commit('UPDATE_SUCCESS', updatedExperiment)
+				console.log('textsheet ' + textsheet.title + ' updated for ' + updatedExperiment.title + ' updated') 
+			})
 		}
 	}
 }

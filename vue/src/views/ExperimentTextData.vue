@@ -1,6 +1,9 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Data for <span style="color: darkred">{{ experiment.title }}</span></h3>
+	{{ sheet }}<br/>
+	{{ experiment }}
+
 		<b-form-checkbox
 			ref = "enabledInput"
 			v-model="enabled"
@@ -59,6 +62,7 @@
 	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
 	import Dialog from '../utils/Dialog.js'
+	import Notif from '../utils/Notif.js'
 
 	export default {
 		components: {
@@ -99,36 +103,16 @@
 				else {
 					try{
 						console.log(this.experiment)
-						this.sheet = this.experiment.data.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)
+						this.sheet = {...this.experiment.data.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)}
 						this.isNew = false
 						this.enabled = false
-					} catch(error) {
-						console.error(error)
-						alert('An error occured during loading.')
+					} catch(err) {
+						console.error(err)
+						this.$store.dispatch('displayAlert', { msg: 'Could not find the datasheet you are looking for.', variant: 'warning' })
 						this.$router.push('/404')
 					}
 				}	
 			},
-
-			// handleImageAdded(file, Editor, cursorLocation, resetUploader) {
-			// 	var formData = new FormData();
-			// 	formData.append('image', file)
-
-			// 	axios({
-			// 		url: 'https://fakeapi.yoursite.com/images',
-			// 		method: 'POST',
-			// 		data: formData
-			// 	})
-			// 	.then(result => {
-			// 		console.log(result.data)
-			// 		let url = result.data.url // Get url from response
-			// 		Editor.insertEmbed(cursorLocation, 'image', url);
-			// 		resetUploader();
-			// 	})
-			// 	.catch(err => {
-			// 		console.log(err);
-			// 	})
-			// },
 
 			okSave() {
 				try {
@@ -151,26 +135,27 @@
 				}
 			},
 
-			saveSheet(sheet) {
+			async saveSheet(sheet) {
 				this.saving = true
-				const experiment = {...this.experiment}
 				sheet.lastUser = this.username
 				sheet.LastModifiedDate = DateFormat.dateString()
 				if (this.isNew) {
-					experiment.data.textsheets.push(sheet)
-					this.$store.dispatch('experiment/updateExperiment', experiment)
+					this.$store.dispatch('experiment/createTextsheet', { experiment: this.experiment, textsheet: sheet })
 					.then(() => {
+						Notif.toastSuccess(this, 'New textsheet saved', 'The new textsheet has been successfully saved.')
 						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+sheet.title)
 						this.isNew = false
-						this.saving = false
 					})
+					.catch(() => { Notif.toastError(this, 'Could not save', 'The new textsheet could not be saved.') })
+					.then(() => this.saving = false)
 				}
 				else {
-					sheet.lastUser = this.username
-					sheet.LastModifiedDate = DateFormat.dateString()
-					setTimeout(() => {this.saving = false}, 500)
-					console.log('saved')
-					console.log(this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle).data.textsheets)
+					this.$store.dispatch('experiment/updateTextsheet', { experiment: this.experiment, textsheet: sheet })
+					.then(() => {
+						Notif.toastSuccess(this, 'Modifications saved', 'Your modifications have been successfully saved.')
+					})
+					.catch(() => { Notif.toastError(this, 'Could not save', 'Your modifications could not be saved.') })
+					.then(() => this.saving = false)
 				}	
 			},
 			toggleToolbar(checked) {
