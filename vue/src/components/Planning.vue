@@ -281,7 +281,7 @@
 	import VueCal from 'vue-cal'
 	import 'vue-cal/dist/vuecal.css'
 	import 'vue-cal/dist/drag-and-drop.js'
-	import Task from '../models/task'
+	import Task from '../models/Task'
 
 	export default {
 		components: { VueCal },

@@ -2,7 +2,7 @@
 		<b-navbar toggleable="lg" class="bg-white" style="box-shadow: 0px 3px 15px darkred">
 			<b-navbar-brand href="https://astrolink.earth/" target="_self">
 
-				<img src="@/assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/>
+				<!-- <img src="@/assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/> -->
 
 			</b-navbar-brand>
 

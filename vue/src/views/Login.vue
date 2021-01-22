@@ -1,6 +1,6 @@
 <template>
     <div class="main-container" style="align-items: center">
-        <img src="@/assets/img/Astrolink_logo_white.png" alt="a" style="width: 300px; margin: auto; margin-bottom: 100px; margin-top: 50px;"/>
+        <!-- <img src="@/assets/img/Astrolink_logo_white.png" alt="a" style="width: 300px; margin: auto; margin-bottom: 100px; margin-top: 50px;"/> -->
         <div class="inner-block" v-if="!this.$store.state.auth.status.loggedIn" style="position: relative;">
             <h3 class="text-center">Login</h3>
 
