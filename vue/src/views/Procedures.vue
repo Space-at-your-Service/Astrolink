@@ -230,6 +230,7 @@
 <script>
 	import ProcedureService from '../services/ProcedureService'
 	import Dialog from '../utils/Dialog.js'
+	import Notif from '../utils/Notif.js'
 	import Procedure from '../models/Procedure.js'
 	import tooltip from '../components/tooltip.vue'
 	import { mapState } from 'vuex'
@@ -266,14 +267,17 @@
 			editModal(procedure) {
 				this.editedProcedure = procedure
 			},
+
 			toggleToFavorites(procedure) {
 				console.log(procedure.title)
 				this.$store.dispatch('user/toggleToFavorites', procedure)
 			},
+
 			refreshSubtypesOptions() {
 				const type = this.procedureTypes.find(type => type.primaryType === this.createdProcedure.type)
 				if (type) this.subtypesOptions = type.subtypes
 			},
+
 			openPDF(title) {
 				ProcedureService.getFile(title)
 				.then(response => {
@@ -284,13 +288,19 @@
 				.then(fileURL => {
 					window.open(fileURL, title)
 				})
+				.catch(() => {
+					Notif.toastError(this, 'Could not open PDF', 'Could not open the PDF you are looking for.')
+				})
 			},
+
 			checkTitle(procedure) {
 				return (procedure.title.length > 0)
 			},
+
 			checkAbstract(procedure) {
 				return (procedure.title.length >= 0)
 			},
+
 			checkProcedure(procedure) {
 				if (procedure.abstract === '') {
 					if (this.checkTitle(procedure)) {
@@ -301,40 +311,65 @@
 				}
 				else return (this.checkTitle(procedure) && this.checkAbstract(procedure))
 			},
+
 			okCreate() {
 				if (!this.checkProcedure(this.createdProcedure)) return
 				else this.createProcedure(this.createdProcedure)
 			},
+
 			createProcedure(procedure) {
 				this.isUploading = true;
 				this.$store.dispatch('procedure/createProcedure', procedure)
 				.then(() => {
-					this.isUploading = false
+					Notif.toastSuccess(this, 'Procedure created', 'The procedure has been successfully created.')
 				})
-			},
-			okEdit() {
-				if (!this.checkProcedure(this.editedProcedure)) return
-				else this.editProcedure(this.editedProcedure)
-			},
-			editProcedure(procedure){
-				this.isUploading = true;
-				this.$store.dispatch('procedure/updateProcedure', procedure)
+				.catch(() => {
+					Notif.toastError(this, 'Could not create', 'Could not create the procedure.')
+				})
 				.then(() => {
 					this.isUploading = false
 				})
 			},
+
+			okEdit() {
+				if (!this.checkProcedure(this.editedProcedure)) return
+				else this.editProcedure(this.editedProcedure)
+			},
+
+			editProcedure(procedure){
+				this.isUploading = true;
+				this.$store.dispatch('procedure/updateProcedure', procedure)
+				.then(() => {
+					Notif.toastSuccess(this, 'Procedure updated', 'The procedure has been successfully updated.')
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Could not update', 'Could not update the procedure.')
+				})
+				.then(() => {
+					this.isUploading = false
+				})	
+			},
+
 			deleteProcedure(procedure) {
 				Dialog.confirmDelete(this, 'Do you really want to remove this procedure from the database ?')
 				.then((value)=> {
 					if (value) {
 						this.$store.dispatch('procedure/deleteProcedure', procedure)
-						this.$bvModal.hide('editModal')
+						.then(() => {
+							this.$bvModal.hide('editModal')
+							Notif.toastSuccess(this, 'Procedure deleted', 'The procedure has been successfully deleted.')
+						})
+						.catch(() => {
+							Notif.toastError(this, 'Could not delete', 'Could not delete the procedure.')
+						})	
 					}
 				})
 			},
+
 			okCreateSubtype() {
 				return
 			},
+
 			reloadProcedures() {
 				this.$store.dispatch('getProcedureState')
 			}

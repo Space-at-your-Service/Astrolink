@@ -1,5 +1,7 @@
 <template>
 	<div>
+		<!-- <strong>Astronauts:</strong> {{astronautsCrew}}<br/> -->
+		<!-- <strong>Tasks:</strong> {{tasks}} -->
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col>
@@ -10,6 +12,17 @@
 						size="lg"
 						>
 						Enable event resizing
+					</b-form-checkbox>
+				</b-col>
+
+				<b-col>
+					<b-form-checkbox
+						id="eventDragInput"
+						v-model="editionOptions.drag"
+						switch
+						size="lg"
+						>
+						Enable event drag and drop placement
 					</b-form-checkbox>
 				</b-col>
 			</b-row>
@@ -32,7 +45,7 @@
 				today-button
 				:watchRealTime="true"
 				:timeCellHeight="30"
-				:events="events"
+				:events="tasks"
 				:on-event-click="onEventClick"
 				:on-event-create="onEventCreate"
 				@event-drag-create="showCreateModal = true"
@@ -153,7 +166,7 @@
 
 							<b-form-checkbox-group
 							v-model="selectedEventSplits"
-							:options="astronautsList"
+							:options="astronautsNames"
 							inline
 							>
 							</b-form-checkbox-group>
@@ -165,6 +178,14 @@
 						label-cols="auto">
 							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1" disabled>
 								{{ selectedEventEveryday ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<b-form-group
+						label="Background task (can be overriden):"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1" disabled>
+								{{ selectedEvent.background ? 'Yes' : 'No' }}
 							</b-form-checkbox>
 						</b-form-group>
 
@@ -269,9 +290,6 @@
 				</b-container>
 			</b-modal>
 		</div>
-		{{events}}
-		<br/>
-		{{selectedEventSplits}}
 	</div>
 </template>
 
@@ -285,6 +303,8 @@
 
 	export default {
 		components: { VueCal },
+		props: ['tasks'],
+
 		data() {
 			return {
 				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
@@ -293,8 +313,6 @@
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,
-				events: [],
-				astronautsList: ['Julien', 'William', 'Lisbeth', 'Pierre', 'Paul', 'Jacqueline'],
 				selectedEventSplits: [],
 				selectedEventEveryday: false,
 				showMoreOptions: false,
@@ -303,20 +321,25 @@
 				linkedProcedures: []
 			}
 		},
+
 		computed: {
 			...mapState(['missionStartDate']),
+			...mapGetters(['astronautsCrew']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
 			...mapGetters(['currentAccountRights', 'missionDayNumber']),
-			minDate () {
+			astronautsNames() {
+				return this.$store.getters['listUsernames']('astronauts')
+			},
+			minDate() {
 				return new Date().subtractDays(10)
 			},
-			maxDate () {
+			maxDate() {
 				return new Date().addDays(10)
 			},
 			splitDays() { 
 				var splitDays = []
-				for (var astronaut of this.astronautsList){
-					var splitDay = { id: astronaut, class: astronaut, label: astronaut, hide: false }
+				for (var astronaut of this.astronautsCrew){
+					var splitDay = { id: astronaut.username, class: astronaut.username, label: astronaut.username, hide: false }
 					splitDays.push(splitDay)
 				}
 				return splitDays
@@ -346,9 +369,10 @@
 				}
 			}
 		},
+
 		methods: {
 			toggleAllSplits(checked) {
-				this.selectedEventSplits = checked ? this.astronautsList.slice() : []
+				this.selectedEventSplits = checked ? this.astronautsCrew.slice() : []
 			},
 			getMissionDayNumber(currentDate) {
 				return Math.floor((currentDate.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
@@ -381,8 +405,8 @@
 			okCreate() {
 				var selectedEvent = this.selectedEvent
 				if (selectedEvent.class === "Background") selectedEvent.background = true
-				var newTask = new Task(selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.split, selectedEvent.background, selectedEvent.allDay)
-				this.events.push(newTask)
+				var newTask = new Task('', selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.split, this.linkedProcedures, selectedEvent.background, selectedEvent.allDay)
+				this.tasks.push(newTask)
 				this.showCreateModal = false
 			},
 			cancelCreate() {

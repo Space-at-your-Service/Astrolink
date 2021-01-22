@@ -12,6 +12,14 @@ from django.db import models
 from django.contrib.auth import get_user_model
 
 
+def procedure_path(instance, filename):
+
+    return join("procedures", 
+                instance.types.masterType.type, 
+                instance.types.subtype,
+                filename)
+
+
 class ProcedureType(models.Model):
 
     """ Represents a procedure's type, or main category
@@ -59,10 +67,7 @@ class Procedure(models.Model):
 
     favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures")
 
-    pdfFile = models.FileField(max_length = 100, upload_to = lambda instance, filename : join("procedures", 
-                                                                                                instance.types.masterType.type, 
-                                                                                                instance.types.subtype,
-                                                                                                filename))
+    pdfFile = models.FileField(max_length = 100, upload_to = procedure_path)
 
     def __str__(self):
 

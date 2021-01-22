@@ -54,8 +54,6 @@ export const procedure = {
 			return options
 		},
 		findProcedureByTitle: state => title => {
-			console.log(state.procedures)
-			console.log('titl' +title)
 			return state.procedures.find(procedure => procedure.title === title)
 		}
 	},
@@ -65,20 +63,22 @@ export const procedure = {
 			state.procedures = payload.procedures
 			// state.procedureTypes = payload.procedureTypes
 		},
+
 		CREATE_SUCCESS(state, payload) {
 			const procedure = {...payload}
 			state.procedures.push(procedure)
 		},
+
 		DELETE_SUCCESS(state, payload) {
 			const index = state.procedures.indexOf(payload)
 			if (index > -1) {
 				state.procedures.splice(index, 1)
 			}
 		},
+
 		UPDATE_SUCCESS(state, payload) {
 			const title = payload.title
 			const index = state.procedures.findIndex(procedure => { return procedure.title === title })
-			console.log(state.procedures[index])
 			if (index > -1) {
 				state.procedures.splice(index, 1)
 
@@ -89,7 +89,7 @@ export const procedure = {
 	},
 
 	actions: {
-		getProcedureState({ commit }) {
+		async getProcedureState({ commit }) {
 			var payload = {procedures: [], procedureTypes: []}
 			return ProcedureService.getProcedures()
 			.then(response => {
@@ -101,12 +101,13 @@ export const procedure = {
 				console.log('procedures loaded')
 				// })
 			})
-			.catch(error => {
-				console.log(error)
+			.catch(err => {
+				console.log(err)
 				throw 'loading error (procedures)'
 			})
 		},
-		createProcedure({ commit, state }, procedure) {
+
+		async createProcedure({ commit, state }, procedure) {
 			const formData = new FormData()
 			formData.append('title', procedure.title)
 			formData.append('type', procedure.type)
@@ -114,21 +115,23 @@ export const procedure = {
 			formData.append('abstract', procedure.abstract)
 			formData.append('pdfFile', procedure.file)
 
-			ProcedureService.postProcedure(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
+			return ProcedureService.postProcedure(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
 			.then(() => { 
 				commit('CREATE_SUCCESS', procedure)
 				state.uploadProgress = 0
 				console.log('procedure ' + procedure.title + ' created') 
 			})
 		},
-		deleteProcedure({ commit }, procedure) {
-			ProcedureService.deleteProcedure(procedure)
+
+		async deleteProcedure({ commit }, procedure) {
+			return ProcedureService.deleteProcedure(procedure)
 			.then(() => { 
 				commit('DELETE_SUCCESS', procedure)
 				console.log('procedure ' + procedure.title + ' deleted') 
 			})
 		},
-		updateProcedure({ commit, state }, procedure) {
+
+		async updateProcedure({ commit, state }, procedure) {
 			const formData = new FormData()
 			formData.append('title', procedure.title)
 			formData.append('type', procedure.type)
@@ -136,12 +139,13 @@ export const procedure = {
 			formData.append('abstract', procedure.abstract)
 			formData.append('pdfFile', procedure.file)
 
-			ProcedureService.updateProcedure(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
+			return ProcedureService.updateProcedure(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
 			.then(() => { 
 				commit('UPDATE_SUCCESS', procedure)
 				state.uploadProgress = 0
 				console.log('procedure ' + procedure.title + ' updated') 
 			})
-		}
+		},
+
 	}
 }

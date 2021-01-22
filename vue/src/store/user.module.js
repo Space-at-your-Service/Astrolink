@@ -24,12 +24,15 @@ export const user = {
 			}
 			return rights
 		},
+
 		isAllowed: (state, getters) => right => {
 			return getters.rights.includes(right)
 		},
+
 		permissionsReadable: state => {
 			return Object.values(state.permissions)
 		},
+
 		favoriteProceduresObjects: (state, getters, rootState, rootGetters) => {
 			var favoriteProceduresObjects = []
 			for (var procedureTitle of state.favoriteProcedures) {
@@ -51,24 +54,28 @@ export const user = {
 			state.favoriteProcedures = user.favoriteProcedures
 			
 		},
+
 		SET_PLANNING(state, payload) {
 			state.planning = payload
 		},
+
 		ADD_FAV_SUCCESS(state, procedureTitle) {
 			state.favoriteProcedures.push(procedureTitle)
 		},
+
 		REMOVE_FAV_SUCCESS(state, procedureTitle) {
 			const index = state.favoriteProcedures.indexOf(procedureTitle)
 			if (index > -1) {
 				state.favoriteProcedures.splice(index, 1)
 			}
 		},
+
 		PASSWORD_CHANGED() {
 		}
 	},
 
 	actions: {
-		getUserState({ commit }) {
+		async getUserState({ commit }) {
 			var payload = undefined
 			return ProfileService.getUserProfile()
 			.then(response => {
@@ -76,8 +83,8 @@ export const user = {
 				commit('SET_USER', payload)
 				console.log('user loaded')
 			})
-			.catch(error => {
-				console.log(error)
+			.catch(err => {
+				console.log(err)
 				throw 'loading error (user)'
 			})
 			.then(() => { return TaskService.getUserPlanning() })
@@ -86,12 +93,13 @@ export const user = {
 				commit('SET_PLANNING', payload)
 				console.log('user planning loaded')
 			})
-			.catch(error => {
-				console.log(error)
+			.catch(err => {
+				console.log(err)
 				throw 'loading error (user planning)'
 			})
 		},
-		toggleToFavorites({ commit, state }, procedure) {
+
+		async toggleToFavorites({ commit, state }, procedure) {
 			const procedureTitle = procedure.title
 			const index = state.favoriteProcedures.indexOf(procedureTitle)
 			var favoriteProcedures = [...state.favoriteProcedures]
@@ -112,7 +120,8 @@ export const user = {
 				})
 			}
 		},
-		changePassword({ commit }, {oldPassword, newPassword}) {
+
+		async changePassword({ commit }, {oldPassword, newPassword}) {
 			ProfileService.updatePassword(oldPassword, newPassword)
 			.then(() => {
 				commit('PASSWORD_CHANGED')
