@@ -40,10 +40,8 @@
 				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
 					<h4>Protocol</h4>
 					<ul>
-						<li v-for="procedure in experiment.procedures"  :key="procedure.nick">
-							<router-link  to="/">
-								{{ procedure.title }}
-							</router-link>
+						<li v-for="procedure in experiment.procedures" :key="procedure.nick" @click="openPDF(procedure.title)" class="hover-pointer hover-bg-grey">
+							[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
 						</li>
 					</ul>
 				</b-container>
@@ -95,6 +93,7 @@
 
 <script>
 	import expBadge from '../components/expBadge.vue'
+	import ProcedureService from '../services/ProcedureService.js'
 	import { mapState } from 'vuex'
 
 	export default {
@@ -111,6 +110,19 @@
 			...mapState('experiment', ['defaultExperimentLogo']),
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
+			}
+		},
+		methods: {
+			openPDF(title) {
+				ProcedureService.getFile(title)
+				.then(response => {
+					const file = new Blob([response.data], {type: "application/pdf"})
+					const fileURL = URL.createObjectURL(file)
+					return fileURL
+				})
+				.then(fileURL => {
+					window.open(fileURL, title)
+				})
 			}
 		}
 	}
