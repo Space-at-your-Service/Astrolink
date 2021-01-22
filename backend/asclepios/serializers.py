@@ -1,12 +1,24 @@
+"""
+asclepios > serializers
+Defines various ways of
+serializing the app's models
+"""
+
+
 from django.contrib.auth.models import Group, Permission
 
 from rest_framework import serializers
 
 from .models import Asclepian
-from activities.serializers import ProcedureSerializer
 
 
 class GroupSerializer(serializers.ModelSerializer):
+
+    """ Group/Role Serializer 
+
+        Returns a simplified representation of a Group/Role
+        just in terms of its name and unit
+    """
 
     class Meta:
 
@@ -21,6 +33,12 @@ class GroupSerializer(serializers.ModelSerializer):
 
 class SimpleAsclepianSerializer(serializers.ModelSerializer):
 
+    """ Asclepian Serializer 
+
+        Returns a simplified representation of a User
+        just in terms of its username, first name, last name, and groups/roles
+    """
+
     groups = GroupSerializer(many = True)
 
     class Meta:
@@ -30,6 +48,13 @@ class SimpleAsclepianSerializer(serializers.ModelSerializer):
 
 
 class AsclepianSerializer(serializers.ModelSerializer):
+
+    """ Asclepian Serializer 
+
+        Returns a full representation of a User
+        with favorites procedures just as a title list
+        and permissions as "codename : verbose name"
+    """
 
     groups = GroupSerializer(many = True)
 
@@ -54,6 +79,11 @@ class AsclepianSerializer(serializers.ModelSerializer):
 
 
 class AsclepianFavoritesSerializer(serializers.ModelSerializer):
+
+    """ Asclepian Serializer 
+
+        Simply updates the favoriteProcedures field
+    """
 
     class Meta:
 

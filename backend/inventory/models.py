@@ -1,10 +1,16 @@
+"""
+inventory > models
+Defines all the different
+models of the app
+"""
+
+
 from django.db import models
 
 
 class Item(models.Model):
 
-    """ Item
-    Represents an item inventoried in the base
+    """ Represents an item inventoried in the base
 
     @field identifier (str) : A unique ID for the item (e.g KI33)
     @field name (str) : A human-readable name 

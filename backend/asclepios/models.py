@@ -1,5 +1,12 @@
-from django.db import models
+"""
+asclepios > models
+Defines all the different
+models of the app
+"""
+
+
 from django.contrib.auth.models import AbstractUser, Group
+from django.db import models
 
 from rest_framework.exceptions import PermissionDenied
 
@@ -36,7 +43,11 @@ ASCLEPIOS_ROLES = [("MCC", (("FLIGHT", "Flight Director"),
 
 class Asclepian(AbstractUser):
 
+    """ Represents a User in the Asclepios mission (extends the Django User model) """
+
     def check_perms(self, perms):
+
+        """ Convenience method for checking a set of permissions and raising a rest framework error """
 
         if not self.has_perms(perms):
 
@@ -44,6 +55,11 @@ class Asclepian(AbstractUser):
 
 
 class Unit(models.Model):
+
+    """ Represents a group of roles, a.k.a a Unit 
+
+        @param name (str) : The name of the Unit
+    """
 
     name = models.CharField(max_length = 20, choices = ASCLEPIOS_UNITS)
 
@@ -54,6 +70,8 @@ class Unit(models.Model):
 Group.add_to_class("unit", models.ForeignKey(Unit, on_delete = models.PROTECT, default = 1, related_name = "groups"))
 
 class Role(Group):
+
+    """ Represents a Role (proxies the Django Group model) """
 
     class Meta:
 

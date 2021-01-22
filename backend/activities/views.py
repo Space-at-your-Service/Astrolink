@@ -7,12 +7,12 @@ REST Endpoints
 
 from wsgiref.util import FileWrapper
 
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse, HttpResponse
+
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
-
-from django.contrib.auth import get_user_model
-from django.http import JsonResponse, HttpResponse
 
 from .models import Procedure, ProcedureType, Task, Experiment
 from .serializers import ProcedureSerializer, ProcedureTypeSerializer, TaskSerializer, ExperimentSerializer, TextsheetSerializer
