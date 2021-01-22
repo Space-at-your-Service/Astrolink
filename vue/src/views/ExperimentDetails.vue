@@ -11,7 +11,21 @@
 			</template>
 			
 			<b-card-text class="p-3">
-				<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="250px"/><br/>
+				<b-row>
+					<b-col>
+						<strong>Supervised by</strong><br/>
+						{{ experiment.supervisor }} 
+					</b-col>
+
+					<b-col>
+						<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="250px"/><br/>
+					</b-col>
+					
+					<b-col>
+						<strong>Carried by</strong><br/>
+						<div v-for="operator in experiment.operators" :key="operator">{{ operator }}</div>
+					</b-col>
+				</b-row>
 
 				<b-container class="mb-2 py-3">
 					<h4>Abstract</h4>
