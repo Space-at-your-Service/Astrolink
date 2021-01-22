@@ -2,7 +2,7 @@
 	<div class="main-container">
 		<h3 class="section-title">Procedures</h3>
 
-		<b-container class="m-0 p-0">
+		<b-container fluid class="p-0">
 			<b-row class="no-gutters">
 				<b-col>
 					<b-button v-b-modal.createModal size="lg" variant="info" v-if="isAllowed('activities.add_procedure')" class="my-3" style="border-radius: 15px">
@@ -47,8 +47,8 @@
 									</b-tooltip>
 
 									<b-col cols=1 :id="procedure.title+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
-										<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure)"></b-icon>
-										<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure)"></b-icon>
+										<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure.title)"></b-icon>
+										<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure.title)"></b-icon>
 									</b-col>
 									<tooltip :target="procedure.title+'_fav'" msg="Add/remove from favorites"/>
 
@@ -66,9 +66,9 @@
 
 						</b-tab>
 
-						<template #tabs-end>
+						<!-- <template #tabs-end>
 							<b-nav-item v-b-modal.createSubtypeModal disabled><span class="text-dark" style="font-weight: bold; font-variant-caps: small-caps;"><b-icon icon="folder-plus" class="mr-2"></b-icon>new subtype</span></b-nav-item>
-						</template>
+						</template> -->
 					</b-tabs>
 
 					<div v-if="section.subsections.length === 0" class="text-center text-dark">
@@ -83,7 +83,7 @@
 						<strong  style="font-variant-caps: small-caps;">Favorites</strong>
 					</template>
 
-					<b-container v-for="procedure in favoriteProcedures" :key="procedure.title" class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
+					<b-container v-for="procedure in favoriteProceduresObjects" :key="procedure.title" class="text-dark py-2 px-0" style="font-size: 1.3em; border-top-style: solid; border-width: 1px; border-color: #007BFF">
 						<b-row no-gutters>
 							<b-col :id="procedure.title+'_file'" class="hover-bg-grey hover-pointer" @click="openPDF(procedure.title)">
 								[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
@@ -100,8 +100,8 @@
 							</b-tooltip>
 
 							<b-col cols=1 :id="procedure.title+'_fav'" class=" hover-bg-grey hover-pointer text-center"  @click="toggleToFavorites(procedure)">
-								<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure)"></b-icon>
-								<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure)"></b-icon>
+								<b-icon icon="star" v-if="!favoriteProcedures.includes(procedure.title)"></b-icon>
+								<b-icon icon="star-fill" variant="warning" v-if="favoriteProcedures.includes(procedure.title)"></b-icon>
 							</b-col>
 							<tooltip :target="procedure.title+'_fav'" msg="Add/remove from favorites"/>
 
@@ -147,7 +147,7 @@
 				>
 					<b-form-select v-model="createdProcedure.type" :options="procedurePrimaryTypes" @change="refreshSubtypesOptions">
 						<template #first>
-							<b-form-select-option value="" disabled>Please select a procedure type</b-form-select-option>
+							<b-form-select-option value="" disabled>Select a procedure type</b-form-select-option>
 						</template>
 					</b-form-select>
 				</b-form-group>
@@ -158,7 +158,7 @@
 				>
 					<b-form-select v-model="createdProcedure.subtype" :options="subtypesOptions" :disabled="!createdProcedure.type">
 						<template #first>
-							<b-form-select-option value="" disabled>Please select a procedure subtype</b-form-select-option>
+							<b-form-select-option value="" disabled>Select a procedure subtype</b-form-select-option>
 						</template>
 					</b-form-select>
 				</b-form-group>
@@ -230,7 +230,7 @@
 <script>
 	import ProcedureService from '../services/ProcedureService'
 	import Dialog from '../utils/Dialog.js'
-	import Procedure from '../models/procedure.js'
+	import Procedure from '../models/Procedure.js'
 	import tooltip from '../components/tooltip.vue'
 	import { mapState } from 'vuex'
 	import { mapGetters } from 'vuex'
@@ -259,7 +259,7 @@
 			...mapState('procedure', ['procedures', 'procedureTypes', 'uploadProgress']),
 			...mapState('user', ['favoriteProcedures']),
 			...mapGetters('procedure', {procedureSections: 'proceduresByType', procedurePrimaryTypes: 'procedurePrimaryTypes'}),
-			...mapGetters('user', ['isAllowed'])
+			...mapGetters('user', ['isAllowed', 'favoriteProceduresObjects'])
 		},
 
 		methods: {
@@ -267,6 +267,7 @@
 				this.editedProcedure = procedure
 			},
 			toggleToFavorites(procedure) {
+				console.log(procedure.title)
 				this.$store.dispatch('user/toggleToFavorites', procedure)
 			},
 			refreshSubtypesOptions() {

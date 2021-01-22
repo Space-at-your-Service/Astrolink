@@ -39,7 +39,7 @@ export const procedure = {
 			}
 		return procedureSections
 		},
-		proceduresAsOptions : (state, getters) =>  {
+		proceduresAsOptions: (state, getters) =>  {
 			var options = []
 			const proceduresByType = getters.proceduresByType
 			for (var section of proceduresByType) {
@@ -52,6 +52,11 @@ export const procedure = {
 				options.push(optionGroup)
 			}
 			return options
+		},
+		findProcedureByTitle: state => title => {
+			console.log(state.procedures)
+			console.log('titl' +title)
+			return state.procedures.find(procedure => procedure.title === title)
 		}
 	},
 
