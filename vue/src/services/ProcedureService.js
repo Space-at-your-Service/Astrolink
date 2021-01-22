@@ -3,11 +3,8 @@
 import http from './http.common';
 
 class ProcedureService {
-	// getProcedureTypes() {
-	// 	return http.get('/')
-	// }
 
-	getProcedures() {
+	async getProcedures() {
 		return http.get('/activities/procedures/')
 	}
 
@@ -15,15 +12,11 @@ class ProcedureService {
 	// 	return http.get('/activities/procedureTypes/')
 	// }
 
-	getFile(title) {
+	async getFile(title) {
 		return http.get('/activities/procedures/'+title, {responseType: 'blob'})
 	}
 
-	// getFavorites() {
-	// 	return http.get('/activities/procedures/favorites'+username)
-	// }
-
-	postProcedure(formData, onUploadProgress) {
+	async postProcedure(formData, onUploadProgress) {
 		return http.post('/activities/procedures/', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
@@ -32,7 +25,7 @@ class ProcedureService {
 		})
 	}
 
-	updateProcedure(formData, onUploadProgress) {
+	async updateProcedure(formData, onUploadProgress) {
 		return http.put('/activities/procedures/'+formData.get('title'), formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
@@ -41,7 +34,7 @@ class ProcedureService {
 		})
 	}
 
-	deleteProcedure(procedure) {
+	async deleteProcedure(procedure) {
 		return http.delete('/activities/procedures/'+procedure.title)
 	}
 }

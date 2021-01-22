@@ -19,14 +19,14 @@ const ifNotLogged = (to, from, next) => {
 
 const routes = [
   {
-    path: '*',
+    path: '/404',
     name: '404notfound',
     component: () => import('../views/404NotFound.vue')
   },
-  // {
-  //   path: '*',
-  //   redirect: '/404'
-  // },
+  {
+    path: '*',
+    redirect: '/404'
+  },
   {
     path: '/login',
     alias: '/',

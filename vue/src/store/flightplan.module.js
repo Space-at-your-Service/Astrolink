@@ -23,7 +23,7 @@ export const flightplan = {
 			var payload = undefined
 			return TaskService.getFlightplan()
 			.then(response => {
-				payload = response
+				payload = response.data
 				commit('SET_STATE', payload)
 				console.log('flightplan loaded')
 			})

@@ -3,20 +3,20 @@
 import http from './http.common';
 
 class ProfileService {
-  getUserProfile() {
+  async getUserProfile() {
     return http.get('/asclepios/profile/');
   }
 
-  updatePassword(oldPassword, newPassword) {
+  async updatePassword(oldPassword, newPassword) {
     return http.put('/asclepios/profile/', {oldPassword: oldPassword, newPassword: newPassword});
   }
 
-  updateFavorites(favoriteProcedures) {
-    return http.put('/asclepios/profile/', { favoriteProcedures: favoriteProcedures });
+  async updateFavorites(favoriteProceduresTitles) {
+    return http.put('/asclepios/profile/', { favoriteProcedures: favoriteProceduresTitles });
   }
 
-  getGroupUsers(group) {
-   return http.get('/asclepios/group/'+group);
+  async getUnit(unit) {
+   return http.get('/asclepios/unit/'+unit);
   }
 }
 

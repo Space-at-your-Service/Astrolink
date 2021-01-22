@@ -1,15 +1,19 @@
 // Data API for flightplan and user planning
 
-import http from "./http.common";
+import http from './http.common';
 
 class TaskService {
-  getFlightplan() {
-    return http.get('/activities/flightplan/');
-  }
+	async getFlightplan() {
+		return http.get('/activities/flightplan/');
+	}
 
-  getUserPlanning() {
-    return http.get('/activities/planning/');
-  }
+	async getUserPlanning() {
+		return http.get('/activities/planning/');
+	}
+
+	async postTask() {
+		return http.post('/activities/planning/');
+	}
 }
 
 export default new TaskService();

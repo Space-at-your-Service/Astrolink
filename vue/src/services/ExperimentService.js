@@ -3,20 +3,20 @@
 import http from './http.common';
 
 class ExperimentService {
-	getExperiments() {
+	async getExperiments() {
 		return http.get('/activities/experiments/');
 	}
 	
-	postExperiments(experiment) {
-		return http.post('/activities/experiments/', experiment)
+	async postExperiment(experiment) {
+		return http.post('/activities/experiments/', experiment);
 	}
 
-	updateExperiments(experiment) {
-		return http.put('/activities/experiments/' + experiment.nick, experiment)
+	async updateExperiment(experiment) {
+		return http.put('/activities/experiments/' + experiment.title, experiment);
 	}
 
-	deleteExperiments(experiment) {
-		return http.delete('/activities/experiments/' + experiment.nick)
+	async deleteExperiment(experiment) {
+		return http.delete('/activities/experiments/' + experiment.title);
 	}
 }
 

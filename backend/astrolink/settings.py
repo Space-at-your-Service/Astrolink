@@ -26,6 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["astrolink.earth"]
 
+#Security settings
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
@@ -43,9 +44,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken", #Enable DRF's Token generation
 
     #Custom apps
+    "activities",
     "asclepios",
     "inventory",
-    "activities",
 
 ]
 
@@ -83,7 +84,6 @@ WSGI_APPLICATION = 'astrolink.wsgi.application'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -99,8 +99,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#This replaces the default Django User model (class) by a custom class of ours
 AUTH_USER_MODEL = "asclepios.Asclepian"
 
+#This setting ensures that by default any REST request not authenticated via token is rejected
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES" : ("rest_framework.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
@@ -109,7 +111,6 @@ REST_FRAMEWORK = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "Europe/Zurich"
 USE_I18N = True
@@ -119,6 +120,5 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-
 STATIC_URL = "/static/"
 MEDIA_ROOT = BASE_DIR / "files"

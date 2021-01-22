@@ -1,10 +1,23 @@
+"""
+activities > serializers
+Defines various ways of
+serializing the app's models
+"""
+
+
 from rest_framework import serializers
 
 from .models import Procedure, ProcedureType, ProcedureSubtype, Task, Experiment, Textsheet
 from django.contrib.auth import get_user_model
 
 
-class SimpleProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
+class ProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
+
+    """ ProcedureSubtype Serializer
+
+        Returns a simplified representation of a
+        subtype just in terms of its name
+    """
 
     class Meta:
 
@@ -16,21 +29,11 @@ class SimpleProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
         return instance.subtype
 
 
-class SimpleProcedureTypeSerializer(serializers.HyperlinkedModelSerializer):
-
-    class Meta:
-
-        model = ProcedureType
-        fields = ("type",)
-
-    def to_representation(self, instance):
-
-        return instance.type
-
-
 class ProcedureTypeSerializer(serializers.HyperlinkedModelSerializer):
 
-    subtypes = SimpleProcedureSubtypeSerializer(many = True)
+    """ ProcedureType Serializer """
+
+    subtypes = ProcedureSubtypeSerializer(many = True)
 
     class Meta:
 
@@ -38,17 +41,13 @@ class ProcedureTypeSerializer(serializers.HyperlinkedModelSerializer):
         fields = ("type", "subtypes",)
 
 
-class ProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
-
-    masterType = SimpleProcedureTypeSerializer()
-
-    class Meta:
-
-        model = ProcedureSubtype
-        fields = ("subtype", "masterType")
-
-
 class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
+
+    """ Procedure Serializer
+
+        Wraps the subtype & type
+        received into a ProcedureSubtype object before creation
+    """
 
     type = serializers.CharField(max_length = 50)
     subtype = serializers.CharField(max_length = 50)
@@ -83,6 +82,12 @@ class ProcedureSerializer(serializers.HyperlinkedModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
 
+    """ Task Serializer
+
+        Fetches the holder user object and the 
+        procedures objects before creation
+    """
+
     holder = serializers.CharField(max_length = 150)
 
     class Meta:
@@ -111,6 +116,12 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class TextsheetSerializer(serializers.ModelSerializer):
 
+    """ Textsheet Serializer
+
+        Gets the creator and lastUser
+        user objects before creation
+    """
+
     creator = serializers.CharField(max_length = 150)
     lastUser = serializers.CharField(max_length = 150)
 
@@ -130,8 +141,18 @@ class TextsheetSerializer(serializers.ModelSerializer):
 
 class ExperimentSerializer(serializers.ModelSerializer):
 
+    """ Experiment Serializer 
+
+        Gets operators and supervisor user objects before creation 
+        while allowing for empty supervisor
+        Gets procedures objects before creation as well
+
+        Constructs a clean representation containing only operators & supervisors usernames
+
+    """
+
     operators = serializers.ListField(child = serializers.CharField(max_length = 150))
-    supervisor = serializers.CharField(max_length = 150, required = False)
+    supervisor = serializers.CharField(max_length = 150, required = False, allow_blank = True)
 
     class Meta:
 
@@ -144,7 +165,11 @@ class ExperimentSerializer(serializers.ModelSerializer):
         operators = get_user_model().objects.filter(username__in = validated_data.pop("operators"))
 
         if "supervisor" in validated_data:
-            validated_data["supervisor"] = get_user_model().objects.get(username = validated_data.pop("supervisor"))
+
+            user = validated_data.pop("supervisor")
+
+            if user:
+                validated_data["supervisor"] = get_user_model().objects.get(username = user)
 
         procedures = Procedure.objects.filter(title__in = validated_data.pop("procedures"))
 
@@ -166,6 +191,6 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "procedures" : ProcedureSerializer(instance.procedures.all(), many = True).data}
 
         rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
-                       "spreadsheets" : list(instance.spreadsheets.all())}
+                       "spreadsheets" : list(instance.spreadsheets.all())} #TODO: Change once spreadsheets are implemented
 
         return rep

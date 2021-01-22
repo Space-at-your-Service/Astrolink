@@ -1,14 +1,21 @@
 <template>
-		<b-navbar toggleable="lg" class="bg-white">
+		<b-navbar toggleable="lg" class="bg-white" style="box-shadow: 0px 3px 15px darkred">
 			<b-navbar-brand href="https://astrolink.earth/" target="_self">
-				<!-- <img src="../assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/> -->
+
+				<img src="@/assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/>
+
 			</b-navbar-brand>
 
 			<b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
 			<b-collapse id="nav-collapse" is-nav>
 				<b-navbar-nav>
-					<b-nav-text>Alpha Version 0.2</b-nav-text>							
+					<b-nav-text>
+						Alpha Version 0.8
+						<a href="https://github.com/Space-at-your-Service/Astrolink/issues" target="__blank" class="ml-2">
+							<b-icon icon="bug-fill"></b-icon>
+						</a>
+					</b-nav-text>							
 				</b-navbar-nav>
 
 				<b-navbar-nav class="ml-auto">
@@ -67,8 +74,8 @@
 	.nav-item {
 		font-variant-caps: all-small-caps;
 		font-weight: bold;
-		font-size: 1.5em;
-		margin: 0px 5px 0px 5px;
+		font-size: 1.7em;
+		margin: 0px 8px 0px 8px;
 	}
 
 	.active {

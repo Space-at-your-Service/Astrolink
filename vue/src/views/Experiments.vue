@@ -1,9 +1,8 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Experiments</h3>
-		<!-- {{experiments}} -->
 
-		<b-container class="p-0 m-0 text-left">	
+		<b-container fluid class="p-0">	
 			<b-row>
 				<b-col cols="sm-4">	
 					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" size="lg">
@@ -36,7 +35,20 @@
 				label="Supervisor name"
 				label-for="createdSupervisorInput"
 				>
-					<b-form-input id="createdSupervisorInput" v-model="createdExperiment.supervisor"></b-form-input>
+					<template #label>
+						Supervisor name
+						<b-icon id="help" icon="question-circle" variant="dark" class="ml-2"></b-icon>
+						<b-tooltip target="help" triggers="hover" placement="top">
+							<strong style="font-size: larger;">Can't find the right supervisor ?</strong><br/>
+							Maybe he/she doesn't have an account yet. In this case, you can always create the experiment and add the supervisor later.
+						</b-tooltip>
+					</template>
+
+					<b-form-select id="createdSupervisorInput" v-model="createdExperiment.supervisor" :options="scientistsNames">
+						<template #first>
+							<b-form-select-option value="">Select a supervisor</b-form-select-option>
+						</template>
+					</b-form-select>
 				</b-form-group>
 
 				<b-form-group
@@ -53,14 +65,14 @@
 					<b-form-checkbox-group
 					id="createdOperatorsInput"
 					v-model="createdExperiment.operators"
-					:options="astronautsCrew"
+					:options="astronautsNames"
 					inline
 					>
 					</b-form-checkbox-group>
 				</b-form-group>
 
 				<b-form-group
-				label="Procedures"
+				label="Protocol"
 				label-for="createdTypeInput"
 				>
 					<b-form-select v-model="createdExperiment.procedures" :options="proceduresAsOptions" multiple :select-size="10">
@@ -120,7 +132,13 @@ export default {
 	computed: {
 		...mapState(['astronautsCrew']),
 		...mapState('experiment', ['experiments']),
-		...mapGetters('procedure', ['proceduresAsOptions'])
+		...mapGetters('procedure', ['proceduresAsOptions']),
+		astronautsNames() {
+			return this.$store.getters['listUsernames']('astronauts')
+		},
+		scientistsNames() {
+			return this.$store.getters['listUsernames']('scientists')
+		}
 	},
 
 	methods: {

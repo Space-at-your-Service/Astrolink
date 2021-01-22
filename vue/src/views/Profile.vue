@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container" style="position: relative">
+  <div class="main-container" style="position: relative;">
     <h3 class="section-title">{{ username }}'s Profile </h3>
 
     <div class="inner-block" style="position: relative;">
@@ -126,6 +126,9 @@
       },
       changePassword(payload) {
         this.$store.dispatch('user/changePassword', payload)
+      },
+      resetPasswordModal() {
+        
       }
     },
 

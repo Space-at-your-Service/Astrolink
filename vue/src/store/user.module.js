@@ -12,7 +12,7 @@ export const user = {
 		lastName: '',
 		groups: [],
 		permissions: [],
-		favoriteProcedures: [{nick: 'fake-procedure', title: 'Fake Procedure', type: 'Type', subtype: 'Subtype'}],
+		favoriteProcedures: [],
 		planning: []
 	},
 
@@ -29,6 +29,14 @@ export const user = {
 		},
 		permissionsReadable: state => {
 			return Object.values(state.permissions)
+		},
+		favoriteProceduresObjects: (state, getters, rootState, rootGetters) => {
+			var favoriteProceduresObjects = []
+			for (var procedureTitle of state.favoriteProcedures) {
+				var procedure = {...rootGetters['procedure/findProcedureByTitle'](procedureTitle)}
+				favoriteProceduresObjects.push(procedure)
+			}
+			return favoriteProceduresObjects
 		}
 	},
 
@@ -46,11 +54,11 @@ export const user = {
 		SET_PLANNING(state, payload) {
 			state.planning = payload
 		},
-		ADD_FAV_SUCCESS(state, procedure) {
-			state.favoriteProcedures.push(procedure)
+		ADD_FAV_SUCCESS(state, procedureTitle) {
+			state.favoriteProcedures.push(procedureTitle)
 		},
-		REMOVE_FAV_SUCCESS(state, procedure) {
-			const index = state.favoriteProcedures.indexOf(procedure)
+		REMOVE_FAV_SUCCESS(state, procedureTitle) {
+			const index = state.favoriteProcedures.indexOf(procedureTitle)
 			if (index > -1) {
 				state.favoriteProcedures.splice(index, 1)
 			}
@@ -84,22 +92,23 @@ export const user = {
 			})
 		},
 		toggleToFavorites({ commit, state }, procedure) {
-			const index = state.favoriteProcedures.indexOf(procedure)
+			const procedureTitle = procedure.title
+			const index = state.favoriteProcedures.indexOf(procedureTitle)
 			var favoriteProcedures = [...state.favoriteProcedures]
 			if (index === -1) {
-				favoriteProcedures.push(procedure)
+				favoriteProcedures.push(procedureTitle)
 				ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
-					commit('ADD_FAV_SUCCESS', procedure)
-					console.log('procedure ' + procedure.title + ' added to user favorites')
+					commit('ADD_FAV_SUCCESS', procedureTitle)
+					console.log('procedure ' + procedureTitle + ' added to user favorites')
 				})
 			}
 			else {
 				favoriteProcedures.splice(index, 1)
 				ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
-					commit('REMOVE_FAV_SUCCESS', procedure)
-					console.log('procedure ' + procedure.title + ' removed from user favorites')
+					commit('REMOVE_FAV_SUCCESS', procedureTitle)
+					console.log('procedure ' + procedureTitle + ' removed from user favorites')
 				})
 			}
 		},

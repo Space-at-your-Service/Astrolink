@@ -11,7 +11,23 @@
 			</template>
 			
 			<b-card-text class="p-3">
-				<!-- <img src="../assets/img/mission_badge.png" alt="Experiment badge" class="mb-3"/><br/> -->
+
+				<b-row>
+					<b-col>
+						<strong>Supervised by</strong><br/>
+						{{ experiment.supervisor }} 
+					</b-col>
+
+					<b-col>
+						<img :src="defaultExperimentLogo" alt="Experiment logo" class="mb-3" width="250px"/><br/>
+					</b-col>
+					
+					<b-col>
+						<strong>Carried by</strong><br/>
+						<div v-for="operator in experiment.operators" :key="operator">{{ operator }}</div>
+					</b-col>
+				</b-row>
+
 
 				<b-container class="mb-2 py-3">
 					<h4>Abstract</h4>
@@ -24,12 +40,10 @@
 				</b-container>
 
 				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
-					<h4>Procedure(s)</h4>
+					<h4>Protocol</h4>
 					<ul>
-						<li v-for="procedure in experiment.procedures"  :key="procedure.nick">
-							<router-link  to="/">
-								{{ procedure.title }}
-							</router-link>
+						<li v-for="procedure in experiment.procedures" :key="procedure.nick" @click="openPDF(procedure.title)" class="hover-pointer hover-bg-grey">
+							[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
 						</li>
 					</ul>
 				</b-container>
@@ -81,6 +95,8 @@
 
 <script>
 	import expBadge from '../components/expBadge.vue'
+	import ProcedureService from '../services/ProcedureService.js'
+	import { mapState } from 'vuex'
 
 	export default {
 		components: {
@@ -93,8 +109,22 @@
 			}
 		},
 		computed: {
+			...mapState('experiment', ['defaultExperimentLogo']),
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
+			}
+		},
+		methods: {
+			openPDF(title) {
+				ProcedureService.getFile(title)
+				.then(response => {
+					const file = new Blob([response.data], {type: "application/pdf"})
+					const fileURL = URL.createObjectURL(file)
+					return fileURL
+				})
+				.then(fileURL => {
+					window.open(fileURL, title)
+				})
 			}
 		}
 	}

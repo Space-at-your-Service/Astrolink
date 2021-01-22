@@ -3,7 +3,7 @@
 	<div class="main-container">
 		<h3 class="section-title">Inventory</h3>	
 
-		<b-container class="m-0 p-0">
+		<b-container fluid class="p-0">
 			<b-row no-gutters class="my-3">
 				<b-col>
 					<b-button v-b-modal.createModal size="lg" variant="info" class="float-left" style="border-radius: 15px;" v-if="isAllowed('inventory.add_item')">
@@ -22,7 +22,7 @@
 						Hide empty items
 					</b-form-checkbox>
 				</b-col>
-				<b-col class="p-auto">
+				<b-col>
 					<b-icon icon="search" class="h3 float-right mt-2 mr-2"></b-icon>
 				</b-col>
 				<b-col cols=3>
@@ -332,17 +332,17 @@
 				if (!this.checkItem(this.editedItem)) return
 				else this.confirmEdit(this.editedItem)
 			},
-			confirmCreate(item) {
+			async confirmCreate(item) {
 				this.$store.dispatch('inventory/createItem', item)
 				.then(() => {
 					this.$bvModal.hide('createModal')
-					Notif.toastSuccess(this, 'Test', 'test text')
+					Notif.toastSuccess(this, 'Item created', 'The item has been successfully created.')
 				})
 				.catch(error => {
 					console.log(error)
 				})	
 			},
-			confirmEdit(item) {
+			async confirmEdit(item) {
 				this.$store.dispatch('inventory/updateItem', item)
 				.then(() => {
 					this.$bvModal.hide('editModal')
@@ -352,31 +352,20 @@
 					console.log(e)
 				})	
 			},
-			deleteItem(item) {
+			async deleteItem(item) {
 				this.$store.dispatch('inventory/deleteItem', item)
 				.then(() => {
-					this.$nextTick(() => {
-						this.$bvToast.toast('Your item has been successfully deleted.', {
-							title: `Item deleted`,
-							variant: 'success',
-							solid: true
-						})
-					})
+					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully deleted.')
 				})
 				.catch(error => {
 					console.log(error)
 				})	
 			},
-			reloadInventory() {
+			async reloadInventory() {
 				this.isBusy = true
 				this.getInventoryState()
-				.catch(error => {
-					console.log(error)
-					this.$bvToast.toast('An error has occured during loading. Please retry.', {
-						title: `Loading error`,
-						variant: 'danger',
-						solid: true
-					})
+				.catch(() => {
+					Notif.toastError(this, 'Loading error', 'An error has occured during loading.')
 				})	
 				.then(() => {
 					this.refreshTable()

@@ -1,24 +1,40 @@
-from rest_framework.views import APIView
-from rest_framework import status
+"""
+asclepios > views
+Defines all of the app's
+REST Endpoints
+"""
+
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.http.response import HttpResponse, JsonResponse
 
-from .serializers import AsclepianSerializer, AsclepianFavoritesSerializer, SimpleAsclepianSerializer
-from django.core.exceptions import ValidationError
+from rest_framework import status
+from rest_framework.views import APIView
 
+from .serializers import AsclepianSerializer, AsclepianFavoritesSerializer, SimpleAsclepianSerializer
 
 
 class ProfileView(APIView):
 
     def get(self, request):
 
+        """ GET asclepios/profile/
+
+            Retrieves a user's profile
+        """
+
         ser = AsclepianSerializer(request.user)
 
         return JsonResponse(ser.data, safe = False)
 
     def put(self, request):
+
+        """ PUT asclepios/profile/
+
+            Edits a user's profile (favorites &/or password)
+        """
 
         rep = {}
 
@@ -60,9 +76,14 @@ class ProfileView(APIView):
         return JsonResponse({"errors" : "Not enough data provided !"}, status = status.HTTP_400_BAD_REQUEST)
 
 
-class GroupView(APIView):
+class UnitsView(APIView):
 
     def get(self, request, pk):
+
+        """ GET asclepios/unit/<unit_name>
+
+            Gets all the usernames in a given unit
+        """
 
         users = get_user_model().objects.filter(groups__unit__name = pk)
 

@@ -22,20 +22,18 @@ export const auth = {
   },
 
   actions: {
-    login({ commit }, user) {
-      return AuthService.login(user).then(
-        user => {
-          commit('loginSuccess')
-          return Promise.resolve(user)
-        },
-        error => {
-          alert('login failed')
-          return Promise.reject(error)
+    async login({ commit }, user) {
+      return AuthService.login(user)
+      .then(response => {
+        const token = response.data.token
+        if (token) {
+          sessionStorage.setItem('token', token)
+          commit('LOGIN_SUCCESS')
         }
-      )
+      })
     },
     logout({ commit }) {
-      AuthService.logout()
+      sessionStorage.removeItem('token')
       commit('LOGOUT')
     }
   }
