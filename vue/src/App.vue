@@ -3,6 +3,16 @@
 
       <Nav v-if="status.loggedIn"/>
 
+      <b-alert
+      :variant="alert.variant"
+      dismissible
+      fade
+      :show="alert.show"
+      @dismissed="this.$store.dispatch('hideAlert')"
+      >
+      {{ alert.msg }}
+      </b-alert>
+
       <router-view />
 
       <b-overlay :show="overlay.show" no-wrap fixed spinner-variant="info">
@@ -15,16 +25,6 @@
           </div>
         </template>
       </b-overlay>
-
-      <b-alert
-      :variant="alert.variant"
-      dismissible
-      fade
-      :show="alert.show"
-      @dismissed="this.$store.dispatch('hideAlert')"
-      >
-      {{ alert.msg }}
-      </b-alert>
 
     </div>
 </template>

@@ -30,16 +30,19 @@ export const experiment = {
 		SET_STATE(state, payload) {
 			state.experiments = payload
 		},
+
 		CREATE_SUCCESS(state, payload) {
 			const experiment = {...payload}
 			state.experiments.push(experiment)
 		},
+
 		DELETE_SUCCESS(state, payload) {
 			const index = state.experiments.indexOf(payload)
 			if (index > -1) {
 				state.experiments.splice(index, 1)
 			}
 		},
+
 		UPDATE_SUCCESS(state, payload) {
 			const title = payload.title
 			const index = state.experiments.findIndex(experiment => { return experiment.title === title })
@@ -54,7 +57,7 @@ export const experiment = {
 	},
 
 	actions: {
-		getExperimentState({ commit }) {
+		async getExperimentState({ commit }) {
 			var payload = undefined
 			return ExperimentService.getExperiments()
 			.then(response => {
@@ -62,33 +65,37 @@ export const experiment = {
 				commit('SET_STATE', payload)
 				console.log('experiments loaded')
 			})
-			.catch(error => {
-				console.log(error)
-				throw 'loading error (experiments)'
+			.catch(err => {
+				console.log('loading error (experiments)')
+				throw err
 			})
 		},
-		createExperiment({ commit }, experiment) {
+
+		async createExperiment({ commit }, experiment) {
 			ExperimentService.postExperiment(experiment)
 			.then(() => { 
 				commit('CREATE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' created') 
 			})
 		},
-		deleteExperiment({ commit }, experiment) {
+
+		async deleteExperiment({ commit }, experiment) {
 			ExperimentService.deleteExperiment(experiment)
 			.then(() => { 
 				commit('DELETE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' deleted') 
 			})
 		},
-		updateExperiment({ commit }, experiment) {
+
+		async updateExperiment({ commit }, experiment) {
 			ExperimentService.updateExperiment(experiment)
 			.then(() => { 
 				commit('UPDATE_SUCCESS', experiment)
 				console.log('experiment ' + experiment.title + ' updated') 
 			})
 		},
-		createTextsheet({ commit }, { experiment, textsheet }) {
+
+		async createTextsheet({ commit }, { experiment, textsheet }) {
 			const updatedExperiment = {...experiment}
 			const updatedData = {...updatedExperiment.data}
 			const updatedTextsheets = [...updatedExperiment.data.textsheets]
@@ -101,7 +108,8 @@ export const experiment = {
 				console.log('textsheet ' + textsheet.title + ' created for ' + updatedExperiment.title + ' updated') 
 			})
 		},
-		updateTextsheet({ commit }, { experiment, textsheet }) {
+
+		async updateTextsheet({ commit }, { experiment, textsheet }) {
 			const updatedExperiment = {...experiment}
 			const index = updatedExperiment.data.textsheets.findIndex(sheet => sheet.title === textsheet.title)
 			updatedExperiment.data.textsheets.splice(index, 1)

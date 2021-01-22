@@ -338,8 +338,8 @@
 					this.$bvModal.hide('createModal')
 					Notif.toastSuccess(this, 'Item created', 'The item has been successfully created.')
 				})
-				.catch(error => {
-					console.log(error)
+				.catch(() => {
+					Notif.toastError(this, 'Could not create', 'Could not create the item.')
 				})	
 			},
 			async confirmEdit(item) {
@@ -348,22 +348,22 @@
 					this.$bvModal.hide('editModal')
 					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully updated.')
 				})
-				.catch(e => {
-					console.log(e)
-				})	
+				.catch(() => {
+					Notif.toastError(this, 'Could not update', 'Could not update the item.')
+				})		
 			},
 			async deleteItem(item) {
 				this.$store.dispatch('inventory/deleteItem', item)
 				.then(() => {
 					Notif.toastSuccess(this, 'Item updated', 'The item has been successfully deleted.')
 				})
-				.catch(error => {
-					console.log(error)
+				.catch(() => {
+					Notif.toastError(this, 'Could not delete', 'Could not delete the item.')
 				})	
 			},
 			async reloadInventory() {
 				this.isBusy = true
-				this.getInventoryState()
+				this.$store.dispatch('inventory/getInventoryState')
 				.catch(() => {
 					Notif.toastError(this, 'Loading error', 'An error has occured during loading.')
 				})	

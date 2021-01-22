@@ -19,7 +19,7 @@ export const flightplan = {
 	},
 
 	actions: {
-		getFlightplanState({ commit }) {
+		async getFlightplanState({ commit }) {
 			var payload = undefined
 			return TaskService.getFlightplan()
 			.then(response => {
@@ -27,9 +27,9 @@ export const flightplan = {
 				commit('SET_STATE', payload)
 				console.log('flightplan loaded')
 			})
-			.catch(error => {
-				console.log(error)
-				throw 'loading error (flightplan)'
+			.catch(err => {
+				console.log('loading error (flightplan)')
+				throw err
 			})
 		}
 	}

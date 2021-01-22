@@ -16,22 +16,19 @@ export const inventory = {
 		SET_STATE(state, payload) {
 			state.items = payload
 		},
-		// ADD_ITEM_UNIT(state, item) {
-		// 	item.quantity++;
-		// },
-		// REMOVE_ITEM_UNIT(state, item) {
-		// 	item.quantity--;
-		// },
+
 		CREATE_SUCCESS(state, payload) {
 			const item = {...payload}
 			state.items.push(item)
 		},
+
 		DELETE_SUCCESS(state, payload) {
 			const index = state.items.indexOf(payload)
 			if (index > -1) {
 				state.items.splice(index, 1)
 			}
 		},
+
 		UPDATE_SUCCESS(state, payload) {
 			const id = payload.id
 			const index = state.items.findIndex(item => { return item.id === id })
@@ -45,7 +42,7 @@ export const inventory = {
 	},
 
 	actions: {
-		getInventoryState({ commit }) {
+		async getInventoryState({ commit }) {
 			var payload = undefined
 			return InventoryService.getItems()
 			.then(response => {
@@ -53,26 +50,29 @@ export const inventory = {
 				commit('SET_STATE', payload)
 				console.log('inventory loaded')
 			})
-			.catch(error => {
-				console.log(error)
-				throw 'loading error (inventory)'
+			.catch(err => {
+				console.log('loading error (inventory)')
+				throw err
 			})
 		},
-		createItem({ commit }, item) {
+
+		async createItem({ commit }, item) {
 			return InventoryService.postItem(item)
 			.then(() => { 
 				commit('CREATE_SUCCESS', item)
 				console.log('item ' + item.name + ' created') 
 			})
 		},
-		deleteItem({ commit }, item) {
+
+		async deleteItem({ commit }, item) {
 			return InventoryService.deleteItem(item)
 			.then(() => { 
 				commit('DELETE_SUCCESS', item)
 				console.log('item ' + item.name + ' deleted') 
 			})
 		},
-		updateItem({ commit }, item) {
+
+		async updateItem({ commit }, item) {
 			return InventoryService.updateItem(item)
 			.then(() => { 
 				commit('UPDATE_SUCCESS', item)
