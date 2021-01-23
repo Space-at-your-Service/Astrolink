@@ -8,8 +8,8 @@
             <ul>
               <li><strong>First name: </strong>{{ firstName }}</li>
               <li><strong>Last name: </strong>{{ lastName }}</li>
-              <li><strong>Age: </strong>{{ lastName }}</li>
-              <li><strong>Nationality: </strong>{{ lastName }}</li>
+            <!--   <li><strong>Age: </strong>{{ lastName }}</li>
+              <li><strong>Nationality: </strong>{{ lastName }}</li> -->
             </ul>
           </div>
 
