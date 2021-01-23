@@ -273,6 +273,10 @@ def inflate_textsheet(requestdata):
         if new_lastUser:
             requestdata["lastUser"] = new_lastUser.pk
 
+    if "creator" in requestdata:
+
+        del requestdata["creator"]
+
 class TextsheetsView(APIView):
 
     def post(self, request):
@@ -326,7 +330,7 @@ class TextsheetView(APIView):
         inflate_textsheet(request.data)
 
         ts = Textsheet.objects.get(pk = pk)
-        ser = TextsheetSerializer(ts, data = request.data, partial = True)
+        ser = TextsheetSerializer(ts, data = request.data)
 
         if ser.is_valid():
 
