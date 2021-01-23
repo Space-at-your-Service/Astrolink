@@ -338,3 +338,17 @@ class TextsheetView(APIView):
             return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+
+        """ DELETE activities/textsheets/<textsheet_id>
+
+            Deletes a specific textsheet
+        """
+
+        request.user.check_perms(("activities.delete_textsheet",))
+
+        ts = Textsheet.objects.get(pk = pk)
+        ts.delete()
+
+        return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)
