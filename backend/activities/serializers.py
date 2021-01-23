@@ -158,7 +158,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "supervisor" : "" if not instance.supervisor else instance.supervisor.username,
                "procedures" : ProcedureSerializer(instance.procedures.all(), many = True).data}
 
-        rep["data"] = {"textsheets" : list(instance.textsheets.all().values_list("id", flat = True)),
+        rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
                        "spreadsheets" : list(instance.spreadsheets.all().values_list("id", flat = True))} #TODO: Change once spreadsheets are implemented
 
         return rep
