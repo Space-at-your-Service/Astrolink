@@ -14,7 +14,7 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
-from .models import Procedure, ProcedureType, Task, Experiment
+from .models import Procedure, ProcedureType, Task, Experiment, Textsheet
 from .serializers import ProcedureSerializer, ProcedureTypeSerializer, TaskSerializer, ExperimentSerializer, TextsheetSerializer
 
 
@@ -177,6 +177,26 @@ class FlightplanView(APIView):
         return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
 
 
+def inflate_experiment(requestdata):
+
+    if "supervisor" in requestdata and requestdata["supervisor"]:
+
+        new_supervisor = get_user_model().objects.get(username = requestdata.pop("supervisor"))
+        if new_supervisor:
+            requestdata["supervisor"] = new_supervisor.pk
+
+    if "operators" in requestdata and requestdata["operators"]:
+
+        new_operators = get_user_model().objects.filter(username__in = requestdata.pop("operators"))
+        if new_operators:
+            requestdata["operators"] = list(new_operators.values_list("pk", flat = True))
+
+    if "procedures" in requestdata and requestdata["procedures"]:
+
+        new_procedures = Procedure.objects.filter(title__in = requestdata.pop("procedures"))
+        if new_procedures:
+            requestdata["procedures"] = list(new_procedures.values_list("pk", flat = True))
+
 class ExperimentsView(APIView):
 
     def get(self, request):
@@ -203,6 +223,8 @@ class ExperimentsView(APIView):
 
         request.user.check_perms(("activities.add_experiment",))
 
+        inflate_experiment(request.data)
+
         ser = ExperimentSerializer(data = request.data)
 
         if ser.is_valid():
@@ -212,51 +234,103 @@ class ExperimentsView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
+
+class ExperimentView(APIView):
+
     def put(self, request, pk):
 
         """ PUT activities/experiments/<experiment_title>
 
-            Edits an experiment (+ Adds textsheets/datasheets)
+            Edits an experiment
         """
 
+        request.user.check_perms(("activities.change_experiment",))
+
+        inflate_experiment(request.data)
+
         experiment = Experiment.objects.get(pk = pk)
+        ser = ExperimentSerializer(instance = experiment, data = request.data, partial = True)
 
-        if "data" in request.data:
+        if ser.is_valid():
 
-            request.user.check_perms(("activities.add_textsheet", "activities.add_spreadsheet"))
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
-            textsheets = request.data["data"].get("textsheets", [])
-            spreadsheets = request.data["data"].get("spreadsheets", [])
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
-            for t in textsheets:
-                t["experiment"] = experiment.title
 
-            rep = {}
-            stus = 0
+def inflate_textsheet(requestdata):
 
-            if textsheets:
+    if "experiment" in requestdata and requestdata["experiment"]:
 
-                ser = TextsheetSerializer(data = textsheets, many = True)
+        new_experiment = Experiment.objects.get(title = requestdata.pop("experiment"))
+        if new_experiment:
+            requestdata["experiment"] = new_experiment.pk
 
-                if ser.is_valid():
+    if "lastUser" in requestdata and requestdata["lastUser"]:
 
-                    experiment.textsheets.add(*ser.save())
-                    experiment.save()
+        new_lastUser = get_user_model().objects.get(username = requestdata.pop("lastUser"))
+        if new_lastUser:
+            requestdata["lastUser"] = new_lastUser.pk
 
-                    rep.update({"textsheets" : ser.data})
-                    stus = status.HTTP_201_CREATED
+class TextsheetsView(APIView):
 
-                else:
+    def post(self, request):
 
-                    rep.update({"textsheets" : ser.errors})
-                    stus = status.HTTP_400_BAD_REQUEST
+        """ POST activities/textsheets/
 
-            if spreadsheets:
+            Adds a textsheet
+        """
 
-                pass #TODO Implement when spreadsheets are done
+        request.user.check_perms(("activities.add_textsheet",))
 
-            if rep and stus != 0:
+        inflate_textsheet(request.data)
+        request.data["creator"] = request.user.pk
+        request.data["lastUser"] = request.user.pk
 
-                return JsonResponse(rep, status = stus)
+        ser = TextsheetSerializer(data = request.data)
 
-        return JsonResponse({"errors" : "no data provided !"}, status = status.HTTP_400_BAD_REQUEST)
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+class TextsheetView(APIView):
+
+    def get(self, request, pk):
+
+        """ GET activities/textsheets/<textsheet_id>
+
+            Retrieves a specific textsheet
+        """
+
+        request.user.check_perms(("activities.view_textsheet",))
+
+        ts = Textsheet.objects.get(pk = pk)
+        ser = TextsheetSerializer(ts)
+
+        return JsonResponse(ser.data, status = status.HTTP_200_OK)
+
+    def put(self, request, pk):
+
+        """ PUT activities/textsheets/<textsheet_id>
+
+            Edits a specific textsheet
+        """
+
+        request.user.check_perms(("activities.change_textsheet",))
+
+        inflate_textsheet(request.data)
+
+        ts = Textsheet.objects.get(pk = pk)
+        ser = TextsheetSerializer(ts, data = request.data, partial = True)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)

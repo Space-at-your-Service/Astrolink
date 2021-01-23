@@ -7,7 +7,7 @@ of the app's views
 
 from django.urls import path
 
-from .views import ProceduresView, ProcedureView, ProcedureTypesView, PlanningView, FlightplanView, ExperimentsView
+from .views import ProceduresView, ProcedureView, ProcedureTypesView, PlanningView, FlightplanView, ExperimentsView, ExperimentView, TextsheetsView, TextsheetView
 
 
 urlpatterns = [
@@ -21,6 +21,9 @@ urlpatterns = [
     path("flightplan/", FlightplanView.as_view()),
 
     path("experiments/", ExperimentsView.as_view()),
-    path("experiments/<str:pk>", ExperimentsView().as_view()),
+    path("experiments/<str:pk>", ExperimentView().as_view()),
+
+    path("textsheets/", TextsheetsView.as_view()),
+    path("textsheets/<int:pk>", TextsheetView.as_view())
 
 ]

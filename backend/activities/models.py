@@ -118,7 +118,7 @@ class Textsheet(models.Model):
         @param content (str) : The contents of the file (can be very long, and contain HTML)
     """
 
-    title = models.CharField(max_length = 50, primary_key = True)
+    title = models.CharField(max_length = 50)
 
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
 

@@ -118,67 +118,35 @@ class TextsheetSerializer(serializers.ModelSerializer):
 
     """ Textsheet Serializer
 
-        Gets the creator and lastUser
-        user objects before creation
+        Constructs a clean representation containing creator and lastUser's usernames
     """
-
-    creator = serializers.CharField(max_length = 150)
-    lastUser = serializers.CharField(max_length = 150)
 
     class Meta:
 
         model = Textsheet
-        fields = ("title", "experiment", "creationDate", "lastModifiedDate", "creator", "lastUser", "content")
+        fields = ("id", "title", "experiment", "creationDate", "lastModifiedDate", "creator", "lastUser", "content")
 
 
-    def create(self, validated_data):
+    def to_representation(self, instance):
 
-        creator = get_user_model().objects.get(username = validated_data.pop("creator"))
-        lastUser = get_user_model().objects.get(username = validated_data.pop("lastUser"))
+        rep = super().to_representation(instance)
+        rep["creator"] = instance.creator.username
+        rep["lastUser"] = instance.lastUser.username
 
-        return Textsheet.objects.create(creator = creator, lastUser = lastUser, **validated_data)
-
+        return rep
 
 class ExperimentSerializer(serializers.ModelSerializer):
 
     """ Experiment Serializer 
 
-        Gets operators and supervisor user objects before creation 
-        while allowing for empty supervisor
-        Gets procedures objects before creation as well
-
-        Constructs a clean representation containing only operators & supervisors usernames
-
+        Constructs a clean representation containing operators & supervisors usernames
     """
-
-    operators = serializers.ListField(child = serializers.CharField(max_length = 150))
-    supervisor = serializers.CharField(max_length = 150, required = False, allow_blank = True)
 
     class Meta:
 
         model = Experiment
         fields = ("title", "status", "abstract", "description", "operators", "supervisor", "procedures")
 
-
-    def create(self, validated_data):
-
-        operators = get_user_model().objects.filter(username__in = validated_data.pop("operators"))
-
-        if "supervisor" in validated_data:
-
-            user = validated_data.pop("supervisor")
-
-            if user:
-                validated_data["supervisor"] = get_user_model().objects.get(username = user)
-
-        procedures = Procedure.objects.filter(title__in = validated_data.pop("procedures"))
-
-        new_experiment = Experiment.objects.create(**validated_data)
-
-        new_experiment.operators.add(*operators)
-        new_experiment.procedures.add(*procedures)
-
-        return new_experiment
 
     def to_representation(self, instance):
 
@@ -190,7 +158,7 @@ class ExperimentSerializer(serializers.ModelSerializer):
                "supervisor" : "" if not instance.supervisor else instance.supervisor.username,
                "procedures" : ProcedureSerializer(instance.procedures.all(), many = True).data}
 
-        rep["data"] = {"textsheets" : TextsheetSerializer(instance.textsheets.all(), many = True).data,
-                       "spreadsheets" : list(instance.spreadsheets.all())} #TODO: Change once spreadsheets are implemented
+        rep["data"] = {"textsheets" : list(instance.textsheets.all().values_list("id", flat = True)),
+                       "spreadsheets" : list(instance.spreadsheets.all().values_list("id", flat = True))} #TODO: Change once spreadsheets are implemented
 
         return rep
