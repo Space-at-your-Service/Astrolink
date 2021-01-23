@@ -120,7 +120,7 @@
 			</b-tabs>
 		</b-card>
 
-		<b-modal id="createSubtypeModal" title="New subtype" centered @ok="okCreateSubtype">
+		<!-- <b-modal id="createSubtypeModal" title="New subtype" centered @ok="okCreateSubtype">
 			<form>
 				<b-form-group
 				label="Subtype name"
@@ -129,23 +129,23 @@
 					<b-form-input id="createdSubtypeInput" v-model="createdSubtype" trim></b-form-input>
 				</b-form-group>
 			</form>
-		</b-modal>
+		</b-modal> -->
 
-		<b-modal id="createModal" title="Upload a Procedure" centered @ok="okCreate">
-			<form>
+		<b-modal id="createModal" title="Upload a Procedure" centered @ok.prevent="okCreate" @hidden="resetCreateModal">
+			<b-form ref="createForm">
 
 				<b-form-group
 				label="Title"
 				label-for="createdTitleInput"
 				>
-					<b-form-input id="createdTitleInput" v-model="createdProcedure.title" trim></b-form-input>
+					<b-form-input id="createdTitleInput" v-model="createdProcedure.title" trim required></b-form-input>
 				</b-form-group>
 
 				<b-form-group
 				label="Type"
 				label-for="createdTypeInput"
 				>
-					<b-form-select v-model="createdProcedure.type" :options="procedurePrimaryTypes" @change="refreshSubtypesOptions">
+					<b-form-select v-model="createdProcedure.type" :options="procedurePrimaryTypes" @change="refreshSubtypesOptions" required>
 						<template #first>
 							<b-form-select-option value="" disabled>Select a procedure type</b-form-select-option>
 						</template>
@@ -156,7 +156,7 @@
 				label="Subtype"
 				label-for="createdSubtypeInput"
 				>
-					<b-form-select v-model="createdProcedure.subtype" :options="subtypesOptions" :disabled="!createdProcedure.type">
+					<b-form-select v-model="createdProcedure.subtype" :options="subtypesOptions" :disabled="!createdProcedure.type" required>
 						<template #first>
 							<b-form-select-option value="" disabled>Select a procedure subtype</b-form-select-option>
 						</template>
@@ -181,6 +181,7 @@
 					placeholder="Drop the procedure PDF file here"
 					drop-placeholder="Yosh, got it !"
 					no-drop-placeholder="Only PDF format is accepted"
+					required
 					>
 						<template slot="file-name" slot-scope="{ names }">
 							<b-badge v-for="name in names" :key="name" pill variant="dark">{{ name }}</b-badge>
@@ -188,7 +189,7 @@
 
 					</b-form-file>
 				</b-form-group>
-			</form>
+			</b-form>
 		</b-modal>
 
 		<b-modal id="editModal" title="Procedure Edit" centered @ok="okEdit">
@@ -311,8 +312,17 @@
 				else return (this.checkTitle(procedure) && this.checkAbstract(procedure))
 			},
 
+			checkCreateForm() {
+				const isValid = this.$refs['createForm'].checkValidity() && this.checkProcedure(this.createdProcedure)
+				return isValid
+			},
+
 			okCreate() {
-				if (!this.checkProcedure(this.createdProcedure)) return
+				if (!this.checkCreateForm()) {
+					Dialog.okMessage(this, 'Invalid form')
+					return
+				}
+
 				else this.createProcedure(this.createdProcedure)
 			},
 
@@ -320,6 +330,7 @@
 				this.isUploading = true;
 				this.$store.dispatch('procedure/createProcedure', procedure)
 				.then(() => {
+					this.$bvModal.hide('createModal')
 					Notif.toastSuccess(this, 'Procedure created', 'The procedure has been successfully created.')
 				})
 				.catch(() => {
@@ -328,6 +339,10 @@
 				.then(() => {
 					this.isUploading = false
 				})
+			},
+
+			resetCreateModal() {
+				this.createdProcedure = new Procedure()
 			},
 
 			okEdit() {
