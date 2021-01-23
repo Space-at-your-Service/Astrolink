@@ -161,7 +161,7 @@ class Task(models.Model):
         @param allDay (bool) : Whether this task takes up all day
     """
 
-    title = models.CharField(max_length = 50, primary_key = True)
+    title = models.CharField(max_length = 50)
 
     holder = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     procedures = models.ManyToManyField(Procedure, related_name = "tasks", blank = True)
