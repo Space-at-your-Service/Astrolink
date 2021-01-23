@@ -38,10 +38,8 @@ export const experiment = {
 			const title = payload.title
 			const index = state.experiments.findIndex(experiment => { return experiment.title === title })
 			if (index > -1) {
-				state.experiments.splice(index, 1)
-
 				const experiment = {...payload}
-				state.experiments.push(experiment)
+				state.experiments.splice(index, 1, experiment)
 			}
 		},
 
@@ -60,8 +58,7 @@ export const experiment = {
 			const data = experiment.data
 			const index = data.textsheets.findIndex(textsheet => { return textsheet.title === sheet.title })
 			if (index > -1) {
-				data.textsheets.splice(index, 1)
-				data.textsheets.push(sheet)
+				data.textsheets.splice(index, 1, sheet)
 			}
 		}
 	},
