@@ -330,7 +330,7 @@ class TextsheetView(APIView):
         inflate_textsheet(request.data)
 
         ts = Textsheet.objects.get(pk = pk)
-        ser = TextsheetSerializer(ts, data = request.data)
+        ser = TextsheetSerializer(ts, data = request.data, partial = True)
 
         if ser.is_valid():
 
