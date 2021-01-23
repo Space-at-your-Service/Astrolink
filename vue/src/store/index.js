@@ -106,33 +106,46 @@ const store = new Vuex.Store({
 		async loadAll({ dispatch }) {
 			var errors = []
 			var errorFlag = false
-			return dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
+			await dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
 			.then(async () => await dispatch('user/getUserState', null,  {root: true}) )
-			.catch((err) => { errorFlag = true; errors.push('User'); console.error(err) })
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'}) })
-			.then(async () => await dispatch('inventory/getInventoryState', null,  {root: true}))
-			.catch((err) => { errorFlag = true; errors.push('Inventory'); console.error(err) })
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'}) })
-			.then(async () => await dispatch('procedure/getProcedureState', null,  {root: true}))
-			.catch((err) => { errorFlag = true; errors.push('Procedures'); console.error(err) })
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'}) })
-			.then(async () => await dispatch('flightplan/getFlightplanState', null,  {root: true}))
-			.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: ' https://cdn.onlinewebfonts.com/svg/img_490832.png'}) })
-			.then(async () => await dispatch('experiment/getExperimentState', null,  {root: true}))
-			.catch((err) => { errorFlag = true; errors.push('Experiments'); console.error(err) })
-			.then(() => { dispatch('displayOverlay', {msg: 'Loading MISSION MEMBERS', img: 'https://cdn.onlinewebfonts.com/svg/img_458814.png'}) })
-			.then(async () => await dispatch('loadMembers', null,  {root: true}))
-			.catch((err) => { errorFlag = true; errors.push('Mission members'); console.error(err) })
-			.then(() => { dispatch('hideOverlay') })
-			// .catch(() => { dispatch('displayOverlay', {msg: 'SERVER ERROR', img: 'https://cdn.onlinewebfonts.com/svg/img_505377.png', hideSpinner: true}) })
-			.then(() => { 
-				dispatch('hideOverlay')
-				if (errorFlag) {
-					const errorMessage = 'Failed to load the following resources: ' + errors.join(', ')
-					dispatch('displayAlert', { msg: errorMessage, variant: 'danger' }) 
-				}
+			.then(async () => {
+				dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'})
+				await dispatch('inventory/getInventoryState', null,  {root: true})
+				.catch((err) => { errorFlag = true; errors.push('Inventory'); console.error(err) })
+				.then(async () => { 
+					dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'})
+					await dispatch('procedure/getProcedureState', null,  {root: true})
+				})
+				.catch((err) => { errorFlag = true; errors.push('Procedures'); console.error(err) })
+				.then(async () => { 
+					dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'})
+					await dispatch('flightplan/getFlightplanState', null,  {root: true})
+				})
+				.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
+				.then(async () => { 
+					dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: ' https://cdn.onlinewebfonts.com/svg/img_490832.png'}) 
+					await dispatch('experiment/getExperimentState', null,  {root: true})
+				})
+				.catch((err) => { errorFlag = true; errors.push('Experiments'); console.error(err) })
+				.then(async () => { 
+					dispatch('displayOverlay', {msg: 'Loading MISSION MEMBERS', img: 'https://cdn.onlinewebfonts.com/svg/img_458814.png'}) 
+					await dispatch('loadMembers', null,  {root: true})
+				})
+				.catch((err) => { errorFlag = true; errors.push('Mission members'); console.error(err) })
+				.then(() => { dispatch('hideOverlay') })
+				.then(() => { 
+					dispatch('hideOverlay')
+					if (errorFlag) {
+						const errorMessage = 'Failed to load the following resources: ' + errors.join(', ')
+						dispatch('displayAlert', { msg: errorMessage, variant: 'danger' }) 
+					}
+				})
 			})
+			.catch((err) => { 
+				console.error(err)
+				dispatch('displayOverlay', {msg: 'SERVER ERROR: FAILED TO LOAD USER', img: 'https://cdn.onlinewebfonts.com/svg/img_505377.png', hideSpinner: true}) 
+			})
+			
 		},
 
 		//loads state.staff
