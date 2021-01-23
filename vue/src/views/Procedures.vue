@@ -246,7 +246,6 @@
 				editedProcedure: new Procedure(),
 				subtypesOptions: [],
 				isUploading: false,
-				fileInfos: [],
 				typesColorVariants : [
 				{type: 'Logistics', colorVariant: 'dark'},
 				{type: 'Contacts', colorVariant: 'warning'},
