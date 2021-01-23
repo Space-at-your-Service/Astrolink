@@ -11,7 +11,6 @@
 			</template>
 			
 			<b-card-text class="p-3">
-
 				<b-row>
 					<b-col>
 						<strong>Supervised by</strong><br/>

@@ -1,8 +1,6 @@
 <template>
 	<div class="main-container">
 		<h3 class="section-title">Data for <span style="color: darkred">{{ experiment.title }}</span></h3>
-	{{ sheet }}<br/>
-	{{ experiment }}
 
 		<b-form-checkbox
 			ref = "enabledInput"
@@ -59,7 +57,6 @@
 <script>
 	import { VueEditor } from 'vue2-editor';
 	import Textsheet from '../models/Textsheet'
-	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
 	import Dialog from '../utils/Dialog.js'
 	import Notif from '../utils/Notif.js'
@@ -98,7 +95,9 @@
 			getSheet() {
 				const sheetTitle = this.$route.params.sheetTitle
 				if (sheetTitle === 'new-entry') {
-					this.sheet = new Textsheet(this.username)
+					console.log(this.experiment)
+					this.sheet = new Textsheet(this.experiment.title)
+					console.log(this.sheet)
 				}
 				else {
 					try{
@@ -116,8 +115,11 @@
 
 			okSave() {
 				try {
-					if (this.isNew) this.checkSheet(this.sheet)
-					this.saveSheet(this.sheet)
+					if (this.isNew) { 
+						this.checkSheet(this.sheet)
+						this.createSheet(this.sheet)
+					}
+					else { this.updateSheet(this.sheet) }
 				}
 				catch(err) {
 					Dialog.okMessage(this, err)
@@ -135,29 +137,30 @@
 				}
 			},
 
-			async saveSheet(sheet) {
+			async createSheet(sheet) {
 				this.saving = true
-				sheet.lastUser = this.username
-				sheet.LastModifiedDate = DateFormat.dateString()
-				if (this.isNew) {
-					this.$store.dispatch('experiment/createTextsheet', { experiment: this.experiment, textsheet: sheet })
-					.then(() => {
-						Notif.toastSuccess(this, 'New textsheet saved', 'The new textsheet has been successfully saved.')
-						this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+sheet.title)
-						this.isNew = false
-					})
-					.catch(() => { Notif.toastError(this, 'Could not save', 'The new textsheet could not be saved.') })
-					.then(() => this.saving = false)
-				}
-				else {
-					this.$store.dispatch('experiment/updateTextsheet', { experiment: this.experiment, textsheet: sheet })
-					.then(() => {
-						Notif.toastSuccess(this, 'Modifications saved', 'Your modifications have been successfully saved.')
-					})
-					.catch(() => { Notif.toastError(this, 'Could not save', 'Your modifications could not be saved.') })
-					.then(() => this.saving = false)
-				}	
+
+				this.$store.dispatch('experiment/createTextsheet', sheet)
+				.then(() => {
+					Notif.toastSuccess(this, 'New textsheet saved', 'The new textsheet has been successfully saved.')
+					this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+sheet.title)
+					this.isNew = false
+				})
+				.catch(err => { console.error(err); Notif.toastError(this, 'Could not save', 'The new textsheet could not be saved.') })
+				.then(() => this.saving = false)
 			},
+
+			async updateSheet(sheet) {
+				this.saving = true
+				
+				this.$store.dispatch('experiment/updateTextsheet', sheet)
+				.then(() => {
+					Notif.toastSuccess(this, 'Modifications saved', 'Your modifications have been successfully saved.')
+				})
+				.catch(() => { Notif.toastError(this, 'Could not save', 'Your modifications could not be saved.') })
+				.then(() => this.saving = false)	
+			},
+
 			toggleToolbar(checked) {
 				const toolbar = document.getElementsByClassName('ql-toolbar')[0]
 				if (checked) toolbar.classList.remove('hidden')
