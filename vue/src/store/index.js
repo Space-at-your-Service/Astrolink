@@ -103,26 +103,30 @@ const store = new Vuex.Store({
 
 	actions: {
 		// performs the initial load of all the data
-		async loadAll({ dispatch }) {
+		async loadAll({ dispatch, getters }) {
 			var errors = []
 			var errorFlag = false
 			await dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
 			.then(async () => await dispatch('user/getUserState', null,  {root: true}) )
 			.then(async () => {
+				if (!getters['user/isAllowed']('inventory.view_item')) return 
 				dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'})
 				await dispatch('inventory/getInventoryState', null,  {root: true})
 				.catch((err) => { errorFlag = true; errors.push('Inventory'); console.error(err) })
 				.then(async () => { 
+					if (!getters['user/isAllowed']('activities.view_procedure')) return 
 					dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'})
 					await dispatch('procedure/getProcedureState', null,  {root: true})
 				})
 				.catch((err) => { errorFlag = true; errors.push('Procedures'); console.error(err) })
 				.then(async () => { 
+					if (!getters['user/isAllowed']('activities.view_task')) return 
 					dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'})
 					await dispatch('flightplan/getFlightplanState', null,  {root: true})
 				})
 				.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
 				.then(async () => { 
+					if (!getters['user/isAllowed']('activities.view_experiment')) return 
 					dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: ' https://cdn.onlinewebfonts.com/svg/img_490832.png'}) 
 					await dispatch('experiment/getExperimentState', null,  {root: true})
 				})
