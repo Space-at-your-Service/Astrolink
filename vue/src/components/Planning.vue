@@ -21,7 +21,6 @@
 						v-model="editionOptions.drag"
 						switch
 						size="lg"
-						disabled
 						>
 						Enable event drag and drop placement
 					</b-form-checkbox>
