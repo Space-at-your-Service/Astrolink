@@ -20,7 +20,6 @@ backend/nukedb
 
 # Vue
 /vue/public/lib
-/vue/dist
 node_modules
 npm-debug.log*
 yarn-debug.log*
