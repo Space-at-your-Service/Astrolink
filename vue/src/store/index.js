@@ -109,41 +109,40 @@ const store = new Vuex.Store({
 			dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
 			await dispatch('user/getUserState', null,  {root: true})
 			.then(async () => {
-				if (!getters['user/isAllowed']('inventory.view_item')) return 
-				dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'})
-				await dispatch('inventory/getInventoryState', null,  {root: true})
-				.catch((err) => { errorFlag = true; errors.push('Inventory'); console.error(err) })
-				.then(async () => { 
-					if (!getters['user/isAllowed']('activities.view_procedure')) return 
+				if (getters['user/isAllowed']('inventory.view_item')) {
+					dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'})
+					await dispatch('inventory/getInventoryState', null,  {root: true})
+					.catch((err) => { errorFlag = true; errors.push('Inventory'); console.error(err) })
+				}
+
+				if (getters['user/isAllowed']('activities.view_procedure')) {
 					dispatch('displayOverlay', {msg: 'Loading PROCEDURES', img: 'https://cdn.onlinewebfonts.com/svg/img_274798.png'})
 					await dispatch('procedure/getProcedureState', null,  {root: true})
-				})
-				.catch((err) => { errorFlag = true; errors.push('Procedures'); console.error(err) })
-				.then(async () => { 
-					if (!getters['user/isAllowed']('activities.view_task')) return 
+					.catch((err) => { errorFlag = true; errors.push('Procedures'); console.error(err) })
+				}
+
+				if (getters['user/isAllowed']('activities.view_task')) {
 					dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'})
 					await dispatch('flightplan/getFlightplanState', null,  {root: true})
-				})
-				.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
-				.then(async () => { 
-					if (!getters['user/isAllowed']('activities.view_experiment')) return 
+					.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
+				}
+
+				if (getters['user/isAllowed']('activities.view_experiment')) {
 					dispatch('displayOverlay', {msg: 'Loading EXPERIMENTS', img: ' https://cdn.onlinewebfonts.com/svg/img_490832.png'}) 
 					await dispatch('experiment/getExperimentState', null,  {root: true})
-				})
-				.catch((err) => { errorFlag = true; errors.push('Experiments'); console.error(err) })
-				.then(async () => { 
-					dispatch('displayOverlay', {msg: 'Loading MISSION MEMBERS', img: 'https://cdn.onlinewebfonts.com/svg/img_458814.png'}) 
-					await dispatch('loadMembers', null,  {root: true})
-				})
+					.catch((err) => { errorFlag = true; errors.push('Experiments'); console.error(err) })
+				}
+
+				dispatch('displayOverlay', {msg: 'Loading MISSION MEMBERS', img: 'https://cdn.onlinewebfonts.com/svg/img_458814.png'}) 
+				await dispatch('loadMembers', null,  {root: true})
 				.catch((err) => { errorFlag = true; errors.push('Mission members'); console.error(err) })
-				.then(() => { dispatch('hideOverlay') })
-				.then(() => { 
-					dispatch('hideOverlay')
-					if (errorFlag) {
-						const errorMessage = 'Failed to load the following resources: ' + errors.join(', ')
-						dispatch('displayAlert', { msg: errorMessage, variant: 'danger' }) 
-					}
-				})
+
+				dispatch('hideOverlay')
+				if (errorFlag) {
+					const errorMessage = 'Failed to load the following resources: ' + errors.join(', ')
+					dispatch('displayAlert', { msg: errorMessage, variant: 'danger' }) 
+				}
+
 			})
 			.catch((err) => { 
 				console.error(err)
