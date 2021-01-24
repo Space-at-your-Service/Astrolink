@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<!-- <strong>Astronauts:</strong> {{astronautsCrew}}<br/> -->
-		<!-- <strong>Tasks:</strong> {{tasks}} -->
+		<!-- <strong>Astronauts:</strong> {{astronautsNames}}<br/>
+		<strong>Tasks:</strong> {{tasks}} -->
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
-				<b-col>
+				<b-col v-if="isAllowed('activities.change_task')">
 					<b-form-checkbox
 						id="eventResizeInput"
 						v-model="editionOptions.resize"
@@ -15,12 +15,13 @@
 					</b-form-checkbox>
 				</b-col>
 
-				<b-col>
+				<b-col v-if="isAllowed('activities.change_task')">
 					<b-form-checkbox
 						id="eventDragInput"
 						v-model="editionOptions.drag"
 						switch
 						size="lg"
+						disabled
 						>
 						Enable event drag and drop placement
 					</b-form-checkbox>
@@ -84,30 +85,29 @@
 				</template>
 				
 				<template v-slot:event="{ event }">
-
-					<div class="vuecal__event-title">
-						{{ event.title }}
-					</div>
-					<br/>
-					<div class="vuecal__event-time" v-if="event.resizing" style="display:flex; flex-direction: column;">
-						<div> From <strong>{{ event.start.formatTime('HH:mm') }} </strong></div>
-						<div> To <strong>{{ event.end.formatTime('HH:mm') }} </strong></div>
-					</div>
+						<div class="vuecal__event-title" v-if="!event.resizing" style="justify-content: center; align-self: center;">
+							{{ event.title }}
+						</div>
+						
+						<div class="vuecal__event-time" v-if="event.resizing">
+							<div> From <strong>{{ event.start.formatTime('HH:mm') }} </strong></div>
+							<div> To <strong>{{ event.end.formatTime('HH:mm') }} </strong></div>
+						</div>
 					
 				</template>
 
 				<template v-slot:no-event>Nothing yet</template>
 			</vue-cal>
 
-			<b-modal id="createModal" title="New task" v-model="showCreateModal" @ok.prevent="okCreate()" @cancel="cancelCreate()" @hidden="resetSelectedEvent" no-close-on-backdrop>
-				<form @submit.stop.prevent="handleSubmit">
+			<b-modal id="createModal" title="New task" v-model="showCreateModal" @ok.prevent="okCreate()" @cancel="cancelCreate()" @close="cancelCreate()" @hidden="resetSelectedEvent" no-close-on-backdrop>
+				<b-form ref="createForm" @submit.stop.prevent="handleSubmit">
 					<b-container>
 						<b-row>
 							<b-col>
 								<b-form-group 
 								label="From"
 								label-for="startTimeInput">
-									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required></b-form-timepicker>
 								</b-form-group>
 							</b-col>
 
@@ -115,7 +115,7 @@
 								<b-form-group 
 								label="To"
 								label-for="endTimeInput">
-									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required></b-form-timepicker>
 								</b-form-group>
 							</b-col>
 						</b-row>
@@ -123,19 +123,19 @@
 						<b-form-group 
 						label="Title"
 						label-for="titleInput">
-							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
 						</b-form-group>
 					
 						<b-form-group 
 						label="Content"
 						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50" required></b-form-textarea>
 						</b-form-group>
 
 						<b-form-group 
 						label="Category"
 						label-for="categoryInput">
-							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class" required>
 								<template #first>
 									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
 								</template>
@@ -184,7 +184,7 @@
 						<b-form-group
 						label="Background task (can be overriden):"
 						label-cols="auto">
-							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1" disabled>
+							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
 								{{ selectedEvent.background ? 'Yes' : 'No' }}
 							</b-form-checkbox>
 						</b-form-group>
@@ -206,7 +206,7 @@
 							</b-form-select>
 						</b-form-group>
 					</b-container>
-				</form>
+				</b-form>
 			</b-modal>
 
 			<b-modal id="eventModal" :title="selectedEvent.title" v-model="showEventModal" @hidden="resetSelectedEvent">
@@ -237,7 +237,7 @@
 					</b-row>
 
 					<b-row class="float-right">
-						<b-button @click="isEditingEvent = true" variant="info" >
+						<b-button @click="isEditingEvent = true" variant="info" disabled>
 							<b-icon icon="pencil-square"></b-icon> Edit
 						</b-button>
 					</b-row>
@@ -300,6 +300,7 @@
 	import 'vue-cal/dist/vuecal.css'
 	import 'vue-cal/dist/drag-and-drop.js'
 	import Task from '../models/Task'
+	import Dialog from '../utils/Dialog.js'
 
 	export default {
 		components: { VueCal },
@@ -324,9 +325,9 @@
 
 		computed: {
 			...mapState(['missionStartDate']),
-			...mapGetters(['astronautsCrew']),
+			...mapGetters(['astronautsCrew', 'missionDayNumber']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
-			...mapGetters(['currentAccountRights', 'missionDayNumber']),
+			...mapGetters('user', ['isAllowed']),
 			astronautsNames() {
 				return this.$store.getters['listUsernames']('astronauts')
 			},
@@ -372,11 +373,13 @@
 
 		methods: {
 			toggleAllSplits(checked) {
-				this.selectedEventSplits = checked ? this.astronautsCrew.slice() : []
+				this.selectedEventSplits = checked ? this.astronautsNames.slice() : []
 			},
+
 			getMissionDayNumber(currentDate) {
 				return Math.floor((currentDate.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
 			},
+
 			getDateString() {
 				var date = new Date()
 				var year = date.getYear()
@@ -384,17 +387,20 @@
 				var day = date.getDate()
 				return year+"-"+month+"-"+day
 			},
+
 			getTimeString() {
 				var date = new Date()
 				var hours = date.getHours()
 				var minutes = date.getMinutes()
 				return hours+":"+minutes
 			},
+
 			onEventClick(event, e) {
 				e.stopPropagation()
 				this.selectedEvent = event
 				this.showEventModal = true
 			},
+
 			onEventCreate(event, deleteEventFunction) {
 				this.selectedEvent = event
 				this.deleteEventFunction = deleteEventFunction
@@ -402,22 +408,41 @@
 				return event
 			},
 			
+			checkCreateForm() {
+				const isValid = this.$refs['createForm'].checkValidity()
+				return isValid
+			},
+
 			okCreate() {
+				if (!this.checkCreateForm()) {
+					Dialog.okMessage(this, 'Invalid form')
+					return
+				}
+
+				else this.createTask()
+			},
+
+			createTask() {
 				var selectedEvent = this.selectedEvent
-				if (selectedEvent.class === "Background") selectedEvent.background = true
-				var newTask = new Task('', selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.split, this.linkedProcedures, selectedEvent.background, selectedEvent.allDay)
-				this.tasks.push(newTask)
+				for (var astronaut of this.selectedEventSplits) {
+					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, astronaut, this.linkedProcedures, selectedEvent.background, selectedEvent.allDay)
+					this.tasks.push(newTask)
+				}
 				this.showCreateModal = false
 			},
+
 			cancelCreate() {
 				this.deleteEventFunction()
 			},
+
 			resetSelectedEvent() {
 				this.selectedEvent = {}
 				this.showLinkToInput = false
 				this.selectedEventSplits = []
 				this.selectedEventEveryday = false
 				this.showLinkToInput = false
+
+				this.isEditingEvent = false
 			}
 		}
 
@@ -451,13 +476,10 @@
 		border-radius: 15px;
 		box-shadow: 0 1px 4px navy;
 		opacity: 0.9;
-		/*display: flex;
+		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		align-items: center;*/
-	}
-	
-	.vuecal__event:hover {
+		align-items: center;
 	}
 
 	.vuecal__event.Break {
