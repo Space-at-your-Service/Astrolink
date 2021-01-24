@@ -10,6 +10,7 @@ from os.path import join
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 
 def procedure_path(instance, filename):
@@ -123,7 +124,7 @@ class Textsheet(models.Model):
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
 
     creationDate = models.DateTimeField(auto_now_add = True)
-    lastModifiedDate = models.DateTimeField(auto_now_add = True)
+    lastModifiedDate = models.DateTimeField(default = timezone.now)
 
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created")
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)

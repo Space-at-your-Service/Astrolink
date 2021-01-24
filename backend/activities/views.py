@@ -9,6 +9,7 @@ from wsgiref.util import FileWrapper
 
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -277,6 +278,14 @@ def inflate_textsheet(requestdata):
 
         del requestdata["creator"]
 
+    if "creationDate" in requestdata:
+
+        del requestdata["creationDate"]
+
+    if "lastModifiedDate" in requestdata:
+
+        del requestdata["lastModifiedDate"]
+
 class TextsheetsView(APIView):
 
     def post(self, request):
@@ -334,7 +343,7 @@ class TextsheetView(APIView):
 
         if ser.is_valid():
 
-            ser.save()
+            ser.save(lastModifiedDate = timezone.now())
             return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
