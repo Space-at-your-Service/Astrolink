@@ -287,11 +287,9 @@ def inflate_textsheet(requestdata):
         if new_experiment:
             requestdata["experiment"] = new_experiment.pk
 
-    if "lastUser" in requestdata and requestdata["lastUser"]:
+    if "lastUser" in requestdata:
 
-        new_lastUser = get_user_model().objects.get(username = requestdata.pop("lastUser"))
-        if new_lastUser:
-            requestdata["lastUser"] = new_lastUser.pk
+        del requestdata["lastUser"]
 
     if "creator" in requestdata:
 
@@ -365,7 +363,7 @@ class TextsheetView(APIView):
 
         if ser.is_valid():
 
-            ser.save(lastModifiedDate = timezone.now())
+            ser.save(lastUser = request.user, lastModifiedDate = timezone.now())
             return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
