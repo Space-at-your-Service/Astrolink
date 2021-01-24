@@ -106,8 +106,8 @@ const store = new Vuex.Store({
 		async loadAll({ dispatch, getters }) {
 			var errors = []
 			var errorFlag = false
-			await dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
-			.then(async () => await dispatch('user/getUserState', null,  {root: true}) )
+			dispatch('displayOverlay', {msg: 'Loading USER', img: ' https://cdn.onlinewebfonts.com/svg/img_210318.png'})
+			await dispatch('user/getUserState', null,  {root: true})
 			.then(async () => {
 				if (!getters['user/isAllowed']('inventory.view_item')) return 
 				dispatch('displayOverlay', {msg: 'Loading INVENTORY', img: 'https://cdn.onlinewebfonts.com/svg/img_449535.png'})
