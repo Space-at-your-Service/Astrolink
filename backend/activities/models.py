@@ -10,6 +10,7 @@ from os.path import join
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 
 def procedure_path(instance, filename):
@@ -65,7 +66,7 @@ class Procedure(models.Model):
     types = models.ForeignKey(ProcedureSubtype, on_delete = models.PROTECT, related_name = "procedures", null = True)
     abstract = models.CharField(max_length = 140)
 
-    favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures")
+    favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures", blank = True)
 
     pdfFile = models.FileField(max_length = 100, upload_to = procedure_path)
 
@@ -118,12 +119,12 @@ class Textsheet(models.Model):
         @param content (str) : The contents of the file (can be very long, and contain HTML)
     """
 
-    title = models.CharField(max_length = 50, primary_key = True)
+    title = models.CharField(max_length = 50)
 
     experiment = models.ForeignKey(Experiment, on_delete = models.CASCADE, related_name = "textsheets")
 
     creationDate = models.DateTimeField(auto_now_add = True)
-    lastModifiedDate = models.DateTimeField(auto_now_add = True)
+    lastModifiedDate = models.DateTimeField(default = timezone.now)
 
     creator = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, related_name = "datasheets_created")
     lastUser = models.ForeignKey(get_user_model(), on_delete = models.CASCADE)
@@ -161,7 +162,7 @@ class Task(models.Model):
         @param allDay (bool) : Whether this task takes up all day
     """
 
-    title = models.CharField(max_length = 50, primary_key = True)
+    title = models.CharField(max_length = 50)
 
     holder = models.ForeignKey(get_user_model(), on_delete = models.CASCADE, null = True)
     procedures = models.ManyToManyField(Procedure, related_name = "tasks", blank = True)

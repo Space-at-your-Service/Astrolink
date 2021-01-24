@@ -4,7 +4,7 @@
 
 		<b-container fluid class="p-0">	
 			<b-row>
-				<b-col cols="sm-4">	
+				<b-col cols="sm-4" v-if="isAllowed('activities.add_experiment')">	
 					<b-button v-b-modal.createModal variant="info" class="my-3" style="border-radius: 15px;" size="lg">
 						<b-icon icon="plus-circle-fill" class="mr-1"></b-icon>
 						New experiment
@@ -21,14 +21,14 @@
 			/>
 		</b-card-group>
 
-		<b-modal id="createModal" title="Upload an Experiment" centered size="lg" @ok="okCreate">
-			<form>
+		<b-modal id="createModal" title="Upload an Experiment" centered size="lg" @ok.prevent="okCreate" @hidden="resetCreateModal">
+			<b-form ref="createForm">
 
 				<b-form-group
 				label="Title"
 				label-for="createdTitleInput"
 				>
-					<b-form-input id="createdTitleInput" v-model="createdExperiment.title" trim></b-form-input>
+					<b-form-input id="createdTitleInput" v-model="createdExperiment.title" trim required></b-form-input>
 				</b-form-group>
 
 				<b-form-group
@@ -55,7 +55,7 @@
 				label="Abstract"
 				label-for="createdAbstractInput"
 				>
-					<b-form-textarea id="createdAbstractInput" v-model="createdExperiment.abstract" size="sm" no-resize></b-form-textarea>
+					<b-form-textarea id="createdAbstractInput" v-model="createdExperiment.abstract" size="sm" no-resize required></b-form-textarea>
 				</b-form-group>
 
 				<b-form-group
@@ -67,7 +67,7 @@
 					v-model="createdExperiment.operators"
 					:options="astronautsNames"
 					inline
-					>
+					required>
 					</b-form-checkbox-group>
 				</b-form-group>
 
@@ -86,7 +86,7 @@
 				label="Detailed description"
 				label-for="createdDescriptionInput"
 				>
-					<b-form-textarea id="createdDescriptionInput" v-model="createdExperiment.description" :rows="4"></b-form-textarea>
+					<b-form-textarea id="createdDescriptionInput" v-model="createdExperiment.description" :rows="4"  required></b-form-textarea>
 				</b-form-group>
 
 				<!-- <b-form-group 
@@ -107,7 +107,7 @@
 
 					</b-form-file>
 				</b-form-group> -->
-			</form>
+			</b-form>
 		</b-modal>
 	</div>
 </template>
@@ -117,6 +117,8 @@ import { mapState } from 'vuex';
 import { mapGetters } from 'vuex';
 import Experiment from '../models/Experiment.js'
 import ExperimentCard from '../components/ExperimentCard.vue';
+import Notif from '../utils/Notif.js'
+import Dialog from '../utils/Dialog.js'
 
 export default {
 	components: {
@@ -133,6 +135,7 @@ export default {
 		...mapState(['astronautsCrew']),
 		...mapState('experiment', ['experiments']),
 		...mapGetters('procedure', ['proceduresAsOptions']),
+		...mapGetters('user', ['isAllowed']),
 		astronautsNames() {
 			return this.$store.getters['listUsernames']('astronauts')
 		},
@@ -145,19 +148,38 @@ export default {
 		gotoExperimentDetails(experimentTitle) {
 			this.$router.push({ path: 'experiments/'+experimentTitle })
 		},
-		checkExperiment() {
-			return true
+
+		checkCreateForm() {
+			const isValid = this.$refs['createForm'].checkValidity()
+			return isValid
 		},
+
 		okCreate() {
-				if (!this.checkExperiment(this.createdExperiment)) return
+				if (!this.checkCreateForm()) {
+					Dialog.okMessage(this, 'Invalid form')
+					return
+				}
+
 				else this.createExperiment(this.createdExperiment)
 		},
+
 		createExperiment(experiment) {
 			this.isUploading = true;
 			this.$store.dispatch('experiment/createExperiment', experiment)
 			.then(() => {
+				this.$bvModal.hide('createModal')
+				Notif.toastSuccess(this, 'Experiment created', 'The experiment has been successfully created.')
+			})
+			.catch(() => {
+				Notif.toastError(this, 'Could not create', 'Could not create the experiment.')
+			})
+			.then(() => {
 				this.isUploading = false
 			})
+		},
+
+		resetCreateModal() {
+			this.createdExperiment = new Experiment()
 		},
 	}
 }

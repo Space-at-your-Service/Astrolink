@@ -2,9 +2,15 @@
   <div>
     <span class="loader"></span>
     
-    <img src="https://cdn2.iconfinder.com/data/icons/thesquid-ink-40-free-flat-icon-pack/64/space-rocket-512.png" style="width:30px;height:20px;" class="loader"/>
+    <img src="https://cdn2.iconfinder.com/data/icons/thesquid-ink-40-free-flat-icon-pack/64/space-rocket-512.png" style="width:60px;height:40px;" class="loader"/>
   </div>
 </template>
+
+<script>
+  export default {
+    name: 'rocketSpinner'
+  }
+</script>
 
 <style scoped>
 /*.loader {
@@ -84,10 +90,6 @@ body {
 }
 
 .loader {
-  position:absolute;
-    width:20px;
-    height:20px;
-
     animation:infinite-spinning 2s infinite;
     animation-timing-function:linear;
     transform-origin:100% 200%;

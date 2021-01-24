@@ -1,12 +1,14 @@
-import DateFormat from '../utils/DateFormat.js'
+// import DateFormat from '../utils/DateFormat.js'
 
 export default class Textsheet{
-	constructor(creator=undefined) {
+	constructor(experimentTitle=undefined) {
+		// this.id = undefined
 		this.title = 'Untitled'
 		this.content = ''
-		this.creator = creator
-		this.creationDate = DateFormat.dateString()
-		this.lastUser = creator
-		this.lastModifiedDate = DateFormat.dateString()
+		this.experiment = experimentTitle
+		// this.creator = creator
+		// this.creationDate = DateFormat.dateString()
+		// this.lastUser = creator
+		// this.lastModifiedDate = DateFormat.dateString()
 	}
 }

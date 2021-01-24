@@ -1,7 +1,7 @@
 // Store module that contains user data, including permissions
 
 import ProfileService from '../services/ProfileService.js'
-import TaskService from '../services/TaskService.js'
+// import TaskService from '../services/TaskService.js'
 
 export const user = {
 	namespaced: true,
@@ -87,16 +87,16 @@ export const user = {
 				console.log(err)
 				throw 'loading error (user)'
 			})
-			.then(() => { return TaskService.getUserPlanning() })
-			.then(response => {
-				payload = response.data
-				commit('SET_PLANNING', payload)
-				console.log('user planning loaded')
-			})
-			.catch(err => {
-				console.log(err)
-				throw 'loading error (user planning)'
-			})
+			// .then(() => { return TaskService.getUserPlanning() })
+			// .then(response => {
+			// 	payload = response.data
+			// 	commit('SET_PLANNING', payload)
+			// 	console.log('user planning loaded')
+			// })
+			// .catch(err => {
+			// 	console.log(err)
+			// 	throw 'loading error (user planning)'
+			// })
 		},
 
 		async toggleToFavorites({ commit, state }, procedure) {
@@ -105,7 +105,7 @@ export const user = {
 			var favoriteProcedures = [...state.favoriteProcedures]
 			if (index === -1) {
 				favoriteProcedures.push(procedureTitle)
-				ProfileService.updateFavorites(favoriteProcedures)
+				return ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
 					commit('ADD_FAV_SUCCESS', procedureTitle)
 					console.log('procedure ' + procedureTitle + ' added to user favorites')
@@ -113,7 +113,7 @@ export const user = {
 			}
 			else {
 				favoriteProcedures.splice(index, 1)
-				ProfileService.updateFavorites(favoriteProcedures)
+				return ProfileService.updateFavorites(favoriteProcedures)
 				.then(() => {
 					commit('REMOVE_FAV_SUCCESS', procedureTitle)
 					console.log('procedure ' + procedureTitle + ' removed from user favorites')
@@ -122,7 +122,7 @@ export const user = {
 		},
 
 		async changePassword({ commit }, {oldPassword, newPassword}) {
-			ProfileService.updatePassword(oldPassword, newPassword)
+			return ProfileService.updatePassword(oldPassword, newPassword)
 			.then(() => {
 				commit('PASSWORD_CHANGED')
 				console.log('user password changed')

@@ -5,6 +5,8 @@ REST Endpoints
 """
 
 
+import logging
+
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.parsers import JSONParser
@@ -12,6 +14,9 @@ from rest_framework.views import APIView
 
 from .models import Item
 from .serializers import ItemSerializer
+
+
+log = logging.getLogger("requests")
 
 
 class ItemsView(APIView):
@@ -24,6 +29,7 @@ class ItemsView(APIView):
         """
 
         request.user.check_perms(("inventory.view_item",))
+        log.info(f"{request.user} accessed GET inventory/")
 
         all_items = Item.objects.all().order_by("id")
         ser = ItemSerializer(all_items, many = True)
@@ -38,6 +44,7 @@ class ItemsView(APIView):
         """
 
         request.user.check_perms(("inventory.add_item",))
+        log.info(f"{request.user} accessed POST inventory/")
 
         item_data = JSONParser().parse(request)
         ser = ItemSerializer(data = item_data)
@@ -60,6 +67,7 @@ class ItemView(APIView):
         """
 
         request.user.check_perms(("inventory.change_item",))
+        log.info(f"{request.user} accessed PUT inventory/{pk}/")
 
         item = Item.objects.get(pk = pk)
 
@@ -81,8 +89,9 @@ class ItemView(APIView):
         """
 
         request.user.check_perms(("inventory.delete_item",))
+        log.info(f"{request.user} accessed DELETE inventory/{pk}/")
 
         item = Item.objects.get(pk = pk)
-
         item.delete()
+
         return JsonResponse({"message" : "Item was deleted successfully"}, status = status.HTTP_204_NO_CONTENT)

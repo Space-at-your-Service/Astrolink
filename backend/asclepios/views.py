@@ -5,6 +5,8 @@ REST Endpoints
 """
 
 
+import logging
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -16,6 +18,9 @@ from rest_framework.views import APIView
 from .serializers import AsclepianSerializer, AsclepianFavoritesSerializer, SimpleAsclepianSerializer
 
 
+log = logging.getLogger("requests")
+
+
 class ProfileView(APIView):
 
     def get(self, request):
@@ -25,6 +30,8 @@ class ProfileView(APIView):
             Retrieves a user's profile
         """
 
+        log.info(f"{request.user} accessed GET asclepios/profile/")
+
         ser = AsclepianSerializer(request.user)
 
         return JsonResponse(ser.data, safe = False)
@@ -33,23 +40,32 @@ class ProfileView(APIView):
 
         """ PUT asclepios/profile/
 
-            Edits a user's profile (favorites &/or password)
+            Edits a user's profile (favorites only for now)
         """
 
-        rep = {}
+        log.info(f"{request.user} accessed PUT asclepios/profile/")
 
-        if "favoriteProcedures" in request.data:
+        ser = AsclepianFavoritesSerializer(request.user, data = request.data)
 
-            ser = AsclepianFavoritesSerializer(request.user, data = request.data)
+        if ser.is_valid():
 
-            if ser.is_valid():
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
-                ser.save()
-                rep.update(ser.data)
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
-            else:
 
-                rep.update(ser.errors)
+
+class PasswordView(APIView):
+
+    def put(self, request):
+
+        """ PUT asclepios/password/
+
+            Edits a user's password
+        """
+
+        log.info(f"{request.user} accessed PUT asclepios/password/")
 
         if "oldPassword" in request.data and "newPassword" in request.data:
 
@@ -60,20 +76,16 @@ class ProfileView(APIView):
                     validate_password(request.data["newPassword"], user = request.user)
                     request.user.set_password(request.data["newPassword"])
                     request.user.save()
-                    rep.update({"password" : "successfully updated"})
+
+                    return HttpResponse("Password was successfully updated", status = status.HTTP_202_ACCEPTED)
 
                 except ValidationError as e:
-                    rep.update({"password" : e.messages})
 
-            else:
+                    return JsonResponse(e.messages, status = status.HTTP_400_BAD_REQUEST)
 
-                rep.update({"password" : "old password incorrect !"})
+            return HttpResponse("Old password incorrect", status = status.HTTP_400_BAD_REQUEST)
 
-        if rep:
-
-            return JsonResponse(rep, status = status.HTTP_202_ACCEPTED)
-
-        return JsonResponse({"errors" : "Not enough data provided !"}, status = status.HTTP_400_BAD_REQUEST)
+        return HttpResponse("Missing fields", status = status.HTTP_400_BAD_REQUEST)
 
 
 class UnitsView(APIView):
@@ -84,6 +96,8 @@ class UnitsView(APIView):
 
             Gets all the usernames in a given unit
         """
+
+        log.info(f"{request.user} accessed GET asclepios/units/{pk}/")
 
         users = get_user_model().objects.filter(groups__unit__name = pk)
 

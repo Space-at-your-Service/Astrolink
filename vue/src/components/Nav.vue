@@ -2,7 +2,7 @@
 		<b-navbar toggleable="lg" class="bg-white" style="box-shadow: 0px 3px 15px darkred">
 			<b-navbar-brand href="https://astrolink.earth/" target="_self">
 
-				<!-- <img src="@/assets/img/Astrolink_logo_white_s.png" alt="Astrolink"/> -->
+				<img src="https://i.postimg.cc/2j29FCsF/Astrolink-logo-white.png" alt="Astrolink" width="150px"/>
 
 			</b-navbar-brand>
 
@@ -13,19 +13,18 @@
 					<b-nav-text>
 						Alpha Version 0.8
 						<a href="https://github.com/Space-at-your-Service/Astrolink/issues" target="__blank" class="ml-2">
-							<b-icon icon="bug-fill"></b-icon>
+							<b-icon id="bug" icon="bug-fill"></b-icon>
 						</a>
 					</b-nav-text>							
 				</b-navbar-nav>
 
 				<b-navbar-nav class="ml-auto">
-					<b-nav-item to="/flightplan" :class="{ active : isActive === 'flightplan' }" @click="isActive = 'flightplan'">Flightplan</b-nav-item>
-					<b-nav-item to="/procedures" :class="{ active : isActive === 'procedures' }" @click="isActive = 'procedures'" v-if="isAllowed('activities.view_procedure')">Procedures</b-nav-item>
-					<b-nav-item to="/experiments" :class="{ active : isActive === 'experiments' }" @click="isActive = 'experiments'" v-if="isAllowed('activities.view_experiment')">Experiments</b-nav-item>
-					<b-nav-item to="/inventory" :class="{ active : isActive === 'inventory' }" @click="isActive = 'inventory'" v-if="isAllowed('inventory.view_item')">Inventory</b-nav-item>
-					<!-- <b-nav-item to="/psyforms" :class="{ active : isActive === 'psyforms' }" @click="isActive = 'psyforms'">Psychological</b-nav-item> -->
+					<b-nav-item to="/flightplan" :class="[{ active : isActive === 'flightplan' }, 'hover-bg-crimson']" @click="isActive = 'flightplan'" v-if="isAllowed('activities.view_task')">Flightplan</b-nav-item>
+					<b-nav-item to="/procedures" :class="[{ active : isActive === 'procedures' }, 'hover-bg-crimson']" @click="isActive = 'procedures'" v-if="isAllowed('activities.view_procedure')">Procedures</b-nav-item>
+					<b-nav-item to="/experiments" :class="[{ active : isActive === 'experiments' }, 'hover-bg-crimson']" @click="isActive = 'experiments'" v-if="isAllowed('activities.view_experiment')">Experiments</b-nav-item>
+					<b-nav-item to="/inventory" :class="[{ active : isActive === 'inventory' }, 'hover-bg-crimson']" @click="isActive = 'inventory'" v-if="isAllowed('inventory.view_item')">Inventory</b-nav-item>
 
-					<b-nav-item-dropdown right class="ml-lg-5">
+					<b-nav-item-dropdown right class="ml-lg-5 hover-bg-grey">
 						<template #button-content>
 							<em>{{ username }}</em>
 						</template>
@@ -83,5 +82,8 @@
 		text-decoration: underline;
 	}
 
+	#bug:hover {
+		animation: shake 0.5s;
+	}
 
 </style>

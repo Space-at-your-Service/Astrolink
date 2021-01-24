@@ -5,17 +5,23 @@ REST Endpoints
 """
 
 
+import logging
+
 from wsgiref.util import FileWrapper
 
 from django.contrib.auth import get_user_model
 from django.http import JsonResponse, HttpResponse
+from django.utils import timezone
 
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 
-from .models import Procedure, ProcedureType, Task, Experiment
+from .models import Procedure, ProcedureType, Task, Experiment, Textsheet
 from .serializers import ProcedureSerializer, ProcedureTypeSerializer, TaskSerializer, ExperimentSerializer, TextsheetSerializer
+
+
+log = logging.getLogger("requests")
 
 
 class ProceduresView(APIView):
@@ -30,6 +36,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
+        log.info(f"{request.user} accessed GET activities/procedures/")
 
         all_procedures = Procedure.objects.all()
         ser = ProcedureSerializer(all_procedures, context = {"request" : request}, many = True)
@@ -44,6 +51,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.add_procedure",))
+        log.info(f"{request.user} accessed POST activities/procedures/")
 
         ser = ProcedureSerializer(data = request.data)
 
@@ -67,6 +75,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
+        log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -80,6 +89,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.change_procedure",))
+        log.info(f"{request.user} accessed PUT activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -97,6 +107,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.delete_procedure",))
+        log.info(f"{request.user} accessed DELETE activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
         procedure.delete()
@@ -114,6 +125,7 @@ class ProcedureTypesView(APIView):
         """
 
         request.user.check_perms(("activities.view_proceduretype",))
+        log.info(f"{request.user} accessed GET activities/procedure_types/")
 
         alltypes = ProcedureType.objects.all()
 
@@ -130,6 +142,8 @@ class PlanningView(APIView):
 
             Retrieves the planning of the user requesting
         """
+
+        log.info(f"{request.user} accessed GET activities/planning/")
 
         planning = Task.objects.filter(holder = request.user)
 
@@ -149,6 +163,7 @@ class PlanningView(APIView):
         """
 
         request.user.check_perms(("activities.add_task",))
+        log.info(f"{request.user} accessed POST activities/planning/")
 
         ser = TaskSerializer(data = request.data)
 
@@ -171,11 +186,33 @@ class FlightplanView(APIView):
 
         #TODO: add permission
 
+        log.info(f"{request.user} accessed GET activities/flightplan/")
+
         astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this, create method get_astronauts under asclepian for instance
         ser = TaskSerializer(Task.objects.filter(holder__in = astronauts), many = True)
 
         return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
 
+
+def inflate_experiment(requestdata):
+
+    if "supervisor" in requestdata and requestdata["supervisor"]:
+
+        new_supervisor = get_user_model().objects.get(username = requestdata.pop("supervisor"))
+        if new_supervisor:
+            requestdata["supervisor"] = new_supervisor.pk
+
+    if "operators" in requestdata and requestdata["operators"]:
+
+        new_operators = get_user_model().objects.filter(username__in = requestdata.pop("operators"))
+        if new_operators:
+            requestdata["operators"] = list(new_operators.values_list("pk", flat = True))
+
+    if "procedures" in requestdata and requestdata["procedures"]:
+
+        new_procedures = Procedure.objects.filter(title__in = requestdata.pop("procedures"))
+        if new_procedures:
+            requestdata["procedures"] = list(new_procedures.values_list("pk", flat = True))
 
 class ExperimentsView(APIView):
 
@@ -187,6 +224,7 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.view_experiment",))
+        log.info(f"{request.user} accessed GET activities/experiments/")
 
         all_experiments = Experiment.objects.all()
         ser = ExperimentSerializer(all_experiments, many = True)
@@ -202,6 +240,9 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.add_experiment",))
+        log.info(f"{request.user} accessed POST activities/experiments/")
+
+        inflate_experiment(request.data)
 
         ser = ExperimentSerializer(data = request.data)
 
@@ -212,51 +253,134 @@ class ExperimentsView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
+
+class ExperimentView(APIView):
+
     def put(self, request, pk):
 
         """ PUT activities/experiments/<experiment_title>
 
-            Edits an experiment (+ Adds textsheets/datasheets)
+            Edits an experiment
         """
 
+        request.user.check_perms(("activities.change_experiment",))
+        log.info(f"{request.user} accessed PUT activities/experiments/{pk}/")
+
+        inflate_experiment(request.data)
+
         experiment = Experiment.objects.get(pk = pk)
+        ser = ExperimentSerializer(instance = experiment, data = request.data, partial = True)
 
-        if "data" in request.data:
+        if ser.is_valid():
 
-            request.user.check_perms(("activities.add_textsheet", "activities.add_spreadsheet"))
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
 
-            textsheets = request.data["data"].get("textsheets", [])
-            spreadsheets = request.data["data"].get("spreadsheets", [])
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
-            for t in textsheets:
-                t["experiment"] = experiment.title
 
-            rep = {}
-            stus = 0
+def inflate_textsheet(requestdata):
 
-            if textsheets:
+    if "experiment" in requestdata and requestdata["experiment"]:
 
-                ser = TextsheetSerializer(data = textsheets, many = True)
+        new_experiment = Experiment.objects.get(title = requestdata.pop("experiment"))
+        if new_experiment:
+            requestdata["experiment"] = new_experiment.pk
 
-                if ser.is_valid():
+    if "lastUser" in requestdata and requestdata["lastUser"]:
 
-                    experiment.textsheets.add(*ser.save())
-                    experiment.save()
+        new_lastUser = get_user_model().objects.get(username = requestdata.pop("lastUser"))
+        if new_lastUser:
+            requestdata["lastUser"] = new_lastUser.pk
 
-                    rep.update({"textsheets" : ser.data})
-                    stus = status.HTTP_201_CREATED
+    if "creator" in requestdata:
 
-                else:
+        del requestdata["creator"]
 
-                    rep.update({"textsheets" : ser.errors})
-                    stus = status.HTTP_400_BAD_REQUEST
+    if "creationDate" in requestdata:
 
-            if spreadsheets:
+        del requestdata["creationDate"]
 
-                pass #TODO Implement when spreadsheets are done
+    if "lastModifiedDate" in requestdata:
 
-            if rep and stus != 0:
+        del requestdata["lastModifiedDate"]
 
-                return JsonResponse(rep, status = stus)
+class TextsheetsView(APIView):
 
-        return JsonResponse({"errors" : "no data provided !"}, status = status.HTTP_400_BAD_REQUEST)
+    def post(self, request):
+
+        """ POST activities/textsheets/
+
+            Adds a textsheet
+        """
+
+        request.user.check_perms(("activities.add_textsheet",))
+        log.info(f"{request.user} accessed POST activities/textsheets/")
+
+        inflate_textsheet(request.data)
+        request.data["creator"] = request.user.pk
+        request.data["lastUser"] = request.user.pk
+
+        ser = TextsheetSerializer(data = request.data)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_201_CREATED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+
+class TextsheetView(APIView):
+
+    def get(self, request, pk):
+
+        """ GET activities/textsheets/<textsheet_id>
+
+            Retrieves a specific textsheet
+        """
+
+        request.user.check_perms(("activities.view_textsheet",))
+        log.info(f"{request.user} accessed GET activities/textsheet/{pk}/")
+
+        ts = Textsheet.objects.get(pk = pk)
+        ser = TextsheetSerializer(ts)
+
+        return JsonResponse(ser.data, status = status.HTTP_200_OK)
+
+    def put(self, request, pk):
+
+        """ PUT activities/textsheets/<textsheet_id>
+
+            Edits a specific textsheet
+        """
+
+        request.user.check_perms(("activities.change_textsheet",))
+        log.info(f"{request.user} accessed PUT activities/textsheet/{pk}/")
+
+        inflate_textsheet(request.data)
+
+        ts = Textsheet.objects.get(pk = pk)
+        ser = TextsheetSerializer(ts, data = request.data, partial = True)
+
+        if ser.is_valid():
+
+            ser.save(lastModifiedDate = timezone.now())
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+
+        """ DELETE activities/textsheets/<textsheet_id>
+
+            Deletes a specific textsheet
+        """
+
+        request.user.check_perms(("activities.delete_textsheet",))
+        log.info(f"{request.user} accessed DELETE activities/textsheet/{pk}/")
+
+        ts = Textsheet.objects.get(pk = pk)
+        ts.delete()
+
+        return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)

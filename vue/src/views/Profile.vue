@@ -8,8 +8,8 @@
             <ul>
               <li><strong>First name: </strong>{{ firstName }}</li>
               <li><strong>Last name: </strong>{{ lastName }}</li>
-              <li><strong>Age: </strong>{{ lastName }}</li>
-              <li><strong>Nationality: </strong>{{ lastName }}</li>
+            <!--   <li><strong>Age: </strong>{{ lastName }}</li>
+              <li><strong>Nationality: </strong>{{ lastName }}</li> -->
             </ul>
           </div>
 
@@ -39,9 +39,9 @@
     </div>
 
     <div style="font-size: x-large; position: absolute; top: 30px; right: 100px;">
-      <b-dropdown variant="link" no-caret>
+      <b-dropdown id="parameters" variant="link" no-caret>
         <template #button-content>
-          <span style="color: white"><b-icon icon='gear-fill' class="float-right"></b-icon></span>
+          <span style="color: white"><b-icon id="gear-icon" icon='gear-fill' class="float-right"></b-icon></span>
         </template>
 
         <b-dropdown-item v-b-modal.passwordModal>Change password</b-dropdown-item>
@@ -103,6 +103,7 @@
 <script>
   import { mapState } from 'vuex'
   import { mapGetters } from 'vuex'
+  import Notif from '../utils/Notif.js'
 
   export default {
     data() {
@@ -126,6 +127,12 @@
       },
       changePassword(payload) {
         this.$store.dispatch('user/changePassword', payload)
+        .then(() => {
+          Notif.toastWarning(this, 'Password changed', 'Your password has been changed.')
+        })
+        .catch(() => {
+          Notif.toastError(this, 'Could not change', 'Could not change your password.')
+        })
       },
       resetPasswordModal() {
         
@@ -156,4 +163,15 @@
   #avatar:hover #avatarEdit {
     visibility: visible;
   }
+
+  #gear-icon {
+    transform: rotate(0deg);
+    transition: transform 0.5s;
+  }
+
+  #parameters:hover #gear-icon {
+    transform: rotate(-90deg);
+    transition: transform 0.5s;
+  }
+
 </style>

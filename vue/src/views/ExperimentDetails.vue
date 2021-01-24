@@ -11,7 +11,6 @@
 			</template>
 			
 			<b-card-text class="p-3">
-
 				<b-row>
 					<b-col>
 						<strong>Supervised by</strong><br/>
@@ -54,12 +53,12 @@
 							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
 							<ul>
 								<li v-for="textsheet in experiment.data.textsheets" :key="textsheet.title" class="my-3">
-									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.title">
+									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.id">
 										{{ textsheet.title }}
 									</router-link><br/>
-									<strong>Created:</strong> {{ textsheet.creationDate }}
+									<strong>Created:</strong> {{ dateFormat(textsheet.creationDate) }}
 							<strong>by:</strong>  {{ textsheet.creator }}<br/>
-							<strong>Last modified:</strong> {{textsheet.lastModifiedDate }}
+							<strong>Last modified:</strong> {{ dateFormat(textsheet.lastModifiedDate) }}
 							<strong>by:</strong> {{ textsheet.lastUser }}
 								</li>
 							</ul>
@@ -96,6 +95,7 @@
 <script>
 	import expBadge from '../components/expBadge.vue'
 	import ProcedureService from '../services/ProcedureService.js'
+	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
 
 	export default {
@@ -125,6 +125,9 @@
 				.then(fileURL => {
 					window.open(fileURL, title)
 				})
+			},
+			dateFormat(rawDate) {
+				return DateFormat.dateString(rawDate)
 			}
 		}
 	}

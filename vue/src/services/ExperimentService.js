@@ -18,6 +18,14 @@ class ExperimentService {
 	async deleteExperiment(experiment) {
 		return http.delete('/activities/experiments/' + experiment.title);
 	}
+
+	async postTextsheet(sheet) {
+		return http.post('/activities/textsheets/', sheet);
+	}
+
+	async updateTextsheet(sheet) {
+		return http.put('/activities/textsheets/' + sheet.id, sheet);
+	}
 }
 
 export default new ExperimentService();
