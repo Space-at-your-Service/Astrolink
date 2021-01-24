@@ -2,17 +2,6 @@
 	<div class="main-container">
 		<h3 class="section-title">Data for <span style="color: darkred">{{ experiment.title }}</span></h3>
 
-		<b-form-checkbox
-			ref = "enabledInput"
-			v-model="enabled"
-			switch
-			size="lg"
-			class="mt-2"
-			@change="toggleToolbar"
-			>
-			Enable edition mode
-		</b-form-checkbox>
-
 		<b-container class="p-0">
 			<b-row>
 				<b-col>
@@ -22,8 +11,15 @@
 					</b-form>
 				</b-col>
 
+				<b-col cols="3" v-if="!enabled">
+					<b-button @click="enableEdition"  class="float-right"  size="lg" variant="info" style="border-radius: 15px; width: 150px;">
+						<b-icon icon="pencil-square"></b-icon>
+						Edit
+					</b-button>
+				</b-col>
+
 				<b-col cols="3" v-if="enabled">
-					<b-button @click="okSave" class="float-right" size="lg" variant="info" style="border-radius: 15px" :disabled="saving">
+					<b-button @click="okSave" class="float-right" size="lg" variant="info" style="border-radius: 15px; width: 150px;" :disabled="saving">
 						<span v-if="!saving"><b-icon icon="cloud-upload" ></b-icon> Save</span>
 						<b-spinner type="grow" label="Spinning" v-if="saving"></b-spinner>
 					</b-button>
@@ -32,7 +28,7 @@
 		</b-container>
 
 		<b-container style="background-color: #fff; color: black; overflow: hidden; border-radius: 0px 0px 0px 15px" class="p-4">
-			<vue-editor v-model="sheet.content" :editorToolbar="customToolbar" :disabled="!enabled" style="height: 1000px;"></vue-editor>
+			<vue-editor ref="editor" v-model="sheet.content" :editorToolbar="customToolbar" :disabled="!enabled" style="height: 1000px;"></vue-editor>
 		</b-container>
 	</div>
 </template>
@@ -70,7 +66,7 @@
 			return {
 				sheet: undefined,
 				isNew: true,
-				enabled: true,
+				enabled: false,
 				customToolbar: [
 					[{ 'size': ['small', false, 'large', 'huge'] }],
 					['bold', 'italic', 'underline', 'strike'],
@@ -93,16 +89,14 @@
 		},
 		methods: {
 			getSheet() {
-				const sheetTitle = this.$route.params.sheetTitle
-				if (sheetTitle === 'new-entry') {
-					console.log(this.experiment)
+				const sheetId = this.$route.params.sheetId
+				if (sheetId === 'new-entry') {
 					this.sheet = new Textsheet(this.experiment.title)
-					console.log(this.sheet)
+					this.enabled = true
 				}
 				else {
 					try{
-						console.log(this.experiment)
-						this.sheet = {...this.experiment.data.textsheets.find(textsheet => textsheet.title === this.$route.params.sheetTitle)}
+						this.sheet = {...this.experiment.data.textsheets.find(textsheet => textsheet.id == this.$route.params.sheetId)}
 						this.isNew = false
 						this.enabled = false
 					} catch(err) {
@@ -143,8 +137,8 @@
 				this.$store.dispatch('experiment/createTextsheet', sheet)
 				.then(() => {
 					Notif.toastSuccess(this, 'New textsheet saved', 'The new textsheet has been successfully saved.')
-					this.$router.push('/experiments/'+this.experiment.title+'/data/textsheets/'+sheet.title)
-					this.isNew = false
+
+					this.$router.go(-1)
 				})
 				.catch(err => { console.error(err); Notif.toastError(this, 'Could not save', 'The new textsheet could not be saved.') })
 				.then(() => this.saving = false)
@@ -161,13 +155,16 @@
 				.then(() => this.saving = false)	
 			},
 
-			toggleToolbar(checked) {
+			enableEdition() {
+				this.enabled = true
 				const toolbar = document.getElementsByClassName('ql-toolbar')[0]
-				if (checked) toolbar.classList.remove('hidden')
-				else toolbar.classList.add('hidden')
+				toolbar.classList.remove('hidden')
+				// const editor = this.$refs.editor
+				// editor.focus();
 			},
+
 			initToolbar() {
-				if (!this.$refs['enabledInput'].checked) {
+				if (!this.enabled) {
 					const toolbar = document.getElementsByClassName('ql-toolbar')[0]
 					toolbar.classList.add('hidden')
 				}
@@ -179,7 +176,6 @@
 		},
 		mounted() {
 			this.initToolbar()
-			this.$refs['titleInput'].focus()
 		}
 	}
 </script>

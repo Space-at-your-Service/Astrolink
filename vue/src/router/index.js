@@ -71,7 +71,7 @@ const routes = [
     component: () => import('../views/Communication.vue')
   },
   {
-    path: '/experiments/:experimentTitle/data/textsheets/:sheetTitle',
+    path: '/experiments/:experimentTitle/data/textsheets/:sheetId',
     name: 'experiment_textdata',
     props: true,
     component: () => import ('../views/ExperimentTextData.vue')

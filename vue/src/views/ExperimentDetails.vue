@@ -53,7 +53,7 @@
 							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
 							<ul>
 								<li v-for="textsheet in experiment.data.textsheets" :key="textsheet.title" class="my-3">
-									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.title">
+									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.id">
 										{{ textsheet.title }}
 									</router-link><br/>
 									<strong>Created:</strong> {{ dateFormat(textsheet.creationDate) }}

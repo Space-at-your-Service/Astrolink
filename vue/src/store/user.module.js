@@ -1,7 +1,7 @@
 // Store module that contains user data, including permissions
 
 import ProfileService from '../services/ProfileService.js'
-import TaskService from '../services/TaskService.js'
+// import TaskService from '../services/TaskService.js'
 
 export const user = {
 	namespaced: true,
@@ -87,16 +87,16 @@ export const user = {
 				console.log(err)
 				throw 'loading error (user)'
 			})
-			.then(() => { return TaskService.getUserPlanning() })
-			.then(response => {
-				payload = response.data
-				commit('SET_PLANNING', payload)
-				console.log('user planning loaded')
-			})
-			.catch(err => {
-				console.log(err)
-				throw 'loading error (user planning)'
-			})
+			// .then(() => { return TaskService.getUserPlanning() })
+			// .then(response => {
+			// 	payload = response.data
+			// 	commit('SET_PLANNING', payload)
+			// 	console.log('user planning loaded')
+			// })
+			// .catch(err => {
+			// 	console.log(err)
+			// 	throw 'loading error (user planning)'
+			// })
 		},
 
 		async toggleToFavorites({ commit, state }, procedure) {
