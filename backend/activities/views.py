@@ -5,6 +5,8 @@ REST Endpoints
 """
 
 
+import logging
+
 from wsgiref.util import FileWrapper
 
 from django.contrib.auth import get_user_model
@@ -19,6 +21,9 @@ from .models import Procedure, ProcedureType, Task, Experiment, Textsheet
 from .serializers import ProcedureSerializer, ProcedureTypeSerializer, TaskSerializer, ExperimentSerializer, TextsheetSerializer
 
 
+log = logging.getLogger("requests")
+
+
 class ProceduresView(APIView):
 
     parser_classes = (MultiPartParser, FormParser,)
@@ -31,6 +36,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
+        log.info(f"{request.user} accessed GET activities/procedures/")
 
         all_procedures = Procedure.objects.all()
         ser = ProcedureSerializer(all_procedures, context = {"request" : request}, many = True)
@@ -45,6 +51,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.add_procedure",))
+        log.info(f"{request.user} accessed POST activities/procedures/")
 
         ser = ProcedureSerializer(data = request.data)
 
@@ -68,6 +75,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
+        log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -81,6 +89,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.change_procedure",))
+        log.info(f"{request.user} accessed PUT activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -98,6 +107,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.delete_procedure",))
+        log.info(f"{request.user} accessed DELETE activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
         procedure.delete()
@@ -115,6 +125,7 @@ class ProcedureTypesView(APIView):
         """
 
         request.user.check_perms(("activities.view_proceduretype",))
+        log.info(f"{request.user} accessed GET activities/procedure_types/")
 
         alltypes = ProcedureType.objects.all()
 
@@ -131,6 +142,8 @@ class PlanningView(APIView):
 
             Retrieves the planning of the user requesting
         """
+
+        log.info(f"{request.user} accessed GET activities/planning/")
 
         planning = Task.objects.filter(holder = request.user)
 
@@ -150,6 +163,7 @@ class PlanningView(APIView):
         """
 
         request.user.check_perms(("activities.add_task",))
+        log.info(f"{request.user} accessed POST activities/planning/")
 
         ser = TaskSerializer(data = request.data)
 
@@ -171,6 +185,8 @@ class FlightplanView(APIView):
         """
 
         #TODO: add permission
+
+        log.info(f"{request.user} accessed GET activities/flightplan/")
 
         astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this, create method get_astronauts under asclepian for instance
         ser = TaskSerializer(Task.objects.filter(holder__in = astronauts), many = True)
@@ -208,6 +224,7 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.view_experiment",))
+        log.info(f"{request.user} accessed GET activities/experiments/")
 
         all_experiments = Experiment.objects.all()
         ser = ExperimentSerializer(all_experiments, many = True)
@@ -223,6 +240,7 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.add_experiment",))
+        log.info(f"{request.user} accessed POST activities/experiments/")
 
         inflate_experiment(request.data)
 
@@ -246,6 +264,7 @@ class ExperimentView(APIView):
         """
 
         request.user.check_perms(("activities.change_experiment",))
+        log.info(f"{request.user} accessed PUT activities/experiments/{pk}/")
 
         inflate_experiment(request.data)
 
@@ -296,6 +315,7 @@ class TextsheetsView(APIView):
         """
 
         request.user.check_perms(("activities.add_textsheet",))
+        log.info(f"{request.user} accessed POST activities/textsheets/")
 
         inflate_textsheet(request.data)
         request.data["creator"] = request.user.pk
@@ -321,6 +341,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.view_textsheet",))
+        log.info(f"{request.user} accessed GET activities/textsheet/{pk}/")
 
         ts = Textsheet.objects.get(pk = pk)
         ser = TextsheetSerializer(ts)
@@ -335,6 +356,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.change_textsheet",))
+        log.info(f"{request.user} accessed PUT activities/textsheet/{pk}/")
 
         inflate_textsheet(request.data)
 
@@ -356,6 +378,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.delete_textsheet",))
+        log.info(f"{request.user} accessed DELETE activities/textsheet/{pk}/")
 
         ts = Textsheet.objects.get(pk = pk)
         ts.delete()

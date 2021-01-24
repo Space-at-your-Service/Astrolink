@@ -13,9 +13,10 @@
 
 # Django
 __pycache__
-files/
-migrations
-nukedb
+backend/files/
+backend/logs/
+backend/*/migrations
+backend/nukedb
 
 # Vue
 /vue/public/lib
