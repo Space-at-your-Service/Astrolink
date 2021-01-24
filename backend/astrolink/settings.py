@@ -29,8 +29,8 @@ DEBUG = False
 ALLOWED_HOSTS = ["astrolink.earth"]
 
 #Security settings
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
 
