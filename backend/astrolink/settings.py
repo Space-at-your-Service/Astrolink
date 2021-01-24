@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
+
 from pathlib import Path
 
 try:
@@ -106,6 +108,54 @@ AUTH_USER_MODEL = "asclepios.Asclepian"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES" : ("rest_framework.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+}
+
+#This is the logging configuration
+LOGGING = {
+    "version" : 1,
+
+    "disable_existing_loggers" : False,
+
+    "formatters" : {
+        "django" : {
+            "()" : "django.utils.log.ServerFormatter",
+            "format" : "[{server_time}] {message}",
+            "style" : "{",
+        },
+    },
+
+    "handlers" : {
+        "console" : {
+            "class" : "logging.StreamHandler",
+            "formatter" : "django",
+        },
+        "file" : {
+            #This logger will overwrite itself every 2000 bytes so we don't clutter our limited cloud space
+            "class" : "logging.handlers.RotatingFileHandler",
+            "encoding" : "utf-8",
+            "filename" : BASE_DIR / "logs/django.log",
+            "maxBytes" : 2000,
+            "backupCount" : 1, 
+            "formatter" : "django",
+        },
+    },
+
+    "root" : {
+        "handlers" : ["console"],
+        "level" : "WARNING",
+    },
+    "loggers" : {
+        "django" : {
+            "handlers" : ["console"],
+            "level" : os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "propagate" : False,
+        },
+        "requests": {
+            "handlers" : ["file"],
+            "level" : "INFO",
+            "propagate" : False,
+        },
+    },
 }
 
 
