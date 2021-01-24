@@ -66,8 +66,7 @@
 					id="createdOperatorsInput"
 					v-model="createdExperiment.operators"
 					:options="astronautsNames"
-					inline
-					required>
+					inline>
 					</b-form-checkbox-group>
 				</b-form-group>
 
