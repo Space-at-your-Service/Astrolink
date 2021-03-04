@@ -16,7 +16,6 @@ __pycache__
 backend/files/
 backend/logs/
 backend/*/migrations
-backend/nukedb
 
 # Vue
 /vue/public/lib

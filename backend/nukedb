@@ -1,0 +1,11 @@
+#!/bin/bash
+
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc" -delete
+
+sudo -u postgres psql -c "DROP DATABASE astrodb;"
+sudo -u postgres psql -c "CREATE DATABASE astrodb; "
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE astrodb TO chloe;"
+
+./manage.py makemigrations
+./manage.py migrate

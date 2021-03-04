@@ -92,7 +92,7 @@ class ProcedureView(APIView):
         log.info(f"{request.user} accessed PUT activities/procedure/{pk}/")
 
         procedure = Procedure.objects.get(pk = pk)
-
+        #TODO : DELETE THE OLD FILE, otherwise we accumulate them
         f = request.data["pdfFile"]
 
         procedure.pdfFile.save(f.name, f, save = True)
