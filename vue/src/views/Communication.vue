@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <h3>Communication:</h3>
+		<h3 class="section-title">Communication</h3>
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
 <audio id="player" controls></audio> -->
@@ -206,20 +206,38 @@ import comBadge from "../components/CommunicationBadge.vue";
 import VueRecord from "@loquiry/vue-record-audio";
 
 export default {
+data() {
+			return {
+				rooms_: [
+					{ key: 'name', label: 'Room name', sortable: true},
+					{ key: 'users', label: 'user list', sortable: false }
+				],
+				sortBy: 'name',
+				hideEmpty: false,
+				transProps: {
+					name: 'flip-list'
+				},
+				selected: [],
+				isBusy: false,
+				editedItem: { name: '', users: ''}
+			}
+		},
+		computed: {
+			...mapState('communication', ['rooms']),
+			...mapGetters('user', ['isAllowed']),
+			sortOptions() {
+				return this.rooms_
+					.filter(f => f.sortable)
+					.map(f => {
+						return { text: f.label, value: f.key }
+					})
+			}
+		},
   components: {
     VueRecord,
     comBadge,
   },
-  computed: {
-    ...mapState("user", [
-      "permissions",
-      "username",
-      "firstName",
-      "lastName",
-      "groups",
-    ]),
-    ...mapGetters("user", ["permissionsReadable"]),
-  },
+
   methods: {
     removePresence() {
       alert("exit");
@@ -272,5 +290,6 @@ export default {
   height: 652px;
   border: 2px solid black;
   background-color: rgb(141, 204, 241);
+  border-radius: 30px;
 }
 </style>

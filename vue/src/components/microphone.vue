@@ -9,6 +9,7 @@ install:  npm i @loquiry/vue-record-audio
 <template>
 
   <VueRecord class="record" @result="onResult">
+
     Record
     <template slot="isInitiating">
       Grant microphone permissions
@@ -34,7 +35,9 @@ export default {
       console.log("record button data:", data);
       console.log("Sound in ms:", data.duration);
       console.log(URL.createObjectURL(data.blob));
+      var div = document.getElementById('test');
 
+      div.innerHTML += 'Extra stuff';
 
 
     }
