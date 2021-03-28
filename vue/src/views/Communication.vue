@@ -9,7 +9,7 @@
         <b-row>
           <b-col cols="9" class="rounded p-2">
             <b-row class="mb-3">
-              <b-col class="sm-4 rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3 bg-info">
                 <h5>FLIGHT</h5>
                 <div class="DoubleBtn">
                   <button
@@ -29,7 +29,7 @@
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
-              <b-col class="sm-4 rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3 bg-info">
                 <h5>FLIGHT</h5>
                 <div class="DoubleBtn">
                   <button
@@ -49,7 +49,7 @@
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
-              <b-col class="sm-4 rounded p-3 ml-auto bg-info">
+              <b-col class="sm-4 channel  rounded p-3  bg-info">
                 <h5>SCIENCE</h5>
                 <div class="DoubleBtn">
                   <button
@@ -70,7 +70,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3 bg-info">
                 <h5>CAP</h5>
                 <div class="DoubleBtn">
                   <button
@@ -91,7 +91,7 @@
                 <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col></b-col>
-              <b-col class="sm-4 col-sm-offset-4 rounded p-3 ml-auto bg-info">
+              <b-col class="sm-4 channel   rounded p-3  bg-info">
                 <h5>PRO</h5>
                 <div class="DoubleBtn">
                   <button
@@ -112,7 +112,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3 bg-info">
                 <h5>BME</h5>
                 <div class="DoubleBtn">
                   <button
@@ -130,10 +130,29 @@
                     In
                   </button>
                 </div>
-                <comBadge id="MA" :speaking="false" />
+                
               </b-col>
-              <b-col></b-col>
-              <b-col class="sm-4 col-sm-offset-4 rounded p-3 bg-info">
+                <b-col id="global" class="sm-4 channel  rounded p-3 ">
+                <h5 align="center">GLOBAL</h5>
+                <div >
+                  <button
+                    type="button"
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
+                    Out
+                  </button>
+                  <button
+                    type="button"
+                    @click="addPresence()"
+                    class="float-left btn btn-success"
+                  >
+                    In
+                  </button>
+                </div>
+                
+              </b-col>
+              <b-col class="sm-4 channel rounded p-3 bg-info">
                 <h5>REC</h5>
                 <div class="DoubleBtn">
                   <button
@@ -154,7 +173,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 rounded p-3 bg-info">
+              <b-col class="sm-4 channel   rounded p-3 bg-info">
                 <h5>PLAN</h5>
                 <div class="DoubleBtn">
                   <button
@@ -173,7 +192,6 @@
                   </button>
                 </div>
 
-                <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col class="text-center" align-v="center">
                 <VueRecord class="record" @result="onResult">
@@ -185,7 +203,7 @@
                   <template slot="isCreating"> Creating Sound... </template>
                 </VueRecord>
               </b-col>
-              <b-col class="sm-4 rounded p-3 ml-auto bg-info">
+              <b-col class="sm-4 channel    rounded p-3  bg-info">
                 <h5>CONTACT</h5>
                 <div class="DoubleBtn">
                   <button
@@ -197,7 +215,7 @@
                   </button>
                   <button
                     type="button"
-                    @click="addPresence()"
+                    @click="addPresence('contact')"
                     class="float-right btn btn-success"
                   >
                     In
@@ -280,8 +298,8 @@ export default {
         '" type="audio/wav"></audio>';
     },
 
-    addPresence() {
-      alert("enter");
+    addPresence(room) {
+      alert("entering " + room);
     },
   },
   mounted() {},
@@ -318,4 +336,14 @@ export default {
   border-radius: 30px;
   background-color: rgb(141, 204, 241);
 }
+.channel {
+  height: 150px;
+  margin-left: 5px;
+  margin-right: 5px;
+  }
+  #global {
+    height: 100px;
+    margin-top: 50px;
+    
+  }
 </style>
