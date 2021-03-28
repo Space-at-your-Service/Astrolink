@@ -9,7 +9,7 @@
         <b-row>
           <b-col cols="9" class="rounded p-2">
             <b-row class="mb-3">
-              <b-col class="sm-4 channel  rounded p-3 bg-info">
+              <b-col id="flight" class="sm-4 channel  rounded p-3">
                 <h5>FLIGHT</h5>
                 <div class="DoubleBtn">
                   <button
@@ -29,8 +29,8 @@
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
-              <b-col class="sm-4 channel  rounded p-3 bg-info">
-                <h5>FLIGHT</h5>
+              <b-col id="base" class="sm-4 channel  rounded p-3 ">
+                <h5>base</h5>
                 <div class="DoubleBtn">
                   <button
                     type="button"
@@ -49,7 +49,7 @@
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
-              <b-col class="sm-4 channel  rounded p-3  bg-info">
+              <b-col id="science" class="sm-4 channel  rounded p-3 ">
                 <h5>SCIENCE</h5>
                 <div class="DoubleBtn">
                   <button
@@ -70,7 +70,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 channel  rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3 " id="cap">
                 <h5>CAP</h5>
                 <div class="DoubleBtn">
                   <button
@@ -91,7 +91,7 @@
                 <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col></b-col>
-              <b-col class="sm-4 channel   rounded p-3  bg-info">
+              <b-col class="sm-4 channel   rounded p-3  " id="pro">
                 <h5>PRO</h5>
                 <div class="DoubleBtn">
                   <button
@@ -112,7 +112,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 channel  rounded p-3 bg-info">
+              <b-col class="sm-4 channel  rounded p-3" id="bme">
                 <h5>BME</h5>
                 <div class="DoubleBtn">
                   <button
@@ -152,7 +152,7 @@
                 </div>
                 
               </b-col>
-              <b-col class="sm-4 channel rounded p-3 bg-info">
+              <b-col class="sm-4 channel rounded p-3 " id="rec">
                 <h5>REC</h5>
                 <div class="DoubleBtn">
                   <button
@@ -173,7 +173,7 @@
               </b-col>
             </b-row>
             <b-row class="mb-3">
-              <b-col class="sm-4 channel   rounded p-3 bg-info">
+              <b-col class="sm-4 channel   rounded p-3 " id="plan">
                 <h5>PLAN</h5>
                 <div class="DoubleBtn">
                   <button
@@ -195,7 +195,7 @@
               </b-col>
               <b-col class="text-center" align-v="center">
                 <VueRecord class="record" @result="onResult">
-                  Record
+                  Push to talk
                   <template slot="isInitiating">
                     Grant microphone permissions
                   </template>
@@ -203,7 +203,7 @@
                   <template slot="isCreating"> Creating Sound... </template>
                 </VueRecord>
               </b-col>
-              <b-col class="sm-4 channel    rounded p-3  bg-info">
+              <b-col class="sm-4 channel    rounded p-3 " id="contact">
                 <h5>CONTACT</h5>
                 <div class="DoubleBtn">
                   <button
@@ -346,4 +346,32 @@ export default {
     margin-top: 50px;
     
   }
+  #science {
+    background-color: rgb(135,206,235);
+  }
+  #base {
+    background-color: rgb(109, 151, 165);
+  }
+  #flight{
+    background-color: rgb(92, 156, 165);
+  }
+  #cap {
+    background-color: rgb(96, 182, 236);
+  }
+  #pro {
+    background-color: rgb(0,191,255);
+  }
+  #bme 
+  {
+    background-color: rgb(30,144,255);
+  }
+  #rec {
+    background-color: rgb(100,149,237);
+  }
+  #plan {
+    background-color: rgb(70,130,180);
+
+  }
+  #contact {
+  background-color: rgb(43, 120, 184);}
 </style>
