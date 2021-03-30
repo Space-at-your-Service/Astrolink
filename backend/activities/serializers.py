@@ -110,6 +110,8 @@ class TaskSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         self.fields["procedures"] = ProcedureSerializer(many = True)
+        self.fields["split"] = self.fields.pop("holder")
+        self.fields["class"] = self.fields.pop("category")
 
         return serializers.ModelSerializer.to_representation(self, instance)
 
