@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 import os
-
 from pathlib import Path
 
 try:
@@ -47,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     #Imported apps
     "rest_framework", #Enable Django Rest Framework (DRF)
     "rest_framework.authtoken", #Enable DRF's Token generation
@@ -75,6 +73,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
 
 ]
+
 
 ROOT_URLCONF = 'astrolink.urls'
 
@@ -121,6 +120,7 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES" : ("rest_framework.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
+
 
 #This is the logging configuration
 LOGGING = {
@@ -183,4 +183,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 STATIC_URL = "/static/"
+STATIC_ROOT = "/static/"
 MEDIA_ROOT = BASE_DIR / "files"
+
+
+

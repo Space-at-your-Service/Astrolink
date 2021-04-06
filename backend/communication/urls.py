@@ -12,5 +12,6 @@ from .views import CommunicationView
 
 urlpatterns = [
   path("", CommunicationView.as_view()),
+    path("<slug:pk>", CommunicationView.as_view()),
 
 ]

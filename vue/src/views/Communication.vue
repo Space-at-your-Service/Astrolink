@@ -215,7 +215,7 @@
                   </button>
                   <button
                     type="button"
-                    @click="addPresence('contact')"
+                    @click="updateRooms()"
                     class="float-right btn btn-success"
                   >
                     In
@@ -256,7 +256,7 @@ export default {
       },
       selected: [],
       isBusy: false,
-      editedItem: { name: "", users: "" },
+      editedRoom: {id: '0',  name: "maxime", users: ['pi'] },
     };
   },
   computed: {
@@ -277,6 +277,11 @@ export default {
   },
 
   methods: {
+    updateRooms() {
+				
+				alert("room edited")
+				this.$store.dispatch('communication/updateRoom', this.editedRoom)	
+			},
     onScroll(event) {
       console.log(this.$refs.scrollbar.ps, event);
     },
