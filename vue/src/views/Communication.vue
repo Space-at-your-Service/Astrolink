@@ -4,7 +4,12 @@
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
 <audio id="player" controls></audio> -->
+
     <b-container fluid="sm">
+      
+  <b-tabs content-class="mt-3" fill>
+    <b-tab title="Audios" active>
+
       <div id="channelContainer">
         <b-row>
           <b-col cols="9" class="rounded p-2">
@@ -129,8 +134,9 @@
                   >
                     In
                   </button>
+    
+                  
                 </div>
-                
               </b-col>
                 <b-col id="global" class="sm-4 channel  rounded p-3 ">
                 <h5 align="center">GLOBAL</h5>
@@ -226,16 +232,103 @@
           </b-col>
           <b-col md="15" cols="3" class="rounded ml-auto p-2">
             <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
-              <div id="audiosContainer"></div>
+              <div id="audiosContainer">
+              
+              </div>
+              
+
             </perfect-scrollbar>
           </b-col>
         </b-row>
+        
       </div>
+      </b-tab>
+      <!--#####################################COMMUNICATION PART ################################################################################### -->
+    <b-tab title="Communication">
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 my-3">
+        <h2>Rooms</h2>
+      </div>
+    </div>
+    <div class="row">
+          <div class="col-md-12">
+        <div class="">
+          <vue-webrtc ref="webrtc2"
+                      width="100%"
+                      roomId="Global"
+                      v-on:joined-room="logEvent"
+                      v-on:left-room="logEvent"
+                      v-on:opened-room="logEvent"
+                      v-on:share-started="logEvent"
+                      v-on:share-stopped="logEvent"
+                      @error="onError" />
+         
+        </div>
+        <div class="row">
+          <div class="col-md-12 my-3">
+            <button type="button" class="btn btn-primary" @click="onJoin2">Join global</button>
+            <button type="button" class="btn btn-primary" @click="onLeave2">Leave global</button>
+            <button type="button" class="btn btn-primary" @click="onCapture2">Capture Photo</button>
+            <button type="button" class="btn btn-primary" @click="onShareScreen2">Share Screen</button>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12">
+        <div class="">
+          <vue-webrtc ref="webrtc"
+                      width="100%"
+                      roomId="BME"
+                      v-on:joined-room="logEvent"
+                      v-on:left-room="logEvent"
+                      v-on:opened-room="logEvent"
+                      v-on:share-started="logEvent"
+                      v-on:share-stopped="logEvent"
+                      @error="onError" />
+         
+        </div>
+        <div class="row">
+          <div class="col-md-12 my-3">
+            <button type="button" class="btn btn-primary" @click="onJoin">Join BME</button>
+            <button type="button" class="btn btn-primary" @click="onLeave">Leave BME</button>
+            <button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>
+            <button type="button" class="btn btn-primary" @click="onShareScreen">Share Screen</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <h2>Captured Image</h2>
+        <figure class="figure">
+          <img :src="img" class="img-responsive" />
+        </figure>
+      </div>
+    </div>
+  </div>
+    </b-tab>
+    
+  </b-tabs>
     </b-container>
   </div>
 </template>
 
   <script>
+
+
+// template
+import Vue from 'vue'
+import WebRTC from 'vue-webrtc'
+
+// ISSUE 5: https://github.com/westonsoftware/vue-webrtc/issues/5
+import * as io from 'socket.io-client'
+window.io = io
+//
+
+Vue.use(WebRTC);
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 import comBadge from "../components/CommunicationBadge.vue";
@@ -245,6 +338,8 @@ import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 export default {
   data() {
     return {
+        img: null,
+        roomId: "public-room",
       rooms_: [
         { key: "name", label: "Room name", sortable: true },
         { key: "users", label: "user list", sortable: false },
@@ -256,7 +351,7 @@ export default {
       },
       selected: [],
       isBusy: false,
-      editedRoom: {id: '0',  name: "maxime", users: ['pi'] },
+      editedRoom: {id: '0',  name: "", users: ['pi'] },
     };
   },
   computed: {
@@ -306,6 +401,36 @@ export default {
     addPresence(room) {
       alert("entering " + room);
     },
+    onCapture() {
+        this.img = this.$refs.webrtc.capture();
+      },
+      onJoin() {
+        this.$refs.webrtc.join();
+      },
+      onLeave() {
+        this.$refs.webrtc.leave();
+      },
+      onShareScreen() {
+        this.img = this.$refs.webrtc.shareScreen();
+      },
+      onCapture2() {
+        this.img = this.$refs.webrtc2.capture();
+      },
+      onJoin2() {
+        this.$refs.webrtc2.join();
+      },
+      onLeave2() {
+        this.$refs.webrtc2.leave();
+      },
+      onShareScreen2() {
+        this.img = this.$refs.webrtc2.shareScreen();
+      },
+      onError(error, stream) {
+        console.log('On Error Event', error, stream);
+      },
+      logEvent(event) {
+        console.log('Event : ', event);
+      },
   },
   mounted() {},
 };
