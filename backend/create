@@ -1,5 +1,0 @@
-sudo -u postgres psql -c "DROP DATABASE astrodb;"
-sudo -u postgres psql -c "CREATE DATABASE astrodb; "
-sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE astrodb TO chloe;"
-sudo -u postgres psql -c "ALTER USER chloe WITH PASSWORD 'hbadg9zhv47e';"
-

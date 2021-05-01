@@ -314,8 +314,17 @@
       </b-tab>
       <!--#####################################COMMUNICATION PART ################################################################################### -->
     <b-tab title="Communication">
-<div class ="vueWRTCBox" v-for="(channel, index) in roomsList" :key="index">
-      <WRTCRoom :roomName="channel"/></div>
+
+
+
+      <b-row  >
+    <b-col 
+        v-for="(channel, index) in roomsList" :key="index">
+                  <WRTCRoom :roomName="channel"/>
+
+
+    </b-col>
+</b-row>
 
     </b-tab>
     
