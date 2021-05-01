@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication {{rooms}}</h3>
+    <h3 class="section-title">Communication </h3>
     
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
@@ -362,6 +362,7 @@ export default {
       transProps: {
         name: "flip-list",
       },
+      
       selected: [],
       isBusy: false,
       editedRoom: {id: '0',  name: "", users: "" },
@@ -427,6 +428,10 @@ export default {
     
 
     },
+    refresh(){
+    this.$store.dispatch('communication/getRooms');
+
+    },
 
     removePresence(roomName) {
       const editedRoom = {...this.rooms.find(x => x.name === roomName)};
@@ -450,8 +455,13 @@ export default {
         console.log('Event : ', event);
       },
   },
+  created() {
+        this.refresh()
+        setInterval(this.refresh, 1000)
+    },
   mounted() {
     this.$store.dispatch('communication/getRooms')
+
   },
 };
 </script>
