@@ -42,6 +42,19 @@ export const communication = {
 	},
 
 	actions: {
+		async getCommunicationState({ commit }) {
+			var payload = undefined
+			return CommunicationService.getRooms()
+			.then(response => {
+				payload = response.data
+				commit('SET_STATE', payload)
+				console.log('communication loaded')
+			})
+			.catch(err => {
+				console.log('loading error (communication)')
+				throw err
+			})
+		},
 		async getRooms({ commit }) {
 			var payload = undefined
 			return CommunicationService.getRooms()

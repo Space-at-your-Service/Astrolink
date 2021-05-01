@@ -21,7 +21,7 @@ log = logging.getLogger("requests")
 
 class CommunicationView(APIView):
 
-    def get(self, request,pk):
+    def get(self, request):
 
         """ GET rooms/
 
@@ -32,7 +32,6 @@ class CommunicationView(APIView):
         #log.info(f"{request.user} accessed GET communication/")
 
         all_rooms = Room.objects.all().order_by("id")
-        print(all_rooms)
         ser = RoomSerializer(all_rooms, many = True)
         return JsonResponse(ser.data, safe = False)
 

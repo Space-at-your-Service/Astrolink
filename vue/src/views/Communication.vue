@@ -24,7 +24,7 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Flight')"
+                    @click="removePresence('flight')"
                     class="float-right btn btn-danger" 
                     
                     >
@@ -33,7 +33,7 @@
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Flight')"
+                    @click="addPresence('flight')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -78,14 +78,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Science')"
+                    @click="removePresence('science')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Science')"
+                    @click="addPresence('science')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -105,14 +105,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Cap')"
+                    @click="removePresence('cap')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Cap')"
+                    @click="addPresence('cap')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -131,14 +131,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Pro')"
+                    @click="removePresence('pro')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Pro')"
+                    @click="addPresence('pro')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -158,14 +158,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Bme')"
+                    @click="removePresence('bme')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Bme')"
+                    @click="addPresence('bme')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -180,14 +180,14 @@
                 <div v-for="group in groups" :key="group.role">
                   <button v-if="group.unit !== 'Astronauts'"
                     type="button"
-                    @click="removePresence('Global')"
+                    @click="removePresence('global')"
                     class="float-right btn btn-danger"
                   >
                     Out
                   </button>
                   <button v-if="group.unit !== 'Astronauts'"
                     type="button"
-                    @click="addPresence('Global')"
+                    @click="addPresence('global')"
                     class="float-left btn btn-success"
                   >
                     In
@@ -203,14 +203,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence('Rec')"
+                    @click="removePresence('rec')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence('Rec')"
+                    @click="addPresence('rec')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -230,14 +230,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence()"
+                    @click="removePresence('plan')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence()"
+                    @click="addPresence('plan')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -274,14 +274,14 @@
 
                     <button 
                     type="button"
-                    @click="removePresence()"
+                    @click="removePresence('contact')"
                     class="float-right btn btn-danger" >
                  
                     Out
                   </button>
                   <button 
                     type="button"
-                    @click="addPresence()"
+                    @click="addPresence('contact')"
                     class="float-right btn btn-success" >
                   
                     In
@@ -352,11 +352,11 @@ export default {
     return {
       joinedRooms: [],
         img: null,
-        roomId: "public-room",
-      rooms_: [
-        { key: "name", label: "Room name", sortable: true },
-        { key: "users", label: "user list", sortable: false },
-      ],
+				fields: [
+					{ key: 'id', label: 'Room ID', sortable: true, sortDirection: 'desc' },
+					{ key: 'name', label: 'Name', sortable: true },
+					{ key: 'users', label: 'users', sortable: false }
+				],
       sortBy: "name",
       hideEmpty: false,
       transProps: {
@@ -364,7 +364,7 @@ export default {
       },
       selected: [],
       isBusy: false,
-      editedRoom: {id: '0',  name: "", users: [] },
+      editedRoom: {id: '0',  name: "", users: "" },
       roomsList: ['BME', 'Global','Base','Flight', 'Science', 'Pro', 'Rec', 'Plan', 'Cap' ,'Contact'],
       roomAccessControl: []
     };
@@ -391,19 +391,11 @@ export default {
   },
 
   methods: {
-    
-    updateRooms() {
-				
-				alert("room edited")
-				this.$store.dispatch('communication/updateRoom', this.editedRoom)	
-			},
+ 
     onScroll(event) {
       console.log(this.$refs.scrollbar.ps, event);
     },
-    removePresence(room) {
-      this.joinedRooms.pop(room)
 
-    },
     onResult(data) {
       console.log("record button data:", data);
       console.log("Sound in ms:", data.duration);
@@ -419,8 +411,34 @@ export default {
         '" type="audio/wav"></audio>';
     },
 
-    addPresence(room) {
-      this.joinedRooms.push(room);
+    addPresence(roomName) {
+      console.log(this.rooms)
+      const editedRoom = {...this.rooms.find(x => x.name === roomName)
+};
+      console.log(roomName)
+      let users =  this.rooms.find(x => x.name === roomName).users;
+      users = users.split(",");
+
+      if (!users.includes(this.firstName+':'+this.lastName)){
+        users.push(this.firstName+':'+this.lastName)
+      }
+      editedRoom.users = users.join(',');
+      this.$store.dispatch('communication/updateRoom', editedRoom);
+    
+
+    },
+
+    removePresence(roomName) {
+      const editedRoom = {...this.rooms.find(x => x.name === roomName)};
+      let users =  this.rooms.find(x => x.name === roomName).users;
+      users = users.split(",");
+
+      if (users.includes(this.firstName+':'+this.lastName)){
+        users.pop(this.firstName+':'+this.lastName)
+      }
+      editedRoom.users = users.join(',');
+      this.$store.dispatch('communication/updateRoom', editedRoom);
+    
 
     },
     

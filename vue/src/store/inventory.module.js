@@ -11,7 +11,7 @@ export const inventory = {
 
 	getters: {
 	},
-
+	
 	mutations: {
 		SET_STATE(state, payload) {
 			state.items = payload

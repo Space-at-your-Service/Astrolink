@@ -3,16 +3,14 @@
 import http from './http.common';
 
 class CommunicationService {
-	async getUsers() {
+	
+
+	async getRooms() {
 		return http.get('/communication/')
 	}
 
-	async getRooms() {
-		return http.get('/communication/rooms')
-	}
-
 	async updateRoom(room) {
-		return http.put('/communication/'+room.name.toString(), room)
+		return http.put('/communication/'+room.id.toString(), room)
 	}
 
 	

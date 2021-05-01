@@ -18,6 +18,7 @@ import { flightplan } from './flightplan.module.js'
 import { inventory } from './inventory.module.js'
 import { procedure } from './procedure.module.js'
 import { user } from './user.module.js'
+import { communication } from './communication.module.js'
 import ProfileService from '../services/ProfileService.js'
 
 Vue.use(Vuex)
@@ -30,6 +31,7 @@ const store = new Vuex.Store({
 		flightplan,
 		inventory,
 		procedure,
+		communication,
 		user
 	},
 
