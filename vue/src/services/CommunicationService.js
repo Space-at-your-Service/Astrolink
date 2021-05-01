@@ -6,10 +6,12 @@ class CommunicationService {
 	async getUsers() {
 		return http.get('/communication/')
 	}
-	
-	
 
-	async updateItem(room) {
+	async getRooms() {
+		return http.get('/communication/rooms')
+	}
+
+	async updateRoom(room) {
 		return http.put('/communication/'+room.name.toString(), room)
 	}
 

@@ -18,13 +18,14 @@ class Room(models.Model):
     @field room (str) : A unique name for the room (ex: global)
     @field users (list) : list of the users in the room ( JSONfield)
     """
+   
 
     name = models.CharField(unique=True, max_length = 20, blank = False)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL,blank=True, help_text="user who are connected to the room")
-
-    #class Meta:
-       # permissions = [("can join this room") ]
-                     
+    
+    class Meta:
+        permissions = [("view_communication","can view communication") ]
+                         
 
     def __str__(self):
 
@@ -77,3 +78,5 @@ class RoomAudio(models.Model):
     objects = RoomAudioManager()
     def __str__(self):
         return str(self.audiofile)
+
+

@@ -1,193 +1,150 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication {{rooms}}</h3>
-    
+    <h3 class="section-title">Communication</h3>
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
 <audio id="player" controls></audio> -->
-
     <b-container fluid="sm">
-      
-  <b-tabs content-class="mt-3" fill>
-    <b-tab title="Audios" active>
-      <!--#####################################AUDIO PART ########################################################################################### -->
-
       <div id="channelContainer">
         <b-row>
           <b-col cols="9" class="rounded p-2">
             <b-row class="mb-3">
               <b-col id="flight" class="sm-4 channel  rounded p-3">
                 <h5>FLIGHT</h5>
-                       <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Flight')"
-                    class="float-right btn btn-danger" 
-                    
-                    >
-                 <!-- :class={: 'float-right'} -->
+                    @click="removePresence()"
+                    class="float-right btninout btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('Flight')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btninout btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col id="base" class="sm-4 channel  rounded p-3 ">
                 <h5>base</h5>
-              <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div >
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('base')"
-                    class="float-right btn btn-danger" >
-                 
+                    @click="removePresence()"
+                    class="float-right btninout btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('base')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btninout btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
                 <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col id="science" class="sm-4 channel  rounded p-3 ">
                 <h5>SCIENCE</h5>
-                       <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Science')"
-                    class="float-right btn btn-danger" >
-                 
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('Science')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
               </b-col>
             </b-row>
             <b-row class="mb-3">
               <b-col class="sm-4 channel  rounded p-3 " id="cap">
                 <h5>CAP</h5>
-                       <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Cap')"
-                    class="float-right btn btn-danger" >
-                 
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('Cap')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
                 </div>
-                </div>
+                <comBadge id="MA" :speaking="false" />
               </b-col>
               <b-col></b-col>
               <b-col class="sm-4 channel   rounded p-3  " id="pro">
                 <h5>PRO</h5>
-                       <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Pro')"
-                    class="float-right btn btn-danger" >
-                 
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('Pro')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
               </b-col>
             </b-row>
             <b-row class="mb-3">
               <b-col class="sm-4 channel  rounded p-3" id="bme">
                 <h5>BME</h5>
-                          <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Bme')"
-                    class="float-right btn btn-danger" >
-                 
-                    Out
-                  </button>
-                  <button 
-                    type="button"
-                    @click="addPresence('Bme')"
-                    class="float-right btn btn-success" >
-                  
-                    In
-                  </button>
-
-
-                </div>
-                </div>
-              </b-col>
-                <b-col id="global" class="sm-4 channel  rounded p-3 ">
-                <h5 align="center">GLOBAL</h5>
-                <div v-for="group in groups" :key="group.role">
-                  <button v-if="group.unit !== 'Astronauts'"
-                    type="button"
-                    @click="removePresence('Global')"
+                    @click="removePresence()"
                     class="float-right btn btn-danger"
                   >
                     Out
                   </button>
-                  <button v-if="group.unit !== 'Astronauts'"
+                  <button
                     type="button"
-                    @click="addPresence('Global')"
+                    @click="addPresence()"
+                    class="float-right btn btn-success"
+                  >
+                    In
+                  </button>
+                </div>
+                
+              </b-col>
+                <b-col id="global" class="sm-4 channel  rounded p-3 ">
+                <h5 align="center">GLOBAL</h5>
+                <div >
+                  <button
+                    type="button"
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
+                    Out
+                  </button>
+                  <button
+                    type="button"
+                    @click="addPresence()"
                     class="float-left btn btn-success"
                   >
                     In
@@ -197,54 +154,42 @@
               </b-col>
               <b-col class="sm-4 channel rounded p-3 " id="rec">
                 <h5>REC</h5>
-                       <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
-                    @click="removePresence('Rec')"
-                    class="float-right btn btn-danger" >
-                 
+                    @click="removePresence()"
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence('Rec')"
-                    class="float-right btn btn-success" >
-                  
+                    @click="addPresence()"
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
               </b-col>
             </b-row>
             <b-row class="mb-3">
               <b-col class="sm-4 channel   rounded p-3 " id="plan">
                 <h5>PLAN</h5>
-                            <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
                     @click="removePresence()"
-                    class="float-right btn btn-danger" >
-                 
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
                     @click="addPresence()"
-                    class="float-right btn btn-success" >
-                  
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
 
               </b-col>
@@ -257,81 +202,41 @@
                   <template slot="isRecording"> Recording </template>
                   <template slot="isCreating"> Creating Sound... </template>
                 </VueRecord>
-                <VueRecord class="record" @result="onResult">
-                  Global
-                  <template slot="isInitiating">
-                    Grant microphone permissions
-                  </template>
-                  <template slot="isRecording"> Recording </template>
-                  <template slot="isCreating"> Creating Sound... </template>
-                </VueRecord>
               </b-col>
               <b-col class="sm-4 channel    rounded p-3 " id="contact">
                 <h5>CONTACT</h5>
-                <div class="DoubleBtn" v-for="group in groups" :key="group.role">
-                  
-                <div v-if="group.unit !== 'Astronauts'">
-
-                    <button 
+                <div class="DoubleBtn">
+                  <button
                     type="button"
                     @click="removePresence()"
-                    class="float-right btn btn-danger" >
-                 
+                    class="float-right btn btn-danger"
+                  >
                     Out
                   </button>
-                  <button 
+                  <button
                     type="button"
-                    @click="addPresence()"
-                    class="float-right btn btn-success" >
-                  
+                    @click="updateRooms()"
+                    class="float-right btn btn-success"
+                  >
                     In
                   </button>
-
-
-                </div>
                 </div>
               </b-col>
             </b-row>
           </b-col>
           <b-col md="15" cols="3" class="rounded ml-auto p-2">
-           <!-- <b-tabs  :v-for="room in joinedRooms" :key="room"> 
-                    <b-tab > -->
             <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
-              <div id="audiosContainer">
-                  
-                
-                  
-              </div>
-
+              <div id="audiosContainer"></div>
             </perfect-scrollbar>
-           <!-- </b-tab>
-
-            </b-tabs> -->
           </b-col>
         </b-row>
-        
       </div>
-      </b-tab>
-      <!--#####################################COMMUNICATION PART ################################################################################### -->
-    <b-tab title="Communication">
-<div class ="vueWRTCBox" v-for="(channel, index) in roomsList" :key="index">
-      <WRTCRoom :roomName="channel"/></div>
-
-    </b-tab>
-    
-  </b-tabs>
     </b-container>
   </div>
 </template>
 
   <script>
-
-
-// template
-
-
-//
-import WRTCRoom from "../components/WRTCRoom.vue";
+  
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 import comBadge from "../components/CommunicationBadge.vue";
@@ -341,9 +246,6 @@ import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 export default {
   data() {
     return {
-      joinedRooms: [],
-        img: null,
-        roomId: "public-room",
       rooms_: [
         { key: "name", label: "Room name", sortable: true },
         { key: "users", label: "user list", sortable: false },
@@ -355,17 +257,12 @@ export default {
       },
       selected: [],
       isBusy: false,
-      editedRoom: {id: '0',  name: "", users: [] },
-      roomsList: ['BME', 'Global','Base','Flight', 'Science', 'Pro', 'Rec', 'Plan', 'Cap' ,'Contact'],
-      roomAccessControl: []
+      editedRoom: {id: '0',  name: "maxime", users: ['pi'] },
     };
   },
   computed: {
-      ...mapState('user', ['permissions', 'username', 'firstName', 'lastName', 'groups']),
-      ...mapState('communication', ['rooms']),
-      ...mapGetters('user', ['isAllowed']),
-
-    },
+    ...mapState("communication", ["rooms"]),
+    ...mapGetters("user", ["isAllowed"]),
     sortOptions() {
       return this.rooms_
         .filter((f) => f.sortable)
@@ -373,16 +270,14 @@ export default {
           return { text: f.label, value: f.key };
         });
     },
- 
+  },
   components: {
-    WRTCRoom,
     VueRecord,
     PerfectScrollbar,
     comBadge,
   },
 
   methods: {
-    
     updateRooms() {
 				
 				alert("room edited")
@@ -391,9 +286,8 @@ export default {
     onScroll(event) {
       console.log(this.$refs.scrollbar.ps, event);
     },
-    removePresence(room) {
-      this.joinedRooms.pop(room)
-
+    removePresence() {
+      alert("exit");
     },
     onResult(data) {
       console.log("record button data:", data);
@@ -411,33 +305,19 @@ export default {
     },
 
     addPresence(room) {
-      this.joinedRooms.push(room);
-
+      alert("entering " + room);
     },
-    
-    
-      onError(error, stream) {
-        console.log('On Error Event', error, stream);
-      },
-      logEvent(event) {
-        console.log('Event : ', event);
-      },
   },
-  mounted() {
-    this.$store.dispatch('communication/getRooms')
-  },
+  mounted() {},
 };
 </script>
   
 
 <style scoped>
-.vueWRTCBox {
-  width: 40px;
-}
 .record {
   width: 230px;
-  height: 76px;
-  border-radius: 40px;
+  height: 150px;
+  border-radius: 100px;
 }
 .record.active {
   background: red;

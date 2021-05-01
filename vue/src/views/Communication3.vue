@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication {{rooms}}</h3>
-    
+    <h3 class="section-title">Communication{{items}}</h3>
+    <h3> {{ items }}</h3>
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
 <audio id="player" controls></audio> -->
@@ -20,15 +20,13 @@
                 <h5>FLIGHT</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'Flight Director'">
 
                     <button 
                     type="button"
                     @click="removePresence('Flight')"
-                    class="float-right btn btn-danger" 
-                    
-                    >
-                 <!-- :class={: 'float-right'} -->
+                    class="float-right btn btn-danger" >
+                 
                     Out
                   </button>
                   <button 
@@ -48,7 +46,7 @@
                 <h5>base</h5>
               <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div >
+                <div v-if="group.role !== 'Principal Investigator'">
 
                     <button 
                     type="button"
@@ -74,7 +72,7 @@
                 <h5>SCIENCE</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'Scientist'">
 
                     <button 
                     type="button"
@@ -101,7 +99,7 @@
                 <h5>CAP</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'CAP'">
 
                     <button 
                     type="button"
@@ -127,7 +125,7 @@
                 <h5>PRO</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'PRO'">
 
                     <button 
                     type="button"
@@ -154,7 +152,7 @@
                 <h5>BME</h5>
                           <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'BME'">
 
                     <button 
                     type="button"
@@ -178,14 +176,14 @@
                 <b-col id="global" class="sm-4 channel  rounded p-3 ">
                 <h5 align="center">GLOBAL</h5>
                 <div v-for="group in groups" :key="group.role">
-                  <button v-if="group.unit !== 'Astronauts'"
+                  <button v-if="group.role !== 'Principal Investigator'"
                     type="button"
                     @click="removePresence('Global')"
                     class="float-right btn btn-danger"
                   >
                     Out
                   </button>
-                  <button v-if="group.unit !== 'Astronauts'"
+                  <button v-if="group.role !== 'Principal Investigator'"
                     type="button"
                     @click="addPresence('Global')"
                     class="float-left btn btn-success"
@@ -199,7 +197,7 @@
                 <h5>REC</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'REC'">
 
                     <button 
                     type="button"
@@ -226,7 +224,7 @@
                 <h5>PLAN</h5>
                             <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'Plan'">
 
                     <button 
                     type="button"
@@ -270,7 +268,7 @@
                 <h5>CONTACT</h5>
                 <div class="DoubleBtn" v-for="group in groups" :key="group.role">
                   
-                <div v-if="group.unit !== 'Astronauts'">
+                <div v-if="group.role === 'Contact'">
 
                     <button 
                     type="button"
@@ -314,8 +312,65 @@
       </b-tab>
       <!--#####################################COMMUNICATION PART ################################################################################### -->
     <b-tab title="Communication">
-<div class ="vueWRTCBox" v-for="(channel, index) in roomsList" :key="index">
-      <WRTCRoom :roomName="channel"/></div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 my-3">
+        <h2>Rooms</h2>
+      </div>
+    </div>
+    <div class="row" v-for="group in groups" :key="group.role">
+          <div class="col-md-12" >
+        <div >
+          <vue-webrtc ref="BaseWRTC"
+                      width="100%"
+                      roomId="Base"
+                      stunServer="stun:stun.l.google.com:19302"
+                      v-on:joined-room="logEvent"
+                      v-on:left-room="logEvent"
+                      v-on:opened-room="logEvent"
+                      v-on:share-started="logEvent"
+                      v-on:share-stopped="logEvent"
+                      @error="onError" />
+         
+        </div>
+        <div class="row">
+          <div class="col-md-12 my-3">
+            <button type="button" class="btn btn-primary" @click="joinBase">Join Base</button>
+            <button type="button" class="btn btn-primary" @click="onLeave2">Leave </button>
+            <!--<button type="button" class="btn btn-primary" @click="onCapture2">Capture Photo</button>-->
+            <button type="button" class="btn btn-primary" @click="onShareScreen2">Share Screen</button>
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-12" v-if="group.role === 'Flight Director'">
+        <div class="">
+          <vue-webrtc ref="FlightWRTC"
+                      width="100%"
+                      roomId="Flight"
+                      v-on:joined-room="logEvent"
+                      v-on:left-room="logEvent"
+                      v-on:opened-room="logEvent"
+                      v-on:share-started="logEvent"
+                      v-on:share-stopped="logEvent"
+                      @error="onError" />
+         
+        </div>
+        <div class="row">
+          <div class="col-md-12 my-3">
+            <button type="button" class="btn btn-primary" @click="joinFlight">Join Flight</button>
+            <button type="button" class="btn btn-primary" @click="onLeave">Leave</button>
+            <!--<button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>-->
+            <button type="button" class="btn btn-primary" @click="onShareScreen">Share Screen</button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
 
     </b-tab>
     
@@ -328,10 +383,15 @@
 
 
 // template
+import Vue from 'vue'
+import WebRTC from 'vue-webrtc'
 
-
+// ISSUE 5: https://github.com/westonsoftware/vue-webrtc/issues/5
+import * as io from 'socket.io-client'
+window.io = io
 //
-import WRTCRoom from "../components/WRTCRoom.vue";
+
+Vue.use(WebRTC);
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 import comBadge from "../components/CommunicationBadge.vue";
@@ -355,16 +415,14 @@ export default {
       },
       selected: [],
       isBusy: false,
-      editedRoom: {id: '0',  name: "", users: [] },
-      roomsList: ['BME', 'Global','Base','Flight', 'Science', 'Pro', 'Rec', 'Plan', 'Cap' ,'Contact'],
-      roomAccessControl: []
+      editedRoom: {id: '0',  name: "", users: ['pi'] },
     };
   },
   computed: {
+			...mapState('inventory', ['items']),
       ...mapState('user', ['permissions', 'username', 'firstName', 'lastName', 'groups']),
       ...mapState('communication', ['rooms']),
-      ...mapGetters('user', ['isAllowed']),
-
+      ...mapGetters('user', ['isAllowed'])
     },
     sortOptions() {
       return this.rooms_
@@ -375,14 +433,12 @@ export default {
     },
  
   components: {
-    WRTCRoom,
     VueRecord,
     PerfectScrollbar,
     comBadge,
   },
 
   methods: {
-    
     updateRooms() {
 				
 				alert("room edited")
@@ -414,8 +470,30 @@ export default {
       this.joinedRooms.push(room);
 
     },
-    
-    
+    onCapture() {
+        this.img = this.$refs.FlightWRTC.capture();
+      },
+      joinFlight() {
+        this.$refs.FlightWRTC.join();
+      },
+      onLeave() {
+        this.$refs.FlightWRTC.leave();
+      },
+      onShareScreen() {
+        this.img = this.$refs.FlightWRTC.shareScreen();
+      },
+      onCapture2() {
+        this.img = this.$refs.BaseWRTC.capture();
+      },
+      joinBase() {
+        this.$refs.BaseWRTC.join();
+      },
+      onLeave2() {
+        this.$refs.BaseWRTC.leave();
+      },
+      onShareScreen2() {
+        this.img = this.$refs.BaseWRTC.shareScreen();
+      },
       onError(error, stream) {
         console.log('On Error Event', error, stream);
       },
@@ -423,17 +501,12 @@ export default {
         console.log('Event : ', event);
       },
   },
-  mounted() {
-    this.$store.dispatch('communication/getRooms')
-  },
+  mounted() {},
 };
 </script>
   
 
 <style scoped>
-.vueWRTCBox {
-  width: 40px;
-}
 .record {
   width: 230px;
   height: 76px;
