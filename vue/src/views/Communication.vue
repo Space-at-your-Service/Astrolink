@@ -42,7 +42,12 @@
 
                 </div>
                 </div>
-                <comBadge id="MA" :speaking="false" />
+                
+              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['flight']" :key="person">
+                <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
               <b-col id="base" class="sm-4 channel  rounded p-3 ">
                 <h5>base</h5>
@@ -68,8 +73,11 @@
 
                 </div>
                 </div>
-                <comBadge id="MA" :speaking="false" />
-              </b-col>
+              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['base']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>              </b-col>
               <b-col id="science" class="sm-4 channel  rounded p-3 ">
                 <h5>SCIENCE</h5>
                        <div class="DoubleBtn" v-for="group in groups" :key="group.role">
@@ -94,6 +102,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['science']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
             </b-row>
             <b-row class="mb-3">
@@ -121,6 +134,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['cap']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
               <b-col></b-col>
               <b-col class="sm-4 channel   rounded p-3  " id="pro">
@@ -147,6 +165,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['pro']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
             </b-row>
             <b-row class="mb-3">
@@ -174,6 +197,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['bme']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
                 <b-col id="global" class="sm-4 channel  rounded p-3 ">
                 <h5 align="center">GLOBAL</h5>
@@ -219,6 +247,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['rec']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
             </b-row>
             <b-row class="mb-3">
@@ -246,6 +279,11 @@
 
                 </div>
                 </div>
+                              <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['plan']" :key="person">
+                <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
 
               </b-col>
               <b-col class="text-center" align-v="center">
@@ -290,6 +328,11 @@
 
                 </div>
                 </div>
+            <b-row class="badgesRow" >
+              <b-col  class="badgesDiv" v-for="person in userLists['contact']" :key="person">
+                               <comBadge :color="computeColor(person)" :id="person" :speaking="false" />
+                 </b-col>
+                  </b-row>
               </b-col>
             </b-row>
           </b-col>
@@ -346,10 +389,15 @@ import { mapGetters } from "vuex";
 import comBadge from "../components/CommunicationBadge.vue";
 import VueRecord from "@loquiry/vue-record-audio";
 import { PerfectScrollbar } from "vue2-perfect-scrollbar";
+  import {Colors} from '../utils/colors.js';
+
 import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 export default {
   data() {
     return {
+      usersColors: {},
+      userLists : {'bme':[], 'global':[],'base':[],'flight':[], 'science':[], 'pro':[], 'rec':[], 'plan':[], 'cap':[] ,'contact': [] },
+       splitRooms: [],
       joinedRooms: [],
         img: null,
 				fields: [
@@ -367,7 +415,6 @@ export default {
       isBusy: false,
       editedRoom: {id: '0',  name: "", users: "" },
       roomsList: ['BME', 'Global','Base','Flight', 'Science', 'Pro', 'Rec', 'Plan', 'Cap' ,'Contact'],
-      roomAccessControl: []
     };
   },
   computed: {
@@ -392,7 +439,8 @@ export default {
   },
 
   methods: {
- 
+    ascii(a) { return a.charCodeAt(0); },
+
     onScroll(event) {
       console.log(this.$refs.scrollbar.ps, event);
     },
@@ -428,9 +476,49 @@ export default {
     
 
     },
+    computeColor(s) {
+    var score = s.split('').map(this.ascii).reduce((a, b) => a + b, 0) ;
+    var k = Object.keys(Colors.names)[score%42];
+    return Colors.names[k]    
+    },
+    splitUsers(){
+      for(let room_ in this.userLists){
+        try {
+              let users =  this.rooms.find(x => x.name === room_).users;
+              if (users == [""] ){
+                this.userLists[room_]=[];
+              
+              } else{
+                console.log(users)
+
+              users = users.split(",");
+              if (users[0]==""){
+                users=users.splice(1)
+              }
+              this.userLists[room_] = users;}
+          } catch (error) {
+            this.userLists[room_] = [];
+            console.error(error);
+            // expected output: ReferenceError: nonExistentFunction is not defined
+            // Note - error messages will vary depending on browser
+          }
+
+
+        //room_.users = room_.users.split(",");
+      }
+      
+    },
     refresh(){
     this.$store.dispatch('communication/getRooms');
+    this.splitRooms = Object.assign({},this.rooms);
+    this.splitUsers();
 
+    },
+     arrayRemove(arr, value) { 
+    
+        return arr.filter(function(ele){ 
+            return ele != value; 
+        });
     },
 
     removePresence(roomName) {
@@ -438,8 +526,9 @@ export default {
       let users =  this.rooms.find(x => x.name === roomName).users;
       users = users.split(",");
 
+
       if (users.includes(this.firstName+':'+this.lastName)){
-        users.pop(this.firstName+':'+this.lastName)
+       users =  this.arrayRemove(users, this.firstName+':'+this.lastName);
       }
       editedRoom.users = users.join(',');
       this.$store.dispatch('communication/updateRoom', editedRoom);
@@ -456,8 +545,8 @@ export default {
       },
   },
   created() {
-        this.refresh()
-        setInterval(this.refresh, 1000)
+        setInterval(this.refresh, 1000);
+
     },
   mounted() {
     this.$store.dispatch('communication/getRooms')
@@ -482,7 +571,7 @@ export default {
 .DoubleBtn {
   margin-left: 30px;
   width: 100px;
-  height: 43px;
+  height: 35px;
   float: right;
   margin-top: -40px;
 }
@@ -499,6 +588,14 @@ export default {
   border-radius: 30px;
   background-color: rgb(141, 204, 241);
 }
+.badgesDiv{
+  width:36px;
+ 
+}
+.badgesRow {
+  width: 250px;
+}
+
 .channel {
   height: 150px;
   margin-left: 5px;
