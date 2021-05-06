@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "asclepios",
     "inventory",
     "communication",
+    "audio",
 
 ]
 

@@ -18,6 +18,7 @@ import { flightplan } from './flightplan.module.js'
 import { inventory } from './inventory.module.js'
 import { procedure } from './procedure.module.js'
 import { user } from './user.module.js'
+import { audio } from './audio.module.js'
 import { communication } from './communication.module.js'
 import ProfileService from '../services/ProfileService.js'
 
@@ -32,7 +33,8 @@ const store = new Vuex.Store({
 		inventory,
 		procedure,
 		communication,
-		user
+		user,
+		audio
 	},
 
 	// general mission and functional data, which doesn't belong in any other module

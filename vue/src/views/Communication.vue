@@ -1,6 +1,6 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication </h3>
+    <h3 class="section-title">Communication{{audios}} </h3>
     
     <!--   <button v-on:click="hello">call helllo</button>
 <input type="file" accept="audio/*" capture>
@@ -420,6 +420,8 @@ export default {
   computed: {
       ...mapState('user', ['permissions', 'username', 'firstName', 'lastName', 'groups']),
       ...mapState('communication', ['rooms']),
+            ...mapState('audio', ['audios']),
+
       ...mapGetters('user', ['isAllowed']),
 
     },
@@ -442,7 +444,7 @@ export default {
     ascii(a) { return a.charCodeAt(0); },
 
     onScroll(event) {
-      console.log(this.$refs.scrollbar.ps, event);
+      console.log(this.$refs.scrollbar.ps, event);  
     },
 
     onResult(data) {
@@ -510,6 +512,8 @@ export default {
     },
     refresh(){
     this.$store.dispatch('communication/getRooms');
+    this.$store.dispatch('audio/getAudios');
+
     this.splitRooms = Object.assign({},this.rooms);
     this.splitUsers();
 

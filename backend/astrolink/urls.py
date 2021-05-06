@@ -21,6 +21,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 
 
 urlpatterns = [
+    path("audio/", include("audio.urls")),
 
     path("inventory/", include("inventory.urls")),
     path("communication/", include("communication.urls")),
