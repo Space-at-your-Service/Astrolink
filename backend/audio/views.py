@@ -31,7 +31,7 @@ class AudioView(APIView):
         #request.user.check_perms(("communication.view_communication",))
         #log.info(f"{request.user} accessed GET communication/")
 
-        all_audios = Audio.objects.all().order_by("id")
+        all_audios = Audio.objects.all().order_by("timestamp")
         ser = AudioSerializer(all_audios, many = True)
         return JsonResponse(ser.data, safe = False)
 
@@ -41,8 +41,7 @@ class AudioView(APIView):
         log.info(f"{request.user} accessed POST audio/")
 
 
-        audio_data = JSONParser().parse(request)
-        ser = RoomSerializer(data = audio_data)
+        ser = AudioSerializer(data = request.data)
 
         if ser.is_valid():
 

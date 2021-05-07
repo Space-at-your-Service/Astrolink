@@ -12,9 +12,8 @@ from .models import Audio
 
 class AudioSerializer(serializers.HyperlinkedModelSerializer):
 
-    """ Item Serializer """
 
     class Meta:
 
         model = Audio
-        fields = ("id","user", "rooms","audiofile","timestamp")
+        fields = ("user", "rooms","audiofile","timestamp")

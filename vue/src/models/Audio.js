@@ -1,7 +1,7 @@
 export default class Audio {
-	constructor(name='', rooms=[]) {
-		this.name = name
+	constructor( user="", rooms="", file=undefined) {
+		this.user = user
 		this.rooms = rooms
-
+		this.file = file
 	}
 }

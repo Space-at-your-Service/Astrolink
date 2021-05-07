@@ -48,7 +48,7 @@ export const communication = {
 			.then(response => {
 				payload = response.data
 				commit('SET_STATE', payload)
-				console.log('communication loaded')
+				//console.log('communication loaded')
 			})
 			.catch(err => {
 				console.log('loading error (communication)')

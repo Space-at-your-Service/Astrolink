@@ -40,11 +40,17 @@ export const audio = {
 			})
 		},
 
-		async createAudio({ commit }, audio) {
-			return AudioService.postAudio(audio)
+		async createAudio({ commit, state }, audio) {
+			const formData = new FormData()
+			formData.append('user', audio.user)
+			formData.append('rooms', audio.rooms)
+			formData.append('audiofile', audio.file)
+
+			return AudioService.postAudio(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
 			.then(() => { 
 				commit('CREATE_SUCCESS', audio)
-				console.log('audio ' + audio.id + ' created') 
+				state.uploadProgress = 0
+				console.log('audio ' + audio+ ' created') 
 			})
 		},
 	

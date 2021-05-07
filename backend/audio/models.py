@@ -18,10 +18,9 @@ class Audio(models.Model):
     @field users (list) : list of the users in the room ( JSONfield)
     """
    
-    id = models.SlugField(max_length = 100, primary_key = True, unique = True)
     user = models.TextField( blank = True ,help_text="user who sent the audio")
     rooms = models.TextField( blank = True ,help_text="room where the audio was sent")
-    audiofile = models.FileField(upload_to="audios")                    
+    audiofile = models.FileField(upload_to="audios/%Y/%m/%d")                    
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
     def __str__(self):
 

@@ -58,7 +58,7 @@ methods: {
         this.img =  this.$refs[this.uuid+this.$props.roomName].capture();
       },
       join() {
-          document.getElementById(this.uuid+'callBoxId').style.width = "1200px";
+        document.getElementById(this.uuid+'callBoxId').style.width = "1200px";
         document.getElementById(this.uuid+'join').classList.remove('show');
         document.getElementById(this.uuid+'share').classList.remove('hide');
         document.getElementById(this.uuid+'leave').classList.remove('hide');
@@ -89,8 +89,11 @@ methods: {
       logEvent(event) {
         console.log('Event : ', event);
       },
-        }
-	};
+        
+},
+mounted(){
+}
+}
 </script>
 <style scoped>
 .btndiv{

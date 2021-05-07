@@ -10,8 +10,13 @@ class AudioService {
 		return http.get('/audio/')
 	}
 
-	async postAudio(audio) {
-		return http.post('/audio/', audio)
+	async postAudio(formData, onUploadProgress) {
+		return http.post('/audio/', formData, {
+			headers: {
+				'Content-Type': 'multipart/form-data'
+			},
+			onUploadProgress
+		})
 	}
 
 	
