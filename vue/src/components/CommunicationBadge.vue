@@ -1,7 +1,7 @@
 <template>
         
       
-      <div id="contour" :style="contourColor" ><h6>{{firstName.slice(0,1).toUpperCase()+lastName.slice(0,1).toUpperCase()}}</h6></div>
+      <div id="contour" :class="{isSpeaking: speaking}" :style="contourColor" ><h6>{{firstName.slice(0,1).toUpperCase()+lastName.slice(0,1).toUpperCase()}}</h6></div>
 </template>
 
 <script>
@@ -56,8 +56,8 @@
   }
 </script>
 <style scoped>
-#contour {
-
+.isSpeaking {
+  border:8px solid black;
   
 }
 

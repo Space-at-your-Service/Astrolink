@@ -408,14 +408,20 @@
                 </b-row>
               </b-col>
               <b-col md="15" cols="3" class="rounded ml-auto p-2">
-                <!-- <b-tabs  :v-for="room in joinedRooms" :key="room"> 
-                    <b-tab > -->
-                <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
-                  <div id="audiosContainer"></div>
-                </perfect-scrollbar>
-                <!-- </b-tab>
+               <b-tabs > 
+                    <b-tab v-for="room in roomsUserIsIn" :key="room" :title="room"> 
 
-            </b-tabs> -->
+                <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
+                  <div id="audiosContainer">
+                      <audio controls>
+                      <source src= "http://localhost:8000/files/audios/2021/05/07/audio22.wav" type="audio/wav">
+                      Your browser does not support the audio tag.
+                    </audio> 
+                  </div>
+                </perfect-scrollbar>
+                 </b-tab>
+
+            </b-tabs> 
               </b-col>
             </b-row>
           </div>
@@ -568,11 +574,20 @@ export default {
 
       }
     },
-   
+    genId() {
+      const current = new Date();
+      const date = current.getFullYear()+'-'+current.getDate()+'-'+(current.getMonth()+1);
+      const time = current.getHours() + "-" + current.getMinutes() + "-" + current.getSeconds();
+      const dateTime = date +'-'+ time;
+      const id = dateTime + this.username;
+      return id;
+    },
     onResult(data) {
+      console.log(this.audios[0].audiofile)
+      this.createdAudio.id = this.genId();
       this.createdAudio.user = this.firstName+":"+this.lastName
       this.createdAudio.rooms=this.roomsUserIsIn.join(',')
-      const myFile = new File([data.blob], "audio22.wav");
+      const myFile = new File([data.blob], "audio22d.wav");
 
       this.createdAudio.file=myFile
       this.$store.dispatch("audio/createAudio", this.createdAudio);
@@ -661,7 +676,7 @@ export default {
     },
   },
   created() {
-    setInterval(this.refresh, 2000);
+    setInterval(this.refresh, 1000);
   },
   mounted() {
     this.$store.dispatch("communication/getRooms");
@@ -708,12 +723,9 @@ export default {
 .ps {
   width: 320px;
   padding: 10px;
-  margin-left: 30px;
-  height: 650px;
-  border: 2px solid black;
+  height: 600px;
 
   border-radius: 30px;
-  background-color: rgb(141, 204, 241);
 }
 .badgesDiv {
   width: 36px;
@@ -723,7 +735,8 @@ export default {
 }
 #comDiv{
   background-color: rgb(153, 196, 252);
-  height: 800px;
+  padding-bottom:20px;
+  height: auto;
   border-radius: 30px;
 }
 .channel {

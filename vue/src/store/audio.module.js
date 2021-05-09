@@ -42,6 +42,8 @@ export const audio = {
 
 		async createAudio({ commit, state }, audio) {
 			const formData = new FormData()
+			formData.append('id', audio.id)
+
 			formData.append('user', audio.user)
 			formData.append('rooms', audio.rooms)
 			formData.append('audiofile', audio.file)
@@ -54,7 +56,6 @@ export const audio = {
 			})
 		},
 	
-
 
 		async getAudios({ commit }) {
 			var payload = undefined
@@ -69,6 +70,7 @@ export const audio = {
 				throw err
 			})
 		},
+		
 
 	}
 }

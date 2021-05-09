@@ -58,7 +58,6 @@ methods: {
         this.img =  this.$refs[this.uuid+this.$props.roomName].capture();
       },
       join() {
-        document.getElementById(this.uuid+'callBoxId').style.width = "1200px";
         document.getElementById(this.uuid+'join').classList.remove('show');
         document.getElementById(this.uuid+'share').classList.remove('hide');
         document.getElementById(this.uuid+'leave').classList.remove('hide');
@@ -76,7 +75,6 @@ methods: {
         document.getElementById(this.uuid+'share').classList.add('hide');
         document.getElementById(this.uuid+'leave').classList.add('hide');
         this.$refs[this.uuid+this.$props.roomName].leave();
-        document.getElementById(this.uuid+'callBoxId').style.width = "200px";
 
       },
       onShareScreen() {
@@ -102,6 +100,7 @@ mounted(){
     .callBox {
         width: 200px;
         border-radius: 30px;
+        width: 780px;
     }
     .joinbtn{
         width: 140px;;

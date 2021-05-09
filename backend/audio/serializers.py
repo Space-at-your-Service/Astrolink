@@ -16,4 +16,4 @@ class AudioSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Audio
-        fields = ("user", "rooms","audiofile","timestamp")
+        fields = ("id", "user", "rooms","audiofile","timestamp")

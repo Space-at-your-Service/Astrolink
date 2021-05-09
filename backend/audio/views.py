@@ -6,6 +6,7 @@ REST Endpoints
 
 
 import logging
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from django.http import JsonResponse
 from rest_framework import status
@@ -19,7 +20,7 @@ log = logging.getLogger("requests")
 
  
 
-class AudioView(APIView):
+class AudiosView(APIView):
 
     def get(self, request):
 
@@ -50,4 +51,22 @@ class AudioView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
+
+
+class AudioView(APIView):
+
+    parser_classes = (MultiPartParser,)
+
+    def get(self, request, pk):
+
+        """ GET activities/procedure/<procedure_title>
+
+            Gets a specific procedure's pdf
+        """
+
+        log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
+
+        audio = Audio.objects.get(pk = pk)
+
+        return HttpResponse(FileWrapper(audio.audioFile), content_type = "audio/wav")
 

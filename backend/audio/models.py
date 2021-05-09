@@ -17,7 +17,7 @@ class Audio(models.Model):
     @field room (str) : A unique name for the room (ex: global)
     @field users (list) : list of the users in the room ( JSONfield)
     """
-   
+    id = models.TextField(max_length = 50, primary_key = True, unique = True)
     user = models.TextField( blank = True ,help_text="user who sent the audio")
     rooms = models.TextField( blank = True ,help_text="room where the audio was sent")
     audiofile = models.FileField(upload_to="audios/%Y/%m/%d")                    

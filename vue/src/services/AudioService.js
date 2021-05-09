@@ -5,13 +5,15 @@ import http from './http.common';
 class AudioService {
 	
 
-
+	async getAudio(pk) {
+		return http.get('/audio/audios/'+pk, {responseType: 'blob'})
+	}
 	async getAudios() {
-		return http.get('/audio/')
+		return http.get('/audio/audios/')
 	}
 
 	async postAudio(formData, onUploadProgress) {
-		return http.post('/audio/', formData, {
+		return http.post('/audio/audios/', formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},
