@@ -22,6 +22,7 @@ class Audio(models.Model):
     rooms = models.TextField( blank = True ,help_text="room where the audio was sent")
     audiofile = models.FileField(upload_to="audios/%Y/%m/%d")                    
     timestamp = models.DateTimeField(auto_now_add=True, blank=True)
+    seenBy = models.TextField(max_length=1024, blank=True)
     def __str__(self):
 
         return f"{self.id} ({self.user})"

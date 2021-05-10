@@ -12,6 +12,7 @@ from .views import AudiosView, AudioView
 
 urlpatterns = [
   path("audios/", AudiosView.as_view()),
-  path("audios/<slug:pk>", AudioView.as_view()),
+  
+  path("audios/<str:id>", AudiosView.as_view()),
 
 ]

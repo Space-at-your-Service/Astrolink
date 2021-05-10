@@ -22,6 +22,17 @@ export const audio = {
 			const audio = {...payload}
 			state.audios.push(audio)
 		},
+		UPDATE_SUCCESS(state, payload) {
+			const id = payload.id
+			const index = state.audios.findIndex(audio => { return audio.id === id })
+			if (index > -1) {
+				state.audios.splice(index, 1)
+
+				const audio = {...payload}
+				state.audios.push(audio)
+			}
+		}
+	
 
 	},
 
@@ -40,6 +51,15 @@ export const audio = {
 			})
 		},
 
+		async updateAudio({ commit }, audio) {
+
+			return AudioService.putAudio(audio)
+			.then(() => { 
+				commit('UPDATE_SUCCESS', audio)
+				console.log('audio ' + audio+ ' created') 
+			})
+		},
+	
 		async createAudio({ commit, state }, audio) {
 			const formData = new FormData()
 			formData.append('id', audio.id)
@@ -47,6 +67,7 @@ export const audio = {
 			formData.append('user', audio.user)
 			formData.append('rooms', audio.rooms)
 			formData.append('audiofile', audio.file)
+			formData.append('seenBy', audio.seenBy)
 
 			return AudioService.postAudio(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })
 			.then(() => { 

@@ -21,6 +21,10 @@ class AudioService {
 		})
 	}
 
+	async putAudio(audio) {
+		return http.put('/audio/audios/'+audio.id.toString(), audio)
+	}
+
 	
 }
 

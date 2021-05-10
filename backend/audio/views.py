@@ -51,6 +51,28 @@ class AudiosView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
+    def put(self, request, id):
+
+        """ PUT audio/<room_id>
+
+            Edits a given room
+        """
+
+
+        audio = Audio.objects.get(id = id)
+        print(request.data)
+        request.data.pop('audiofile')
+        print(request.data)
+        audio_data = request.data
+        ser = AudioSerializer(audio, data = audio_data, partial=True)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
 
 
 class AudioView(APIView):

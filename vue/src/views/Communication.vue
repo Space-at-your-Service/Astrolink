@@ -358,7 +358,7 @@
                       <template slot="isRecording"> Recording </template>
                       <template slot="isCreating"> Creating Sound... </template>
                     </VueRecord>
-                    <VueRecord class="record" @result="onResult">
+                    <VueRecord v-if="groups[0].unit!='Astronauts'" class="record" @result="onResultGlobal">
                       Global
                       <template slot="isInitiating">
                         Grant microphone permissions
@@ -400,23 +400,30 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="this.speaking"
                         />
                       </b-col>
                     </b-row>
                   </b-col>
                 </b-row>
               </b-col>
-              <b-col md="15" cols="3" class="rounded ml-auto p-2">
+              
+              <b-col md="15" cols="3" class="rounded ml-auto p-2 audiosDiv">
                <b-tabs > 
                     <b-tab v-for="room in roomsUserIsIn" :key="room" :title="room"> 
 
                 <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
                   <div id="audiosContainer">
-                      <audio controls>
-                      <source src= "http://localhost:8000/files/audios/2021/05/07/audio22.wav" type="audio/wav">
+                    <div class="audios" v-for="audio in audios" :key="audio.id">
+                      <div v-if="audio.rooms.split(',').includes(room)">
+                      <i>{{audio.user + ' ' +toReadable(audio.timestamp)}}</i>
+                      <i v-if="audio.seenBy.split(',').includes(firstName+':'+lastName)" style="color:#42f5ad"> seen</i>
+                      <audio controls v-on:play="listenned(audio.id)" >
+                      <source  :src= "'http://localhost:8000'+audio.audiofile" type="audio/wav">
                       Your browser does not support the audio tag.
                     </audio> 
+                    </div>
+                    </div>
                   </div>
                 </perfect-scrollbar>
                  </b-tab>
@@ -482,6 +489,7 @@ export default {
     return {
       roomsUserIsIn: [],
       createdAudio: new Audio(),
+      speaking : false,
       usersColors: {},
       userLists: {
         bme: [],
@@ -556,8 +564,28 @@ export default {
   },
 
   methods: {
+ 
     ascii(a) {
       return a.charCodeAt(0);
+    },
+    listenned(id){
+      let editedAudio = { ...this.audios.find((x) => x.id === id) };
+      let listennedByUsers = this.audios.find((x) => x.id === id).seenBy;
+      listennedByUsers = listennedByUsers.split(",");
+
+      if (!listennedByUsers.includes(this.firstName + ":" + this.lastName)) {
+        listennedByUsers.push(this.firstName + ":" + this.lastName);
+      }
+      editedAudio.seenBy = listennedByUsers.join(",");
+      this.$store.dispatch("audio/updateAudio", editedAudio);
+    },
+    
+    toReadable(s){
+      if(s==undefined){
+        return ''
+      }
+      var news=s.slice(5,19).replace('T',' ')
+      return news
     },
 
     onScroll(event) {
@@ -574,19 +602,56 @@ export default {
 
       }
     },
-    genId() {
+     genId() {
       const current = new Date();
-      const date = current.getFullYear()+'-'+current.getDate()+'-'+(current.getMonth()+1);
-      const time = current.getHours() + "-" + current.getMinutes() + "-" + current.getSeconds();
-      const dateTime = date +'-'+ time;
+      const date = current.getFullYear()+''+current.getDate()+''+(current.getMonth()+1);
+      const time = current.getHours() +''+ current.getMinutes() +''+ current.getSeconds();
+      const dateTime = date +''+ time;
       const id = dateTime + this.username;
+      console.log(id)
       return id;
     },
-    onResult(data) {
-      console.log(this.audios[0].audiofile)
+   sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+},
+  async sendBase(audio){
+        await this.sleep(8000);
+        let editedAudio = { ...this.audios.find((x) => x.id === audio.id) };
+        editedAudio.rooms = this.roomsUserIsIn.join(',')
+        this.$store.dispatch("audio/updateAudio", editedAudio);
+  },
+   onResult(data) {
+      if(this.roomsUserIsIn.includes("base")){
+        var noBase = this.arrayRemove(this.roomsUserIsIn, "base");
+        this.createdAudio.id = this.genId();
+        this.createdAudio.user = this.firstName+":"+this.lastName
+        this.createdAudio.rooms=noBase.join(',')
+        this.createdAudio.seenBy = this.firstName+":"+this.lastName
+        const myFile = new File([data.blob], "audio22d.wav");
+
+        this.createdAudio.file=myFile
+        this.$store.dispatch("audio/createAudio", this.createdAudio);
+        this.sendBase(this.createdAudio);
+
+
+
+      }
+     else{
+        this.createdAudio.id = this.genId();
+        this.createdAudio.user = this.firstName+":"+this.lastName
+        this.createdAudio.rooms=this.roomsUserIsIn.join(',')
+        this.createdAudio.seenBy = this.firstName+":"+this.lastName
+        const myFile = new File([data.blob], "audio22d.wav");
+
+        this.createdAudio.file=myFile
+        this.$store.dispatch("audio/createAudio", this.createdAudio);
+      }
+    },
+    onResultGlobal(data) {
       this.createdAudio.id = this.genId();
       this.createdAudio.user = this.firstName+":"+this.lastName
-      this.createdAudio.rooms=this.roomsUserIsIn.join(',')
+      this.createdAudio.rooms="global"
+      this.createdAudio.seenBy = this.firstName+":"+this.lastName
       const myFile = new File([data.blob], "audio22d.wav");
 
       this.createdAudio.file=myFile
@@ -673,6 +738,7 @@ export default {
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
+          
     },
   },
   created() {
@@ -681,6 +747,7 @@ export default {
   mounted() {
     this.$store.dispatch("communication/getRooms");
   },
+
 };
 </script>
   
@@ -744,6 +811,7 @@ export default {
   margin-left: 5px;
   margin-right: 5px;
 }
+
 #global {
   height: 100px;
   margin-top: 50px;
