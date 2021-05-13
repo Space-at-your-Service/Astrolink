@@ -2,21 +2,19 @@
 
       <div :id="uuid+'callBoxId'" class="rounded row     callBox" >
         <div class="col-xs-2 btndiv">
-            <div class="title"><h1>{{roomName}}</h1></div>
-            <button type="button" :id="roomName+'join'" class="btn btn-primary hide joinbtn" :class="roomName+'class'" @click="join()">Join <h3>{{roomName}}</h3></button>
-            <button type="button" :id="roomName+'leave'" class="btn btn-primary leavebtn hide" @click="onLeave">Leave <h3>{{roomName}}</h3></button>
-            <button type="button" v-if="muted" :id="roomName+'mute'" class="btn btn-primary mutebtn hide" @click="mute()">Unmute</button>
-           <button type="button" v-if="!muted" :id="roomName+'mute'" class="btn btn-primary mutebtn hide" @click="mute()">mute</button>
-
-            <!-- <button type="button" :id="uuid+'share'" class="btn btn-primary sharebtn hide" @click="onShareScreen">Share Screen</button> -->
-
+  
+            <button type="button" :id="uuid+'join2'" class="float-right btn btn-success" :class="roomName+'class2'" @click="join(roomName)">In</button>
+            <button type="button" :id="uuid+'leave2'" class="float-right btn btn-danger hide" @click="onLeave">Out</button>
+            <!--<button type="button" class="btn btn-primary" @click="onCapture">Capture Photo</button>-->
+            <button type="button" v-if="!muted" :id="uuid+'mute'" class="btn btn-primary mutebtn hide" @click="mute()">Mute</button>
+            <button type="button" v-if="muted" :id="uuid+'mute'" class="btn btn-primary mutebtn hide" @click="unmute()">Unmute</button>
         </div>
         <div class="col-xs-2">
-          <vue-webrtc :ref="uuid+roomName"
+          <vue-webrtc class="hide" :ref="uuid+roomName"
                       width="100%"
-                      :roomId="roomName"
+                      :roomId="uuid+roomName"
                       socketURL="https://rtcmulticonnection.herokuapp.com:443/"
-                      :enableVideo="videoOn"
+                      :enableVideo="false"
                       v-on:joined-room="logEvent"
                       v-on:left-room="logEvent"
                       v-on:opened-room="logEvent"
@@ -30,37 +28,33 @@
 </template>
 <script>
 import Vue from 'vue'
-import WebRTC from '../components/vue-webrtc.vue'
+import WebRTC from './vue-webrtc.vue'
 // ISSUE 5: https://github.com/westonsoftware/vue-webrtc/issues/5
 import * as io from 'socket.io-client'
 window.io = io
-Vue.component(WebRTC.name, WebRTC);
-
-let uuid = 0;
+  Vue.component(WebRTC.name, WebRTC);
+let uuid = 500;
 
 export default {
-  data () {
-    return {
-      muted: false,
-    }
-  },
+    data: function() {
+        return {
+            muted: true
+        }
+    },
   beforeCreate() {
     this.uuid = uuid.toString();
     uuid += 1;
   },
  
-
+  components: {
+    
+  },
         
-	name: 'WRTCRoom',
+	name: 'webrtcMic',
 	props: {
     roomName: {
     type: String,
     required: true
-  },
-  videoOn: {
-    type: Boolean,
-    required: true,
-    
   }
 },
 methods: {
@@ -69,19 +63,34 @@ methods: {
 
         this.img =  this.$refs[this.uuid+this.$props.roomName].capture();
       },
-      mute() {
-        this.muted = this.$refs[this.uuid+this.$props.roomName].muteMyself(this.muted);
-        
+      mute(){
+        this.muted=true;
+        this.$refs[this.uuid+this.$props.roomName].muteMyself(false);
+      },
+      unmute(){
+          this.muted=false;
+        this.$refs[this.uuid+this.$props.roomName].muteMyself(true);
       },
       join() {
-        document.getElementById(this.roomName+'mute').classList.remove('hide');
-        document.getElementById(this.roomName+'mute').classList.add('show');
+        document.getElementById(this.uuid+'join2').classList.remove('show');
+        document.getElementById(this.uuid+'mute').classList.remove('hide');
+        document.getElementById(this.uuid+'leave2').classList.remove('hide');
+        document.getElementById(this.uuid+'leave2').classList.add('show');
+        document.getElementById(this.uuid+'mute').classList.add('show');
+        document.getElementById(this.uuid+'join2').classList.add('hide');
         this.$refs[this.uuid+this.$props.roomName].join();
+        
+
+
       },
       onLeave() {
 
-        document.getElementById(this.roomName+'mute').classList.remove('show');
-        document.getElementById(this.roomName+'mute').classList.add('hide');
+        document.getElementById(this.uuid+'leave2').classList.remove('show');
+        document.getElementById(this.uuid+'mute').classList.remove('show');
+        document.getElementById(this.uuid+'join2').classList.remove('hide');
+        document.getElementById(this.uuid+'join2').classList.add('show');
+        document.getElementById(this.uuid+'mute').classList.add('hide');
+        document.getElementById(this.uuid+'leave2').classList.add('hide');
         this.$refs[this.uuid+this.$props.roomName].leave();
 
       },
@@ -98,29 +107,21 @@ methods: {
         
 },
 mounted(){
-  this.join();
- 
-},
-created(){
-  
 }
 }
 </script>
 <style scoped>
-.title{
-  margin-left: 20px;
-}
 .btndiv{
-    margin-right: 60px;
+    margin-right: 40px;
 }
     .callBox {
         width: 200px;
         border-radius: 30px;
         width: 780px;
     }
-    .mutebtn{
+    .joinbtn{
         width: 140px;;
-        height: 100px;
+        height: 140px;
         margin-top: 10px;
         margin-left: 20px;
         margin-right: 20px;
@@ -128,7 +129,6 @@ created(){
         margin-bottom: 10px;
     }
         .leavebtn{
-          display: none;
         background-color: rgba(255, 0, 0, 0.698);
         width: 140px;;
         height: 100px;

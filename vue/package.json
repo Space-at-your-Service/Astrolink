@@ -15,6 +15,7 @@
     "bootstrap-vue": "^2.19.0",
     "core-js": "^3.6.4",
     "popper.js": "^1.16.1",
+    "rtcmulticonnection": "^3.7.0",
     "save": "^2.4.0",
     "vee-validate": "^2.2.15",
     "vue": "^2.6.11",

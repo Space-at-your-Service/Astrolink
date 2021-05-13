@@ -443,20 +443,23 @@
                 class="btn btn-primary roomSelector"
                 @click="addRoom(channel)"
               >
-               Add {{ channel }}
+               Join {{ channel }}
               </button>
               <button v-if="roomsListJoined.includes(channel)"
                 class="btn btn-danger roomSelector"
                 @click="delRoom(channel)"
               >
-               Delete {{ channel }}
+               Leave {{ channel }}
               </button>
+     
             </b-col>
+            <b-col><input type="checkbox" id="checkbox" v-model="videoOn" />
+<label for="checkbox">Video: {{ videoOn }}</label></b-col>
           </b-row>
           <b-row id="videosRow">
             <b-col v-for="(channel, index) in roomsListJoined" :key="index">
               
-              <WRTCRoom :roomName="channel" />
+              <WRTCRoom :roomName="channel" :videoOn="videoOn" />
             </b-col>
           </b-row>
           </div>
@@ -487,6 +490,7 @@ import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
 export default {
   data() {
     return {
+      videoOn: true,
       roomsUserIsIn: [],
       createdAudio: new Audio(),
       speaking : false,
@@ -598,6 +602,7 @@ export default {
     },
     delRoom(room) {
       if (this.roomsListJoined.includes(room)) {
+       document.getElementById(room+'leave').click(); 
        this.roomsListJoined= this.arrayRemove(this.roomsListJoined, room);
 
       }
