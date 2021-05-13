@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 
 from .models import Audio
 from .serializers import AudioSerializer
-
+import time
 log = logging.getLogger("requests")
 
  
@@ -57,8 +57,9 @@ class AudiosView(APIView):
 
             Edits a given room
         """
-
-
+        if('base' in request.data['rooms'].split(',')):
+            #add timeout for the delay
+            time.sleep(7)
         audio = Audio.objects.get(id = id)
         print(request.data)
         request.data.pop('audiofile')

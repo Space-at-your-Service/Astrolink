@@ -171,7 +171,7 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col></b-col>
+                  <b-col class="sm-4 channel rounded p-3"></b-col>
                   <b-col class="sm-4 channel rounded p-3" id="pro">
                     <h5>PRO</h5>
                     <div
@@ -349,7 +349,7 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col class="text-center" align-v="center">
+                  <b-col class="sm-4 channel rounded p-3 text-center" align-v="center">
                     <VueRecord class="record" @result="onResult">
                       Push to talk
                       <template slot="isInitiating">
@@ -620,21 +620,23 @@ export default {
   return new Promise(resolve => setTimeout(resolve, ms));
 },
   async sendBase(audio){
-        await this.sleep(8000);
+        await this.sleep(100);
         let editedAudio = { ...this.audios.find((x) => x.id === audio.id) };
         editedAudio.rooms = this.roomsUserIsIn.join(',')
         this.$store.dispatch("audio/updateAudio", editedAudio);
   },
-   onResult(data) {
+   async onResult(data) {
       if(this.roomsUserIsIn.includes("base")){
         var noBase = this.arrayRemove(this.roomsUserIsIn, "base");
         this.createdAudio.id = this.genId();
         this.createdAudio.user = this.firstName+":"+this.lastName
         this.createdAudio.rooms=noBase.join(',')
         this.createdAudio.seenBy = this.firstName+":"+this.lastName
-        const myFile = new File([data.blob], "audio22d.wav");
+        const myFile = new File([data.blob], "audio.wav");
 
         this.createdAudio.file=myFile
+        
+
         this.$store.dispatch("audio/createAudio", this.createdAudio);
         this.sendBase(this.createdAudio);
 
@@ -646,7 +648,7 @@ export default {
         this.createdAudio.user = this.firstName+":"+this.lastName
         this.createdAudio.rooms=this.roomsUserIsIn.join(',')
         this.createdAudio.seenBy = this.firstName+":"+this.lastName
-        const myFile = new File([data.blob], "audio22d.wav");
+        const myFile = new File([data.blob], "audio.wav");
 
         this.createdAudio.file=myFile
         this.$store.dispatch("audio/createAudio", this.createdAudio);
@@ -657,7 +659,7 @@ export default {
       this.createdAudio.user = this.firstName+":"+this.lastName
       this.createdAudio.rooms="global"
       this.createdAudio.seenBy = this.firstName+":"+this.lastName
-      const myFile = new File([data.blob], "audio22d.wav");
+      const myFile = new File([data.blob], "audio.wav");
 
       this.createdAudio.file=myFile
       this.$store.dispatch("audio/createAudio", this.createdAudio);
