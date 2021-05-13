@@ -88,12 +88,12 @@ class TaskSerializer(serializers.ModelSerializer):
         procedures objects before creation
     """
 
-    holder = serializers.CharField(max_length = 150)
+    split = serializers.CharField(max_length = 150)
 
     class Meta:
 
         model = Task
-        fields = ("title", "holder", "start", "end", "content", "category", "background", "allDay", "procedures")
+        fields = ("title", "split", "start", "end", "content", "category", "background", "allDay", "procedures")
 
 
     def create(self, validated_data):
