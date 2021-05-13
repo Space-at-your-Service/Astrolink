@@ -93,7 +93,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
 
         model = Task
-        fields = ("title", "split", "start", "end", "content", "category", "background", "allDay", "procedures")
+        fields = ("title", "holder", "start", "end", "content", "category", "background", "allDay", "procedures")
 
 
     def create(self, validated_data):
