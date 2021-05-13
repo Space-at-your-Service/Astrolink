@@ -98,7 +98,7 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        holder = get_user_model().objects.get(username = validated_data.pop("holder"))
+        holder = get_user_model().objects.get(username = validated_data.pop("split"))
         procedures = validated_data.pop("procedures")
 
         newtask = Task.objects.create(holder = holder, **validated_data)
