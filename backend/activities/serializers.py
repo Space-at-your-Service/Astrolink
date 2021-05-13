@@ -9,6 +9,7 @@ from rest_framework import serializers
 
 from .models import Procedure, ProcedureType, ProcedureSubtype, Task, Experiment, Textsheet
 from django.contrib.auth import get_user_model
+from asyncio import tasks
 
 
 class ProcedureSubtypeSerializer(serializers.HyperlinkedModelSerializer):
@@ -88,12 +89,12 @@ class TaskSerializer(serializers.ModelSerializer):
         procedures objects before creation
     """
 
-    split = serializers.CharField(source = "holder")
+    holder = serializers.CharField(max_length = 150)
 
     class Meta:
 
         model = Task
-        fields = ("title", "split", "start", "end", "content", "category", "background", "allDay", "procedures")
+        fields = ("title", "holder", "start", "end", "content", "category", "background", "allDay", "procedures")
 
 
     def create(self, validated_data):
@@ -110,7 +111,6 @@ class TaskSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         self.fields["procedures"] = ProcedureSerializer(many = True)
-        self.fields["class"] = self.fields.pop("category")
 
         return serializers.ModelSerializer.to_representation(self, instance)
 
