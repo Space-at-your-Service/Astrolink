@@ -88,17 +88,17 @@ class TaskSerializer(serializers.ModelSerializer):
         procedures objects before creation
     """
 
-    split = serializers.CharField(max_length = 150)
+    split = serializers.CharField(source = "holder")
 
     class Meta:
 
         model = Task
-        fields = ("title", "holder", "split", "start", "end", "content", "category", "background", "allDay", "procedures")
+        fields = ("title", "split", "start", "end", "content", "category", "background", "allDay", "procedures")
 
 
     def create(self, validated_data):
 
-        holder = get_user_model().objects.get(username = validated_data.pop("split"))
+        holder = get_user_model().objects.get(username = validated_data.pop("holder"))
         procedures = validated_data.pop("procedures")
 
         newtask = Task.objects.create(holder = holder, **validated_data)
@@ -112,11 +112,7 @@ class TaskSerializer(serializers.ModelSerializer):
         self.fields["procedures"] = ProcedureSerializer(many = True)
         self.fields["class"] = self.fields.pop("category")
 
-        rep = serializers.ModelSerializer.to_representation(self, instance)
-
-        rep["split"] = instance.holder
-
-        return rep
+        return serializers.ModelSerializer.to_representation(self, instance)
 
 
 class TextsheetSerializer(serializers.ModelSerializer):
