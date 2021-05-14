@@ -66,7 +66,7 @@ export const audio = {
 
 			formData.append('user', audio.user)
 			formData.append('rooms', audio.rooms)
-			formData.append('audiofile', audio.file)
+			formData.append('audiofile', audio.audiofile)
 			formData.append('seenBy', audio.seenBy)
 
 			return AudioService.postAudio(formData, event => { state.uploadProgress = Math.round((100*event.loaded) / event.total) })

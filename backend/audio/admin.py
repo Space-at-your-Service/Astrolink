@@ -1,5 +1,5 @@
 """
-Communication > admin
+Audio > admin
 Registers all the different
 models of the app in the
 django admin website

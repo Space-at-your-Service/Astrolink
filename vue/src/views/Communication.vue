@@ -2,10 +2,6 @@
   <div class="main-container">
     <h3 class="section-title">Communication</h3>
 
-    <!--   <button v-on:click="hello">call helllo</button>
-<input type="file" accept="audio/*" capture>
-<audio id="player" controls></audio> -->
-
     <b-container fluid="sm">
       <b-tabs content-class="mt-3" fill>
         <b-tab title="Audios" active>
@@ -171,7 +167,27 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3"></b-col>
+                  <b-col id="global" class="sm-4 channel rounded p-3">
+                    <h5 align="center">GLOBAL</h5>
+                    <div v-for="group in groups" :key="group.role">
+                      <button
+                        v-if="group.unit !== 'Astronauts'"
+                        type="button"
+                        @click="removePresence('global')"
+                        class="float-right btn btn-danger"
+                      >
+                        Out
+                      </button>
+                      <button
+                        v-if="group.unit !== 'Astronauts'"
+                        type="button"
+                        @click="addPresence('global')"
+                        class="float-left btn btn-success"
+                      >
+                        In
+                      </button>
+                    </div>
+                  </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="pro">
                     <h5>PRO</h5>
                     <div
@@ -250,26 +266,31 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col id="global" class="sm-4 channel rounded p-3">
-                    <h5 align="center">GLOBAL</h5>
-                    <div v-for="group in groups" :key="group.role">
+                  <b-col class="sm-4 channel rounded p-3 text-center">
+                    <vue-dictaphone
+                      @stop="onResultGlobal($event)"
+                      v-slot="{ isRecording, startRecording, stopRecording }"
+                      mime-type="audio/mp3"
+                    >
                       <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="removePresence('global')"
-                        class="float-right btn btn-danger"
+                        class="recordBtn"
+                        v-if="!isRecording"
+                        @click="startRecording"
                       >
-                        Out
+                        Global
                       </button>
                       <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="addPresence('global')"
-                        class="float-left btn btn-success"
+                        class="recordBtn recording"
+                        v-else
+                        @click="stopRecording"
                       >
-                        In
+                        Stop recording
                       </button>
-                    </div>
+                      <vue-dictaphone-spectrum-analyser
+                        class="spectrum"
+                        v-if="isRecording"
+                      />
+                    </vue-dictaphone>
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="rec">
                     <h5>REC</h5>
@@ -349,23 +370,34 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3 text-center" align-v="center">
-                    <VueRecord class="record" @result="onResult">
-                      Push to talk
-                      <template slot="isInitiating">
-                        Grant microphone permissions
-                      </template>
-                      <template slot="isRecording"> Recording </template>
-                      <template slot="isCreating"> Creating Sound... </template>
-                    </VueRecord>
-                    <VueRecord v-if="groups[0].unit!='Astronauts'" class="record" @result="onResultGlobal">
-                      Global
-                      <template slot="isInitiating">
-                        Grant microphone permissions
-                      </template>
-                      <template slot="isRecording"> Recording </template>
-                      <template slot="isCreating"> Creating Sound... </template>
-                    </VueRecord>
+                  <b-col
+                    class="sm-4 channel rounded p-3 text-center"
+                    align-v="center"
+                  >
+                    <vue-dictaphone
+                      @stop="onResult($event)"
+                      v-slot="{ isRecording, startRecording, stopRecording }"
+                      mime-type="audio/mp3"
+                    >
+                      <button
+                        class="recordBtn"
+                        v-if="!isRecording"
+                        @click="startRecording"
+                      >
+                        Start recording
+                      </button>
+                      <button
+                        class="recordBtn recording"
+                        v-else
+                        @click="stopRecording"
+                      >
+                        Stop recording
+                      </button>
+                      <vue-dictaphone-spectrum-analyser
+                        class="spectrum"
+                        v-if="isRecording"
+                      />
+                    </vue-dictaphone>
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="contact">
                     <h5>CONTACT</h5>
@@ -400,35 +432,59 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="this.speaking"
+                          :speaking="false"
                         />
                       </b-col>
                     </b-row>
                   </b-col>
                 </b-row>
               </b-col>
-              
+
               <b-col md="15" cols="3" class="rounded ml-auto p-2 audiosDiv">
-               <b-tabs > 
-                    <b-tab v-for="room in roomsUserIsIn" :key="room" :title="room"> 
-
-                <perfect-scrollbar @ps-scroll-y="onScroll" ref="scrollbar">
-                  <div id="audiosContainer">
-                    <div class="audios" v-for="audio in audios" :key="audio.id">
-                      <div v-if="audio.rooms.split(',').includes(room)">
-                      <i>{{audio.user + ' ' +toReadable(audio.timestamp)}}</i>
-                      <i v-if="audio.seenBy.split(',').includes(firstName+':'+lastName)" style="color:#42f5ad"> seen</i>
-                      <audio controls v-on:play="listenned(audio.id)" >
-                      <source  :src= "'http://localhost:8000'+audio.audiofile" type="audio/wav">
-                      Your browser does not support the audio tag.
-                    </audio> 
-                    </div>
-                    </div>
-                  </div>
-                </perfect-scrollbar>
-                 </b-tab>
-
-            </b-tabs> 
+                <b-tabs>
+                  <b-tab
+                    v-for="room in roomsUserIsIn"
+                    :key="room"
+                    :title="room"
+                  >
+                    <vue-custom-scrollbar
+                      class="scroll-area"
+                      :settings="settings"
+                      @ps-scroll-y="scrollHanle"
+                    >
+                      <div id="audiosContainer">
+                        <div
+                          class="audios"
+                          v-for="audio in audios"
+                          :key="audio.id"
+                        >
+                          <div v-if="audio.rooms.split(',').includes(room)">
+                            <i>{{
+                              audio.user + " " + toReadable(audio.timestamp)
+                            }}</i>
+                            <i
+                              v-if="
+                                audio.seenBy
+                                  .split(',')
+                                  .includes(firstName + ':' + lastName)
+                              "
+                              style="color: #42f5ad"
+                            >
+                              seen</i
+                            >
+                            <audio controls v-on:play="listenned(audio.id)">
+                              <source
+                                :src="'http://localhost:8000' + audio.audiofile"
+                                type="audio/mp3"
+                              />
+                              Your browser does not support the audio tag.
+                            </audio>
+                          </div>
+                        </div>
+                      </div>
+                    </vue-custom-scrollbar>
+                  </b-tab>
+                </b-tabs>
               </b-col>
             </b-row>
           </div>
@@ -436,64 +492,67 @@
         <!--#####################################COMMUNICATION PART ################################################################################### -->
         <b-tab title="Communication">
           <div id="comDiv">
-          <b-row id="channelMenu">
-            <b-col v-for="(channel) in roomsList" :key="channel">
-              
-              <button v-if="!roomsListJoined.includes(channel)"
-                class="btn btn-primary roomSelector"
-                @click="addRoom(channel)"
+            <b-row id="channelMenu">
+              <b-col v-for="channel in roomsList" :key="channel">
+                <button
+                  v-if="!roomsListJoined.includes(channel)"
+                  class="btn btn-primary roomSelector"
+                  @click="addRoom(channel)"
+                >
+                  Join {{ channel }}
+                </button>
+                <button
+                  v-if="roomsListJoined.includes(channel)"
+                  class="btn btn-danger roomSelector"
+                  @click="delRoom(channel)"
+                >
+                  Leave {{ channel }}
+                </button>
+              </b-col>
+              <b-col
+                ><input type="checkbox" id="checkbox" v-model="videoOn" />
+                <label for="checkbox">Video: {{ videoOn }}</label></b-col
               >
-               Join {{ channel }}
-              </button>
-              <button v-if="roomsListJoined.includes(channel)"
-                class="btn btn-danger roomSelector"
-                @click="delRoom(channel)"
-              >
-               Leave {{ channel }}
-              </button>
-     
-            </b-col>
-            <b-col><input type="checkbox" id="checkbox" v-model="videoOn" />
-<label for="checkbox">Video: {{ videoOn }}</label></b-col>
-          </b-row>
-          <b-row id="videosRow">
-            <b-col v-for="(channel, index) in roomsListJoined" :key="index">
-              
-              <WRTCRoom :roomName="channel" :videoOn="videoOn" />
-            </b-col>
-          </b-row>
+            </b-row>
+            <b-row id="videosRow">
+              <b-col v-for="(channel, index) in roomsListJoined" :key="index">
+                <WRTCRoom :roomName="channel" :videoOn="videoOn" />
+              </b-col>
+            </b-row>
           </div>
         </b-tab>
       </b-tabs>
     </b-container>
-
-
-
-            </div>
-
+  </div>
 </template>
 
   <script>
 // template
 
 //
+import Vue from "vue";
+import VueDictaphone from "vue-dictaphone";
+Vue.use(VueDictaphone);
 import WRTCRoom from "../components/WRTCRoom.vue";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 import comBadge from "../components/CommunicationBadge.vue";
-import VueRecord from "@loquiry/vue-record-audio";
-import { PerfectScrollbar } from "vue2-perfect-scrollbar";
 import { Colors } from "../utils/colors.js";
-	import Audio from '../models/Audio.js'
-
-import "vue2-perfect-scrollbar/dist/vue2-perfect-scrollbar.css";
+import Audio from "../models/Audio.js";
+import vueCustomScrollbar from "vue-custom-scrollbar";
+import "vue-custom-scrollbar/dist/vueScrollbar.css";
 export default {
   data() {
     return {
+      settings: {
+        suppressScrollY: false,
+        suppressScrollX: false,
+        wheelPropagation: false,
+      },
       videoOn: true,
       roomsUserIsIn: [],
       createdAudio: new Audio(),
-      speaking : false,
+      speaking: false,
       usersColors: {},
       userLists: {
         bme: [],
@@ -523,7 +582,8 @@ export default {
 
       selected: [],
       isBusy: false,
-      editedRoom: { id: "0", name: "", users: "" },
+      editedRoom: { id: "0", name: "", users: "", usersSpeaking: "" },
+
       roomsList: [
         "BME",
         "Global",
@@ -562,17 +622,18 @@ export default {
 
   components: {
     WRTCRoom,
-    VueRecord,
-    PerfectScrollbar,
+    vueCustomScrollbar,
     comBadge,
   },
 
   methods: {
- 
+    scrollHanle(evt) {
+      console.log(evt);
+    },
     ascii(a) {
       return a.charCodeAt(0);
     },
-    listenned(id){
+    listenned(id) {
       let editedAudio = { ...this.audios.find((x) => x.id === id) };
       let listennedByUsers = this.audios.find((x) => x.id === id).seenBy;
       listennedByUsers = listennedByUsers.split(",");
@@ -583,13 +644,13 @@ export default {
       editedAudio.seenBy = listennedByUsers.join(",");
       this.$store.dispatch("audio/updateAudio", editedAudio);
     },
-    
-    toReadable(s){
-      if(s==undefined){
-        return ''
+
+    toReadable(s) {
+      if (s == undefined) {
+        return "";
       }
-      var news=s.slice(5,19).replace('T',' ')
-      return news
+      var news = s.slice(5, 19).replace("T", " ");
+      return news;
     },
 
     onScroll(event) {
@@ -602,73 +663,103 @@ export default {
     },
     delRoom(room) {
       if (this.roomsListJoined.includes(room)) {
-       document.getElementById(room+'leave').click(); 
-       this.roomsListJoined= this.arrayRemove(this.roomsListJoined, room);
-
+        document.getElementById(room + "leave").click();
+        this.roomsListJoined = this.arrayRemove(this.roomsListJoined, room);
       }
     },
-     genId() {
+    startStopRecord() {
+      document.getElementById("pttBtn").click();
+      for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
+        this.startStopSpeaking(this.roomsUserIsIn[i]);
+      }
+    },
+    handleRecording({ blob, src }) {
+      this.audioSource = src;
+      console.log(blob);
+    },
+    genId() {
       const current = new Date();
-      const date = current.getFullYear()+''+current.getDate()+''+(current.getMonth()+1);
-      const time = current.getHours() +''+ current.getMinutes() +''+ current.getSeconds();
-      const dateTime = date +''+ time;
+      const date =
+        current.getFullYear() +
+        "" +
+        current.getDate() +
+        "" +
+        (current.getMonth() + 1);
+      const time =
+        current.getHours() +
+        "" +
+        current.getMinutes() +
+        "" +
+        current.getSeconds();
+      const dateTime = date + "" + time;
       const id = dateTime + this.username;
-      console.log(id)
+      console.log(id);
       return id;
     },
-   sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-},
-  async sendBase(audio){
-        await this.sleep(100);
-        let editedAudio = { ...this.audios.find((x) => x.id === audio.id) };
-        editedAudio.rooms = this.roomsUserIsIn.join(',')
-        this.$store.dispatch("audio/updateAudio", editedAudio);
-  },
-   async onResult(data) {
-      if(this.roomsUserIsIn.includes("base")){
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
+    async sendBase(audio) {
+      await this.sleep(100);
+      let editedAudio = { ...this.audios.find((x) => x.id === audio.id) };
+      editedAudio.rooms = this.roomsUserIsIn.join(",");
+      this.$store.dispatch("audio/updateAudio", editedAudio);
+    },
+    async onResult(data) {
+      if (this.roomsUserIsIn.includes("base")) {
         var noBase = this.arrayRemove(this.roomsUserIsIn, "base");
         this.createdAudio.id = this.genId();
-        this.createdAudio.user = this.firstName+":"+this.lastName
-        this.createdAudio.rooms=noBase.join(',')
-        this.createdAudio.seenBy = this.firstName+":"+this.lastName
-        const myFile = new File([data.blob], "audio.wav");
+        this.createdAudio.user = this.firstName + ":" + this.lastName;
+        this.createdAudio.rooms = noBase.join(",");
+        this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
+        const myFile = new File([data.blob], "audio.mp3");
 
-        this.createdAudio.file=myFile
-        
+        this.createdAudio.audiofile = myFile;
 
         this.$store.dispatch("audio/createAudio", this.createdAudio);
         this.sendBase(this.createdAudio);
-
-
-
-      }
-     else{
+      } else {
         this.createdAudio.id = this.genId();
-        this.createdAudio.user = this.firstName+":"+this.lastName
-        this.createdAudio.rooms=this.roomsUserIsIn.join(',')
-        this.createdAudio.seenBy = this.firstName+":"+this.lastName
-        const myFile = new File([data.blob], "audio.wav");
+        this.createdAudio.user = this.firstName + ":" + this.lastName;
+        this.createdAudio.rooms = this.roomsUserIsIn.join(",");
+        this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
+        const myFile = new File([data.blob], "audio.mp3");
 
-        this.createdAudio.file=myFile
+        this.createdAudio.audiofile = myFile;
         this.$store.dispatch("audio/createAudio", this.createdAudio);
       }
     },
     onResultGlobal(data) {
       this.createdAudio.id = this.genId();
-      this.createdAudio.user = this.firstName+":"+this.lastName
-      this.createdAudio.rooms="global"
-      this.createdAudio.seenBy = this.firstName+":"+this.lastName
+      this.createdAudio.user = this.firstName + ":" + this.lastName;
+      this.createdAudio.rooms = "global";
+      this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
       const myFile = new File([data.blob], "audio.wav");
 
-      this.createdAudio.file=myFile
+      this.createdAudio.file = myFile;
       this.$store.dispatch("audio/createAudio", this.createdAudio);
-
     },
+    startStopSpeaking(roomName) {
+      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
+      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
+      speaking = speaking.split(",");
+
+      if (!speaking.includes(this.firstName + ":" + this.lastName)) {
+        speaking.push(this.firstName + ":" + this.lastName);
+      } else {
+        speaking = this.arrayRemove(
+          speaking,
+          this.firstName + ":" + this.lastName
+        );
+      }
+      editedRoom.usersSpeaking = speaking.join(",");
+      this.$store.dispatch("communication/updateRoom", editedRoom);
+    },
     addPresence(roomName) {
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
+
       users = users.split(",");
 
       if (!users.includes(this.firstName + ":" + this.lastName)) {
@@ -677,7 +768,7 @@ export default {
       editedRoom.users = users.join(",");
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
- 
+
     computeColor(s) {
       var score = s
         .split("")
@@ -702,7 +793,6 @@ export default {
         } catch (error) {
           this.userLists[room_] = [];
           console.error(error);
-
         }
       }
     },
@@ -731,11 +821,13 @@ export default {
     logEvent(event) {
       console.log("Event : ", event);
     },
-    actualiseRooms(){
-      this.roomsUserIsIn=[]
-      for(let room in this.userLists){
-        if(this.userLists[room].includes(this.firstName+":"+this.lastName)){
-          this.roomsUserIsIn.push(room)
+    actualiseRooms() {
+      this.roomsUserIsIn = [];
+      for (let room in this.userLists) {
+        if (
+          this.userLists[room].includes(this.firstName + ":" + this.lastName)
+        ) {
+          this.roomsUserIsIn.push(room);
         }
       }
     },
@@ -745,7 +837,6 @@ export default {
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
-          
     },
   },
   created() {
@@ -754,24 +845,29 @@ export default {
   mounted() {
     this.$store.dispatch("communication/getRooms");
   },
-
 };
 </script>
   
 
 <style scoped>
-#videosRow{
+.scroll-area {
+  position: relative;
+  margin: auto;
+  width: 600px;
+  height: 400px;
+}
+#videosRow {
   margin-top: 40px;
 }
 .vueWRTCBox {
   width: 40px;
 }
-.record {
+.recordBtn {
   width: 230px;
   height: 76px;
   border-radius: 40px;
 }
-.record.active {
+.recording {
   background: red;
 }
 .DoubleBtn {
@@ -786,13 +882,17 @@ export default {
 }
 .roomSelector {
   width: 80px;
-  
 }
-#channelMenu{
+.spectrum {
+  width: 200px;
+  color: white;
+  border-radius: 40px;
+}
+#channelMenu {
   background-color: rgb(68, 68, 190);
   margin-top: 30px;
   border-radius: 30px;
-  padding:10px;
+  padding: 10px;
 }
 .ps {
   width: 320px;
@@ -802,14 +902,14 @@ export default {
   border-radius: 30px;
 }
 .badgesDiv {
-  width: 36px;
+  width: 45px;
 }
 .badgesRow {
   width: 250px;
 }
-#comDiv{
+#comDiv {
   background-color: rgb(153, 196, 252);
-  padding-bottom:20px;
+  padding-bottom: 20px;
   height: auto;
   border-radius: 30px;
 }

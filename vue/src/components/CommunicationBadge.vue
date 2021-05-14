@@ -1,7 +1,9 @@
 <template>
         
-      
-      <div id="contour" :class="{isSpeaking: speaking}" :style="contourColor" ><h6>{{firstName.slice(0,1).toUpperCase()+lastName.slice(0,1).toUpperCase()}}</h6></div>
+      <div>
+      <div class="contour" :class="{isSpeaking: speaking}" :style="contourColor" ><h6>{{firstName.slice(0,2).toUpperCase()+lastName.slice(0,1).toUpperCase()}}</h6></div>
+      <div class="hide">{{firstName + ' ' + lastName}}</div>
+      </div>
 </template>
 
 <script>
@@ -42,12 +44,11 @@
     contourColor() {
       return {
         'border-radius': '20px',
-        
         'padding': '6px',
-        'width': '35px',
+        'width': '50px',
         'height': '38px',
         'text-align':'center',
-        "border": `2px solid ${this.color}`,
+        "border": `3px solid ${this.color}`,
       };
     }
   }
@@ -59,6 +60,17 @@
 .isSpeaking {
   border:8px solid black;
   
+}
+.hide {
+  display: none;
+}
+
+.contour:hover + .hide {
+  display: block;
+  
+}
+.contour{
+  width: 90px;
 }
 
 

@@ -1,7 +1,7 @@
 
 <template>
 	<div class="main-container">
-		<h3 class="section-title">Inventory {{items}}</h3>	
+		<h3 class="section-title">Inventory</h3>	
 
 		<b-container fluid class="p-0">
 			<b-row no-gutters class="my-3">

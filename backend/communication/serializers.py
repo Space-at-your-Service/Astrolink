@@ -12,9 +12,9 @@ from .models import Room
 
 class RoomSerializer(serializers.HyperlinkedModelSerializer):
 
-    """ Item Serializer """
+    """ Room Serializer """
 
     class Meta:
 
         model = Room
-        fields = ("id","name", "users")
+        fields = ("id","name", "users", "usersSpeaking")

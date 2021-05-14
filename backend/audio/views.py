@@ -24,9 +24,9 @@ class AudiosView(APIView):
 
     def get(self, request):
 
-        """ GET rooms/
+        """ GET audio/
 
-            Retrieves all the lists of users rooms
+            Retrieves all the audios
         """
 
         #request.user.check_perms(("communication.view_communication",))
@@ -37,6 +37,10 @@ class AudiosView(APIView):
         return JsonResponse(ser.data, safe = False)
 
     def post(self, request):
+        """ POST audio/
+
+            post an audio
+        """
 
        
         log.info(f"{request.user} accessed POST audio/")
@@ -55,15 +59,15 @@ class AudiosView(APIView):
 
         """ PUT audio/<room_id>
 
-            Edits a given room
+            Edits a given audio
         """
+
         if('base' in request.data['rooms'].split(',')):
             #add timeout for the delay
             time.sleep(7)
         audio = Audio.objects.get(id = id)
         print(request.data)
         request.data.pop('audiofile')
-        print(request.data)
         audio_data = request.data
         ser = AudioSerializer(audio, data = audio_data, partial=True)
 
@@ -74,7 +78,7 @@ class AudiosView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
-
+'''
 
 class AudioView(APIView):
 
@@ -84,7 +88,7 @@ class AudioView(APIView):
 
         """ GET activities/procedure/<procedure_title>
 
-            Gets a specific procedure's pdf
+            Gets a specific audio
         """
 
         log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
@@ -93,3 +97,4 @@ class AudioView(APIView):
 
         return HttpResponse(FileWrapper(audio.audioFile), content_type = "audio/wav")
 
+'''

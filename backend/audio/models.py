@@ -12,10 +12,13 @@ from django.conf import settings
 import os.path
 class Audio(models.Model):
 
-    """ Represents a room in the communication page
+    """ Represents an audio in the audios page
 
-    @field room (str) : A unique name for the room (ex: global)
-    @field users (list) : list of the users in the room ( JSONfield)
+    @field id (str) : A unique name for the audio
+    @field user (str) : User who sent the audio
+    @field rooms (str) : list of the rooms where the audio was sent
+    @field timestamp(str): timestamp of the audio
+    @field seenBy (str): list of the users who listenned to the audio
     """
     id = models.TextField(max_length = 50, primary_key = True, unique = True)
     user = models.TextField( blank = True ,help_text="user who sent the audio")

@@ -1,5 +1,5 @@
 """
-communication > urls
+Audio > urls
 Handles the routing 
 of the app's views
 """
@@ -7,7 +7,7 @@ of the app's views
 
 from django.urls import path
 
-from .views import AudiosView, AudioView
+from .views import AudiosView
 
 
 urlpatterns = [

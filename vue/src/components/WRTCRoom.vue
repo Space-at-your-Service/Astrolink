@@ -1,6 +1,6 @@
 <template>
 
-      <div :id="uuid+'callBoxId'" class="rounded row     callBox" >
+      <div :id="uuid+'callBoxId'" class="rounded row  callBox" >
         <div class="col-xs-2 btndiv">
             <div class="title"><h1>{{roomName}}</h1></div>
             <button type="button" :id="roomName+'join'" class="btn btn-primary hide joinbtn" :class="roomName+'class'" @click="join()">Join <h3>{{roomName}}</h3></button>
