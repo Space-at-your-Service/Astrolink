@@ -46,7 +46,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'flight')"
                         />
                       </b-col>
                     </b-row>
@@ -84,7 +84,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'base')"
                         />
                       </b-col>
                     </b-row>
@@ -122,7 +122,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'science')"
                         />
                       </b-col>
                     </b-row>
@@ -162,7 +162,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'cap')"
                         />
                       </b-col>
                     </b-row>
@@ -221,7 +221,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'pro')"
                         />
                       </b-col>
                     </b-row>
@@ -261,7 +261,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'bme')"
                         />
                       </b-col>
                     </b-row>
@@ -273,16 +273,27 @@
                       mime-type="audio/mp3"
                     >
                       <button
+                        id="realRecordBtn2"
+                        class="hide"
+                        v-if="true"
+                        @click="startRecording"
+                      ></button>
+                      <button
                         class="recordBtn"
                         v-if="!isRecording"
-                        @click="startRecording"
+                        @click="startRecord('2')"
                       >
                         Global
                       </button>
                       <button
-                        class="recordBtn recording"
-                        v-else
+                        id="realStopBtn2"
+                        class="hide"
                         @click="stopRecording"
+                      ></button>
+                      <button
+                        class="recordBtn recording"
+                        v-if="isRecording"
+                        @click="stopRecord('2')"
                       >
                         Stop recording
                       </button>
@@ -325,7 +336,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'rec')"
                         />
                       </b-col>
                     </b-row>
@@ -365,7 +376,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'plan')"
                         />
                       </b-col>
                     </b-row>
@@ -380,16 +391,27 @@
                       mime-type="audio/mp3"
                     >
                       <button
+                        id="realRecordBtn1"
+                        class="hide"
+                        v-if="true"
+                        @click="startRecording"
+                      ></button>
+                      <button
                         class="recordBtn"
                         v-if="!isRecording"
-                        @click="startRecording"
+                        @click="startRecord('1')"
                       >
                         Start recording
                       </button>
                       <button
-                        class="recordBtn recording"
-                        v-else
+                        id="realStopBtn1"
+                        class="hide"
                         @click="stopRecording"
+                      ></button>
+                      <button
+                        class="recordBtn recording"
+                        v-if="isRecording"
+                        @click="stopRecord('1')"
                       >
                         Stop recording
                       </button>
@@ -432,7 +454,7 @@
                         <comBadge
                           :color="computeColor(person)"
                           :id="person"
-                          :speaking="false"
+                          :speaking="isThisOneSpeaking(person, 'contact')"
                         />
                       </b-col>
                     </b-row>
@@ -627,6 +649,14 @@ export default {
   },
 
   methods: {
+    isThisOneSpeaking(person, roomName){
+      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
+      speaking=speaking.split(',');
+      if(speaking.includes(person)){
+        return true;
+      }
+      return false;
+    },
     scrollHanle(evt) {
       console.log(evt);
     },
@@ -667,11 +697,45 @@ export default {
         this.roomsListJoined = this.arrayRemove(this.roomsListJoined, room);
       }
     },
-    startStopRecord() {
-      document.getElementById("pttBtn").click();
+    startRecord(ind) {
+      document.getElementById("realRecordBtn"+ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
-        this.startStopSpeaking(this.roomsUserIsIn[i]);
+        this.startSpeaking(this.roomsUserIsIn[i]);
       }
+    },
+    stopRecord(ind) {
+      document.getElementById("realStopBtn"+ind).click();
+      for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
+        this.stopSpeaking(this.roomsUserIsIn[i]);
+      }
+    },
+    stopSpeaking(roomName) {
+      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
+      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
+
+      speaking = speaking.split(",");
+
+      if (speaking.includes(this.firstName + ":" + this.lastName)) {
+        speaking = this.arrayRemove(
+          speaking,
+          this.firstName + ":" + this.lastName
+        );
+      }
+      editedRoom.usersSpeaking = speaking.join(",");
+      this.$store.dispatch("communication/updateRoom", editedRoom);
+    },
+    startSpeaking(roomName) {
+      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
+      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
+
+      speaking = speaking.split(",");
+
+      if (!speaking.includes(this.firstName + ":" + this.lastName)) {
+
+        speaking.push(this.firstName + ":" + this.lastName);
+      }
+      editedRoom.usersSpeaking = speaking.join(",");
+      this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     handleRecording({ blob, src }) {
       this.audioSource = src;
@@ -736,26 +800,10 @@ export default {
       this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
       const myFile = new File([data.blob], "audio.wav");
 
-      this.createdAudio.file = myFile;
+      this.createdAudio.audiofile = myFile;
       this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
-    startStopSpeaking(roomName) {
-      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
-      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
-      speaking = speaking.split(",");
-
-      if (!speaking.includes(this.firstName + ":" + this.lastName)) {
-        speaking.push(this.firstName + ":" + this.lastName);
-      } else {
-        speaking = this.arrayRemove(
-          speaking,
-          this.firstName + ":" + this.lastName
-        );
-      }
-      editedRoom.usersSpeaking = speaking.join(",");
-      this.$store.dispatch("communication/updateRoom", editedRoom);
-    },
     addPresence(roomName) {
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
@@ -850,6 +898,9 @@ export default {
   
 
 <style scoped>
+.hide {
+  display: none;
+}
 .scroll-area {
   position: relative;
   margin: auto;
