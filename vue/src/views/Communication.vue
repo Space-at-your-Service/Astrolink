@@ -1,7 +1,14 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication   <b-button class="helpShortcut" @click="helpShortcut = !helpShortcut" variant="outline-info">Shortcut help</b-button>
-</h3>
+    <h3 class="section-title">
+      Communication
+      <b-button
+        class="helpShortcut"
+        @click="helpShortcut = !helpShortcut"
+        variant="outline-info"
+        >Shortcut help</b-button
+      >
+    </h3>
 
     <b-container fluid="sm">
       <b-tabs content-class="mt-3" fill>
@@ -14,7 +21,7 @@
                 <b-row class="mb-3">
                   <b-col id="flight" class="sm-4 channel rounded p-3">
                     <h5 v-if="helpShortcut">FLIGHT (1)</h5>
-                    <h5 v-else>FLIGHT </h5>
+                    <h5 v-else>FLIGHT</h5>
                     <div
                       class="DoubleBtn"
                       v-for="group in groups"
@@ -55,7 +62,8 @@
                   </b-col>
                   <b-col id="base" class="sm-4 channel rounded p-3">
                     <h5 v-if="helpShortcut">BASE (2)</h5>
-                    <h5 v-else>BASE </h5>                    <div
+                    <h5 v-else>BASE</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -93,7 +101,8 @@
                   </b-col>
                   <b-col id="science" class="sm-4 channel rounded p-3">
                     <h5 v-if="helpShortcut">SCIENCE (3)</h5>
-                    <h5 v-else>SCIENCE </h5>                    <div
+                    <h5 v-else>SCIENCE</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -133,7 +142,8 @@
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="cap">
                     <h5 v-if="helpShortcut">CAP (4)</h5>
-                    <h5 v-else>CAP </h5>                    <div
+                    <h5 v-else>CAP</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -171,7 +181,8 @@
                   </b-col>
                   <b-col id="global" class="sm-4 channel rounded p-3">
                     <h5 align="center" v-if="helpShortcut">GLOBAL (0)</h5>
-                    <h5 v-else align="center">GLOBAL </h5>                    <div v-for="group in groups" :key="group.role">
+                    <h5 v-else align="center">GLOBAL</h5>
+                    <div v-for="group in groups" :key="group.role">
                       <button
                         v-if="group.unit !== 'Astronauts'"
                         type="button"
@@ -192,7 +203,8 @@
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="pro">
                     <h5 v-if="helpShortcut">PRO (5)</h5>
-                    <h5 v-else>PRO </h5>                    <div
+                    <h5 v-else>PRO</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -232,7 +244,8 @@
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="bme">
                     <h5 v-if="helpShortcut">BME (6)</h5>
-                    <h5 v-else>BME </h5>                    <div
+                    <h5 v-else>BME</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -285,8 +298,8 @@
                         v-if="!isRecording"
                         @click="startRecord('2')"
                       >
-                    <h6 v-if="helpShortcut">Global (keep AltGR pressed)</h6>
-                    <h6 v-else>Global </h6>
+                        <h6 v-if="helpShortcut">Global (keep AltGR pressed)</h6>
+                        <h6 v-else>Global</h6>
                       </button>
                       <button
                         id="realStopBtn2"
@@ -308,7 +321,8 @@
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="rec">
                     <h5 v-if="helpShortcut">REC (7)</h5>
-                    <h5 v-else>REC </h5>                    <div
+                    <h5 v-else>REC</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -348,7 +362,8 @@
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="plan">
                     <h5 v-if="helpShortcut">PLAN (8)</h5>
-                    <h5 v-else>PLAN </h5>                    <div
+                    <h5 v-else>PLAN</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -406,8 +421,9 @@
                         v-if="!isRecording"
                         @click="startRecord('1')"
                       >
-                  <h6 v-if="helpShortcut">ALl (keep Space pressed)</h6>
-                    <h6 v-else>ALL </h6>                      </button>
+                        <h6 v-if="helpShortcut">ALl (keep Space pressed)</h6>
+                        <h6 v-else>ALL</h6>
+                      </button>
                       <button
                         id="realStopBtn1"
                         class="hide"
@@ -428,7 +444,8 @@
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="contact">
                     <h5 v-if="helpShortcut">CONTACT (9)</h5>
-                    <h5 v-else>CONTACT </h5>                    <div
+                    <h5 v-else>CONTACT</h5>
+                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -480,7 +497,7 @@
                     :title="room"
                   >
                     <vue-custom-scrollbar
-                      class="scroll-area, test"
+                      class="scroll-area  scrollingClass"
                       :settings="settings"
                       @ps-scroll-y="scrollHanle"
                       @ps-scroll-up="scrolling()"
@@ -527,30 +544,35 @@
           </div>
         </b-tab>
         <!--#####################################COMMUNICATION PART ################################################################################### -->
-        <b-tab title="Communication">
+        <b-tab id="comTab" title="Communication">
           <div id="comDiv">
             <b-row id="channelMenu">
-              <b-col v-for="channel in roomsList" :key="channel">
+              <b-col
+                class="roomSelectorCol"
+                v-for="(channel, index) in roomsList"
+                :key="channel"
+              >
                 <button
                   v-if="!roomsListJoined.includes(channel)"
                   class="btn btn-primary roomSelector"
                   @click="addRoom(channel)"
                 >
-                  Join {{ channel }}
+                  <h5 v-if="helpShortcut">Join {{ channel }} <h5>({{ index }})</h5></h5>
+                  <h5 v-else>Join {{ channel }}</h5>
                 </button>
                 <button
                   v-if="roomsListJoined.includes(channel)"
                   class="btn btn-danger roomSelector"
                   @click="delRoom(channel)"
                 >
-                  Leave {{ channel }}
-                </button>
+                  <h5 v-if="helpShortcut">Leave {{ channel }} <h5>({{ index }})</h5></h5>
+                  <h5 v-else>Leave {{ channel }}</h5>                </button>
+
               </b-col>
-              <b-col
-                ><input type="checkbox" id="checkbox" v-model="videoOn" />
-                <label for="checkbox">Video: {{ videoOn }}</label></b-col
-              >
+
             </b-row>
+                          <input type="checkbox" class="checkboxVideo" v-model="videoOn" />
+                <label class="checkboxVideo" for="checkbox">Video: {{ videoOn }}  </label>
             <b-row id="videosRow">
               <b-col v-for="(channel, index) in roomsListJoined" :key="index">
                 <WRTCRoom :roomName="channel" :videoOn="videoOn" />
@@ -587,7 +609,7 @@ export default {
         suppressScrollX: false,
         wheelPropagation: false,
       },
-      helpShortcut: true,
+      helpShortcut: false,
       scrolled: true,
       userIsRecording: false,
       videoOn: true,
@@ -626,15 +648,15 @@ export default {
       editedRoom: { id: "0", name: "", users: "", usersSpeaking: "" },
 
       roomsList: [
-        "BME",
         "Global",
-        "Base",
         "Flight",
+        "Base",
         "Science",
+        "cap",
         "Pro",
+        "Bme",
         "Rec",
         "Plan",
-        "Cap",
         "Contact",
       ],
       roomsListJoined: [],
@@ -650,7 +672,6 @@ export default {
     ]),
     ...mapState("communication", ["rooms"]),
     ...mapState("audio", ["audios"]),
-
     ...mapGetters("user", ["isAllowed"]),
   },
   sortOptions() {
@@ -827,19 +848,6 @@ export default {
       this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
 
-    addPresence(roomName) {
-      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
-      let users = this.rooms.find((x) => x.name === roomName).users;
-
-      users = users.split(",");
-
-      if (!users.includes(this.firstName + ":" + this.lastName)) {
-        users.push(this.firstName + ":" + this.lastName);
-      }
-      editedRoom.users = users.join(",");
-      this.$store.dispatch("communication/updateRoom", editedRoom);
-    },
-
     computeColor(s) {
       var score = s
         .split("")
@@ -874,6 +882,18 @@ export default {
       });
     },
 
+    addPresence(roomName) {
+      const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
+      let users = this.rooms.find((x) => x.name === roomName).users;
+
+      users = users.split(",");
+
+      if (!users.includes(this.firstName + ":" + this.lastName)) {
+        users.push(this.firstName + ":" + this.lastName);
+      }
+      editedRoom.users = users.join(",");
+      this.$store.dispatch("communication/updateRoom", editedRoom);
+    },
     removePresence(roomName) {
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
@@ -903,12 +923,11 @@ export default {
       }
     },
     updateScroll() {
-      if (this.scrolled) {
-        var element = document.getElementsByClassName("test");
+        var element = document.getElementsByClassName("scrollingClass");
         for (var i = 0; i < element.length; i++) {
           element[i].scrollTop = element[i].scrollHeight;
         }
-      }
+      
     },
     scrolling() {
       this.scrolled = false;
@@ -919,7 +938,8 @@ export default {
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
-      this.updateScroll();
+      if(this.scrolled){
+      this.updateScroll();}
     },
     onDown(e) {
       if (e.key == " " && !this.userIsRecording) {
@@ -937,83 +957,105 @@ export default {
         this.stopRecord("2");
       }
     },
+    addDel(room){
+            if(!this.roomsListJoined.includes(room)){
+            this.addRoom(room)
+          }else{
+            this.delRoom(room)
+          }
+    },
+    addRemove(room){
+                if (!this.roomsUserIsIn.includes(room)) {
+            this.addPresence(room);
+          } else {
+            this.removePresence(room);
+          }
+    },
     onPressed(e) {
-      console.log(e);
-      console.log(document.getElementsByClassName("active")[0])
+
       switch (e.key) {
         case "1":
-          if (!this.roomsUserIsIn.includes("flight")) {
-            this.addPresence("flight");
-          } else {
-            this.removePresence("flight");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("flight")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Flight")
+}
           break;
         case "2":
-          if (!this.roomsUserIsIn.includes("base")) {
-            this.addPresence("base");
-          } else {
-            this.removePresence("base");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("base")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Base")
+}
           break;
         case "3":
-          if (!this.roomsUserIsIn.includes("science")) {
-            this.addPresence("science");
-          } else {
-            this.removePresence("science");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("science")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Science")
+}
           break;
         case "4":
-          if (!this.roomsUserIsIn.includes("cap")) {
-            this.addPresence("cap");
-          } else {
-            this.removePresence("cap");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("cap")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Cap")
+}
           break;
         case "5":
-          if (!this.roomsUserIsIn.includes("pro")) {
-            this.addPresence("pro");
-          } else {
-            this.removePresence("pro");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("pro")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Pro")
+}
           break;
         case "6":
-          if (!this.roomsUserIsIn.includes("bme")) {
-            this.addPresence("bme");
-          } else {
-            this.removePresence("bme");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("bme")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Bme")
+}
           break;
         case "7":
-          if (!this.roomsUserIsIn.includes("rec")) {
-            this.addPresence("rec");
-          } else {
-            this.removePresence("rec");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("rec")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Rec")
+}
           break;
         case "8":
-          if (!this.roomsUserIsIn.includes("plan")) {
-            this.addPresence("plan");
-          } else {
-            this.removePresence("plan");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("plan")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Plan")
+}
           break;
         case "9":
-          if (!this.roomsUserIsIn.includes("contact")) {
-            this.addPresence("contact");
-          } else {
-            this.removePresence("contact");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("contact")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Contact")
+}
           break;
         case "0":
-          if (!this.roomsUserIsIn.includes("global")) {
-            this.addPresence("global");
-          } else {
-            this.removePresence("global");
-          }
+          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
+            this.addRemove("global")
+            }
+          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
+            this.addDel("Global")
+}
           break;
 
         default:
-          console.log("default");
       }
     },
   },
@@ -1032,6 +1074,9 @@ export default {
   
 
 <style scoped>
+.checkboxVideo{
+  float: right;
+}
 .hide {
   display: none;
 }
@@ -1069,7 +1114,10 @@ export default {
   height: 652px;
 }
 .roomSelector {
-  width: 80px;
+  width: 95px;
+}
+.roomSelectorCol {
+  width: 95px;
 }
 .spectrum {
   width: 200px;
