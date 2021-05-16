@@ -1,10 +1,11 @@
 <template>
   <div class="main-container">
-    <h3 class="section-title">Communication</h3>
+    <h3 class="section-title">Communication   <b-button class="helpShortcut" @click="helpShortcut = !helpShortcut" variant="outline-info">Shortcut help</b-button>
+</h3>
 
     <b-container fluid="sm">
       <b-tabs content-class="mt-3" fill>
-        <b-tab title="Audios" active>
+        <b-tab id="audiosTab" title="Audios" active>
           <!--#####################################AUDIO PART ########################################################################################### -->
 
           <div id="channelContainer">
@@ -12,7 +13,8 @@
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
                   <b-col id="flight" class="sm-4 channel rounded p-3">
-                    <h5>FLIGHT</h5>
+                    <h5 v-if="helpShortcut">FLIGHT (1)</h5>
+                    <h5 v-else>FLIGHT </h5>
                     <div
                       class="DoubleBtn"
                       v-for="group in groups"
@@ -52,8 +54,8 @@
                     </b-row>
                   </b-col>
                   <b-col id="base" class="sm-4 channel rounded p-3">
-                    <h5>base</h5>
-                    <div
+                    <h5 v-if="helpShortcut">BASE (2)</h5>
+                    <h5 v-else>BASE </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -90,8 +92,8 @@
                     </b-row>
                   </b-col>
                   <b-col id="science" class="sm-4 channel rounded p-3">
-                    <h5>SCIENCE</h5>
-                    <div
+                    <h5 v-if="helpShortcut">SCIENCE (3)</h5>
+                    <h5 v-else>SCIENCE </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -130,8 +132,8 @@
                 </b-row>
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="cap">
-                    <h5>CAP</h5>
-                    <div
+                    <h5 v-if="helpShortcut">CAP (4)</h5>
+                    <h5 v-else>CAP </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -168,8 +170,8 @@
                     </b-row>
                   </b-col>
                   <b-col id="global" class="sm-4 channel rounded p-3">
-                    <h5 align="center">GLOBAL</h5>
-                    <div v-for="group in groups" :key="group.role">
+                    <h5 align="center" v-if="helpShortcut">GLOBAL (0)</h5>
+                    <h5 v-else align="center">GLOBAL </h5>                    <div v-for="group in groups" :key="group.role">
                       <button
                         v-if="group.unit !== 'Astronauts'"
                         type="button"
@@ -189,8 +191,8 @@
                     </div>
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="pro">
-                    <h5>PRO</h5>
-                    <div
+                    <h5 v-if="helpShortcut">PRO (5)</h5>
+                    <h5 v-else>PRO </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -229,8 +231,8 @@
                 </b-row>
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="bme">
-                    <h5>BME</h5>
-                    <div
+                    <h5 v-if="helpShortcut">BME (6)</h5>
+                    <h5 v-else>BME </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -283,7 +285,8 @@
                         v-if="!isRecording"
                         @click="startRecord('2')"
                       >
-                        Global
+                    <h6 v-if="helpShortcut">Global (keep AltGR pressed)</h6>
+                    <h6 v-else>Global </h6>
                       </button>
                       <button
                         id="realStopBtn2"
@@ -304,8 +307,8 @@
                     </vue-dictaphone>
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="rec">
-                    <h5>REC</h5>
-                    <div
+                    <h5 v-if="helpShortcut">REC (7)</h5>
+                    <h5 v-else>REC </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -344,8 +347,8 @@
                 </b-row>
                 <b-row class="mb-3">
                   <b-col class="sm-4 channel rounded p-3" id="plan">
-                    <h5>PLAN</h5>
-                    <div
+                    <h5 v-if="helpShortcut">PLAN (8)</h5>
+                    <h5 v-else>PLAN </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -397,12 +400,14 @@
                         @click="startRecording"
                       ></button>
                       <button
+                        v-cloak
+                        @keyup.enter="startRecord('1')"
                         class="recordBtn"
                         v-if="!isRecording"
                         @click="startRecord('1')"
                       >
-                        Start recording
-                      </button>
+                  <h6 v-if="helpShortcut">ALl (keep Space pressed)</h6>
+                    <h6 v-else>ALL </h6>                      </button>
                       <button
                         id="realStopBtn1"
                         class="hide"
@@ -422,8 +427,8 @@
                     </vue-dictaphone>
                   </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="contact">
-                    <h5>CONTACT</h5>
-                    <div
+                    <h5 v-if="helpShortcut">CONTACT (9)</h5>
+                    <h5 v-else>CONTACT </h5>                    <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
@@ -462,7 +467,12 @@
                 </b-row>
               </b-col>
 
-              <b-col md="15" cols="3" class="rounded ml-auto p-2 audiosDiv">
+              <b-col
+                id="audiosCol"
+                md="15"
+                cols="3"
+                class="rounded ml-auto p-2 audiosDiv"
+              >
                 <b-tabs>
                   <b-tab
                     v-for="room in roomsUserIsIn"
@@ -470,9 +480,10 @@
                     :title="room"
                   >
                     <vue-custom-scrollbar
-                      class="scroll-area"
+                      class="scroll-area, test"
                       :settings="settings"
                       @ps-scroll-y="scrollHanle"
+                      @ps-scroll-up="scrolling()"
                     >
                       <div id="audiosContainer">
                         <div
@@ -505,6 +516,10 @@
                         </div>
                       </div>
                     </vue-custom-scrollbar>
+                    <input type="checkbox" id="checkbox" v-model="scrolled" />
+                    <label for="checkbox"
+                      >Automatic scrolldown: {{ scrolled }}</label
+                    >
                   </b-tab>
                 </b-tabs>
               </b-col>
@@ -563,6 +578,7 @@ import { Colors } from "../utils/colors.js";
 import Audio from "../models/Audio.js";
 import vueCustomScrollbar from "vue-custom-scrollbar";
 import "vue-custom-scrollbar/dist/vueScrollbar.css";
+
 export default {
   data() {
     return {
@@ -571,6 +587,9 @@ export default {
         suppressScrollX: false,
         wheelPropagation: false,
       },
+      helpShortcut: true,
+      scrolled: true,
+      userIsRecording: false,
       videoOn: true,
       roomsUserIsIn: [],
       createdAudio: new Audio(),
@@ -649,10 +668,10 @@ export default {
   },
 
   methods: {
-    isThisOneSpeaking(person, roomName){
+    isThisOneSpeaking(person, roomName) {
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
-      speaking=speaking.split(',');
-      if(speaking.includes(person)){
+      speaking = speaking.split(",");
+      if (speaking.includes(person)) {
         return true;
       }
       return false;
@@ -662,6 +681,9 @@ export default {
     },
     ascii(a) {
       return a.charCodeAt(0);
+    },
+    fuckoff() {
+      console.log("fuckoff");
     },
     listenned(id) {
       let editedAudio = { ...this.audios.find((x) => x.id === id) };
@@ -698,13 +720,15 @@ export default {
       }
     },
     startRecord(ind) {
-      document.getElementById("realRecordBtn"+ind).click();
+      this.userIsRecording = true;
+      document.getElementById("realRecordBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
         this.startSpeaking(this.roomsUserIsIn[i]);
       }
     },
     stopRecord(ind) {
-      document.getElementById("realStopBtn"+ind).click();
+      this.userIsRecording = false;
+      document.getElementById("realStopBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
         this.stopSpeaking(this.roomsUserIsIn[i]);
       }
@@ -731,7 +755,6 @@ export default {
       speaking = speaking.split(",");
 
       if (!speaking.includes(this.firstName + ":" + this.lastName)) {
-
         speaking.push(this.firstName + ":" + this.lastName);
       }
       editedRoom.usersSpeaking = speaking.join(",");
@@ -755,7 +778,7 @@ export default {
         current.getMinutes() +
         "" +
         current.getSeconds();
-      const dateTime = date + "" + time;
+      const dateTime = date + "" + time + Math.round(Math.random() * 100);
       const id = dateTime + this.username;
       console.log(id);
       return id;
@@ -879,15 +902,126 @@ export default {
         }
       }
     },
+    updateScroll() {
+      if (this.scrolled) {
+        var element = document.getElementsByClassName("test");
+        for (var i = 0; i < element.length; i++) {
+          element[i].scrollTop = element[i].scrollHeight;
+        }
+      }
+    },
+    scrolling() {
+      this.scrolled = false;
+    },
     refresh() {
       this.$store.dispatch("communication/getRooms");
       this.$store.dispatch("audio/getAudios");
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
+      this.updateScroll();
+    },
+    onDown(e) {
+      if (e.key == " " && !this.userIsRecording) {
+        this.startRecord("1");
+      }
+      if (e.key == "AltGraph" && !this.userIsRecording) {
+        this.startRecord("2");
+      }
+    },
+    onUp(e) {
+      if (e.key == " " && this.userIsRecording) {
+        this.stopRecord("1");
+      }
+      if (e.key == "AltGraph" && this.userIsRecording) {
+        this.stopRecord("2");
+      }
+    },
+    onPressed(e) {
+      console.log(e);
+      console.log(document.getElementsByClassName("active")[0])
+      switch (e.key) {
+        case "1":
+          if (!this.roomsUserIsIn.includes("flight")) {
+            this.addPresence("flight");
+          } else {
+            this.removePresence("flight");
+          }
+          break;
+        case "2":
+          if (!this.roomsUserIsIn.includes("base")) {
+            this.addPresence("base");
+          } else {
+            this.removePresence("base");
+          }
+          break;
+        case "3":
+          if (!this.roomsUserIsIn.includes("science")) {
+            this.addPresence("science");
+          } else {
+            this.removePresence("science");
+          }
+          break;
+        case "4":
+          if (!this.roomsUserIsIn.includes("cap")) {
+            this.addPresence("cap");
+          } else {
+            this.removePresence("cap");
+          }
+          break;
+        case "5":
+          if (!this.roomsUserIsIn.includes("pro")) {
+            this.addPresence("pro");
+          } else {
+            this.removePresence("pro");
+          }
+          break;
+        case "6":
+          if (!this.roomsUserIsIn.includes("bme")) {
+            this.addPresence("bme");
+          } else {
+            this.removePresence("bme");
+          }
+          break;
+        case "7":
+          if (!this.roomsUserIsIn.includes("rec")) {
+            this.addPresence("rec");
+          } else {
+            this.removePresence("rec");
+          }
+          break;
+        case "8":
+          if (!this.roomsUserIsIn.includes("plan")) {
+            this.addPresence("plan");
+          } else {
+            this.removePresence("plan");
+          }
+          break;
+        case "9":
+          if (!this.roomsUserIsIn.includes("contact")) {
+            this.addPresence("contact");
+          } else {
+            this.removePresence("contact");
+          }
+          break;
+        case "0":
+          if (!this.roomsUserIsIn.includes("global")) {
+            this.addPresence("global");
+          } else {
+            this.removePresence("global");
+          }
+          break;
+
+        default:
+          console.log("default");
+      }
     },
   },
   created() {
+    window.addEventListener("keydown", this.onDown);
+    window.addEventListener("keyup", this.onUp);
+    window.addEventListener("keypress", this.onPressed);
+
     setInterval(this.refresh, 1000);
   },
   mounted() {
@@ -920,6 +1054,9 @@ export default {
 }
 .recording {
   background: red;
+}
+.helpShortcut {
+  float: right;
 }
 .DoubleBtn {
   margin-left: 30px;
