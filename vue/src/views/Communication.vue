@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <h3 class="section-title">
-      Communication
+      Communication 
       <b-button
         class="helpShortcut"
         @click="helpShortcut = !helpShortcut"
@@ -497,7 +497,7 @@
                     :title="room"
                   >
                     <vue-custom-scrollbar
-                      class="scroll-area  scrollingClass"
+                      class="scroll-area scrollingClass"
                       :settings="settings"
                       @ps-scroll-y="scrollHanle"
                       @ps-scroll-up="scrolling()"
@@ -557,7 +557,10 @@
                   class="btn btn-primary roomSelector"
                   @click="addRoom(channel)"
                 >
-                  <h5 v-if="helpShortcut">Join {{ channel }} <h5>({{ index }})</h5></h5>
+                  <h5 v-if="helpShortcut">
+                    Join {{ channel }}
+                    <h5>({{ index }})</h5>
+                  </h5>
                   <h5 v-else>Join {{ channel }}</h5>
                 </button>
                 <button
@@ -565,17 +568,21 @@
                   class="btn btn-danger roomSelector"
                   @click="delRoom(channel)"
                 >
-                  <h5 v-if="helpShortcut">Leave {{ channel }} <h5>({{ index }})</h5></h5>
-                  <h5 v-else>Leave {{ channel }}</h5>                </button>
-
+                  <h5 v-if="helpShortcut">
+                    Leave {{ channel }}
+                    <h5>({{ index }})</h5>
+                  </h5>
+                  <h5 v-else>Leave {{ channel }}</h5>
+                </button>
               </b-col>
-
             </b-row>
-                          <input type="checkbox" class="checkboxVideo" v-model="videoOn" />
-                <label class="checkboxVideo" for="checkbox">Video: {{ videoOn }}  </label>
+            <input type="checkbox" class="checkboxVideo" v-model="videoOn" />
+            <label class="checkboxVideo" for="checkbox"
+              >Video: {{ videoOn }}
+            </label>
             <b-row id="videosRow">
-              <b-col v-for="(channel, index) in roomsListJoined" :key="index">
-                <WRTCRoom :roomName="channel" :videoOn="videoOn" />
+              <b-col v-for="(channel, index) in roomsList" :key="index" :class="{'hide': !roomsListJoined.includes(channel)}">
+                <WRTCRoom v-if="roomsListJoined.includes(channel)"  :roomName="channel" :videoOn="videoOn" />
               </b-col>
             </b-row>
           </div>
@@ -652,7 +659,7 @@ export default {
         "Flight",
         "Base",
         "Science",
-        "cap",
+        "Cap",
         "Pro",
         "Bme",
         "Rec",
@@ -732,6 +739,7 @@ export default {
     addRoom(room) {
       if (!this.roomsListJoined.includes(room)) {
         this.roomsListJoined.push(room);
+        console.log(this.roomsListJoined )
       }
     },
     delRoom(room) {
@@ -807,26 +815,9 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
-    async sendBase(audio) {
-      await this.sleep(100);
-      let editedAudio = { ...this.audios.find((x) => x.id === audio.id) };
-      editedAudio.rooms = this.roomsUserIsIn.join(",");
-      this.$store.dispatch("audio/updateAudio", editedAudio);
-    },
+  
     async onResult(data) {
-      if (this.roomsUserIsIn.includes("base")) {
-        var noBase = this.arrayRemove(this.roomsUserIsIn, "base");
-        this.createdAudio.id = this.genId();
-        this.createdAudio.user = this.firstName + ":" + this.lastName;
-        this.createdAudio.rooms = noBase.join(",");
-        this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
-        const myFile = new File([data.blob], "audio.mp3");
 
-        this.createdAudio.audiofile = myFile;
-
-        this.$store.dispatch("audio/createAudio", this.createdAudio);
-        this.sendBase(this.createdAudio);
-      } else {
         this.createdAudio.id = this.genId();
         this.createdAudio.user = this.firstName + ":" + this.lastName;
         this.createdAudio.rooms = this.roomsUserIsIn.join(",");
@@ -835,7 +826,7 @@ export default {
 
         this.createdAudio.audiofile = myFile;
         this.$store.dispatch("audio/createAudio", this.createdAudio);
-      }
+      
     },
     onResultGlobal(data) {
       this.createdAudio.id = this.genId();
@@ -923,11 +914,10 @@ export default {
       }
     },
     updateScroll() {
-        var element = document.getElementsByClassName("scrollingClass");
-        for (var i = 0; i < element.length; i++) {
-          element[i].scrollTop = element[i].scrollHeight;
-        }
-      
+      var element = document.getElementsByClassName("scrollingClass");
+      for (var i = 0; i < element.length; i++) {
+        element[i].scrollTop = element[i].scrollHeight;
+      }
     },
     scrolling() {
       this.scrolled = false;
@@ -938,121 +928,215 @@ export default {
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
-      if(this.scrolled){
-      this.updateScroll();}
+      if (this.scrolled) {
+        this.updateScroll();
+      }
     },
     onDown(e) {
-      if (e.key == " " && !this.userIsRecording) {
-        this.startRecord("1");
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+        "audiosTab"
+      ) {
+        if (e.key == " " && !this.userIsRecording) {
+          this.startRecord("1");
+        }
+        if (e.key == "AltGraph" && !this.userIsRecording) {
+          this.startRecord("2");
+        }
       }
-      if (e.key == "AltGraph" && !this.userIsRecording) {
-        this.startRecord("2");
+
+
+
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
+      ) {
+        if (e.key == " ") {
+          let openRooms = document.getElementsByClassName("unmute");
+          for (var i = 0; i < openRooms.length; ++i) {
+            openRooms[i].click();
+          }
+        }
       }
     },
     onUp(e) {
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+        "audiosTab"
+      ) {
       if (e.key == " " && this.userIsRecording) {
         this.stopRecord("1");
       }
       if (e.key == "AltGraph" && this.userIsRecording) {
         this.stopRecord("2");
+      }}
+
+
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
+      ) {
+        if (e.key == " ") {
+          let openRooms = document.getElementsByClassName("mute");
+          for (var i = 0; i < openRooms.length; ++i) {
+            openRooms[i].click();
+          }
+        }
       }
     },
-    addDel(room){
-            if(!this.roomsListJoined.includes(room)){
-            this.addRoom(room)
-          }else{
-            this.delRoom(room)
-          }
+    addDel(room) {
+      if (!this.roomsListJoined.includes(room)) {
+        this.addRoom(room);
+      } else {
+        this.delRoom(room);
+      }
     },
-    addRemove(room){
-                if (!this.roomsUserIsIn.includes(room)) {
-            this.addPresence(room);
-          } else {
-            this.removePresence(room);
-          }
+    addRemove(room) {
+      if (!this.roomsUserIsIn.includes(room)) {
+        this.addPresence(room);
+      } else {
+        this.removePresence(room);
+      }
     },
     onPressed(e) {
-
       switch (e.key) {
         case "1":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("flight")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Flight")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("flight");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Flight");
+          }
           break;
         case "2":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("base")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Base")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("base");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Base");
+          }
           break;
         case "3":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("science")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Science")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("science");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Science");
+          }
           break;
         case "4":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("cap")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Cap")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("cap");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Cap");
+          }
           break;
         case "5":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("pro")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Pro")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("pro");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Pro");
+          }
           break;
         case "6":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("bme")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Bme")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("bme");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Bme");
+          }
           break;
         case "7":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("rec")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Rec")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("rec");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Rec");
+          }
           break;
         case "8":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("plan")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Plan")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("plan");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Plan");
+          }
           break;
         case "9":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("contact")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Contact")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("contact");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Contact");
+          }
           break;
         case "0":
-          if(document.getElementsByClassName("active")[0].id.slice(0,9)=="audiosTab"){
-            this.addRemove("global")
-            }
-          if(document.getElementsByClassName("active")[0].id.slice(0,6)=="comTab"){
-            this.addDel("Global")
-}
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+            "audiosTab"
+          ) {
+            this.addRemove("global");
+          }
+          if (
+            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
+            "comTab"
+          ) {
+            this.addDel("Global");
+          }
           break;
 
         default:
@@ -1074,7 +1158,7 @@ export default {
   
 
 <style scoped>
-.checkboxVideo{
+.checkboxVideo {
   float: right;
 }
 .hide {
@@ -1133,7 +1217,7 @@ export default {
 .ps {
   width: 320px;
   padding: 10px;
-  height: 600px;
+  height: 570px;
 
   border-radius: 30px;
 }

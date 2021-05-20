@@ -36,20 +36,51 @@ class AudiosView(APIView):
         ser = AudioSerializer(all_audios, many = True)
         return JsonResponse(ser.data, safe = False)
 
+    def put2(self, request, id):
+
+        """ 
+        put2 modifies the rooms of a given audio to add the base room in it
+        after a given timeout. 
+        """
+
+        time.sleep(8)
+        withBase = request.data['rooms'].split(',')
+        withBase.append('base')
+        request.data['rooms'] = (',').join(withBase)
+        audio = Audio.objects.get(id = id)
+        request.data.pop('audiofile')
+        audio_data = request.data
+        ser = AudioSerializer(audio, data = audio_data, partial=True)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
     def post(self, request):
         """ POST audio/
 
             post an audio
         """
 
-       
+
         log.info(f"{request.user} accessed POST audio/")
 
+        if('base' in request.data['rooms'].split(',')):
+            noBase = request.data['rooms'].split(',')
+            noBase.remove('base')
+            request.data['rooms'] = (',').join(noBase) 
+            self.send(request)           
+            self.put2(request, request.data['id'])
+        else:
+            self.send(request)
 
+    def send(self, request):
         ser = AudioSerializer(data = request.data)
 
         if ser.is_valid():
-
             ser.save()
             return JsonResponse(ser.data)
 
@@ -66,7 +97,6 @@ class AudiosView(APIView):
             #add timeout for the delay
             time.sleep(7)
         audio = Audio.objects.get(id = id)
-        print(request.data)
         request.data.pop('audiofile')
         audio_data = request.data
         ser = AudioSerializer(audio, data = audio_data, partial=True)
