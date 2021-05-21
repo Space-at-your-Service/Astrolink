@@ -1,4 +1,4 @@
-// Data API for Communications data
+// Data API for Audios data
 
 import http from './http.common';
 

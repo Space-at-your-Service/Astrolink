@@ -30,7 +30,7 @@
         class="btn btn-primary mutebtn unmute"
         @click="mute()"
       >
-        <h3>Unmute</h3>
+        <h3><img src="../../public/muted.png" width="80" height="80"></h3>
       </button>
       <button
         type="button"
@@ -39,10 +39,9 @@
         class="btn btn-primary mutebtn mute"
         @click="mute()"
       >
-        <h3>mute</h3>
+        <h3><img src="../../public/notMuted.png" width="80" height="80"></h3>
       </button>
 
-      <!-- <button type="button" :id="uuid+'share'" class="btn btn-primary sharebtn hide" @click="onShareScreen">Share Screen</button> -->
     </div>
     <div class="col-xs-2">
       <vue-webrtc
