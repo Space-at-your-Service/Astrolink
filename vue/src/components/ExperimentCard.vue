@@ -33,6 +33,7 @@
 		methods: {
 			gotoExperimentDetails(experimentTitle) {
 				this.$router.push({ path: 'experiments/'+experimentTitle })
+				console.log("hihi")
 			}
 		}
 	}
