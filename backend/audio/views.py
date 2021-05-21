@@ -76,7 +76,7 @@ class AudiosView(APIView):
             self.put2(request, request.data['id'])
         else:
             self.send(request)
-
+        return HttpResponse(status=204)
     def send(self, request):
         ser = AudioSerializer(data = request.data)
 
