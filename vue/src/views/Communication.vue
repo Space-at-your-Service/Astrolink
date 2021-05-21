@@ -1,10 +1,4 @@
 <template>
-<<<<<<< HEAD
-	<div class="main-container">
-		<h3>-Communications</h3>
-	</div>
-</template>
-=======
   <div class="main-container">
     <h3 class="section-title">
       Communication 
@@ -530,7 +524,7 @@
                             >
                             <audio controls v-on:play="listenned(audio.id)">
                               <source
-                                :src="'http://localhost:8000' + audio.audiofile"
+                                :src="'https://astrolink.earth' + audio.audiofile"
                                 type="audio/mp3"
                               />
                               Your browser does not support the audio tag.
@@ -1277,4 +1271,3 @@ export default {
   background-color: rgb(43, 120, 184);
 }
 </style>
->>>>>>> communication
