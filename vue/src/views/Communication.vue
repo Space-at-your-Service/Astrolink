@@ -499,7 +499,7 @@
                     <vue-custom-scrollbar
                       class="scroll-area scrollingClass"
                       :settings="settings"
-                      @ps-scroll-y="scrollHanle"
+                      
                       @ps-scroll-up="scrolling()"
                     >
                       <div id="audiosContainer">
@@ -522,8 +522,8 @@
                             >
                               seen</i
                             >
-                           <audio :id="audio.id+'media'" controls v-on:play="listenned(audio.id)">
-                              <source :id="audio.id+'media_src'"
+                           <audio :class="audio.id+'media'" controls v-on:play="listenned(audio.id)">
+                              <source :class="audio.id+'media_src'"
                                 :src="audioList[audio.id]"
                                 
                               />
@@ -706,8 +706,8 @@ export default {
       }
       return false;
     },
-    scrollHanle(evt) {
-      console.log(evt);
+    scrollHanle() {
+      
     },
     ascii(a) {
       return a.charCodeAt(0);
@@ -819,9 +819,12 @@ export default {
 				.then(response => {
 
           const fileURL = URL.createObjectURL(response.data)
-          this.audioList[title]=fileURL          
-          document.getElementById(title+"media_src").src=fileURL;
-          document.getElementById(title+"media").load();
+          this.audioList[title]=fileURL
+          for(var i=0;i<document.getElementsByClassName(title+'media').length;++i){
+          document.getElementsByClassName(title+"media_src")[i].src=fileURL;
+          document.getElementsByClassName(title+"media")[i].load();
+          }
+
 					return fileURL
 				})
 				.catch(() => {
