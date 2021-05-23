@@ -40,30 +40,49 @@ class AudiosView(APIView):
         ser = AudioSerializer(all_audios, many = True)
         return JsonResponse(ser.data, safe = False)
 
-    def put2(self, request, id):
+    
 
-        """ 
-        put2 modifies the rooms of a given audio to add the base room in it
-        after a given timeout. 
+
+
+class AudioView(APIView):
+
+
+    def get(self, request, id):
+
+        """ GET 
+
+            Gets a specific audio
         """
 
-        time.sleep(8)
-        withBase = request.data['rooms'].split(',')
-        withBase.append('base')
-        request.data['rooms'] = (',').join(withBase)
+
         audio = Audio.objects.get(id = id)
-        request.data.pop('audiofile')
-        audio_data = request.data
-        ser = AudioSerializer(audio, data = audio_data, partial=True)
 
-        if ser.is_valid():
+        return HttpResponse(FileWrapper(audio.audiofile), content_type = "audio/mp3")
 
-            ser.save()
-            return JsonResponse(ser.data)
+    def put2(self, request, id):
 
-        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+            """ 
+            put2 modifies the rooms of a given audio to add the base room in it
+            after a given timeout. 
+            """
 
-    def post(self, request):
+            time.sleep(8)
+            withBase = request.data['rooms'].split(',')
+            withBase.append('base')
+            request.data['rooms'] = (',').join(withBase)
+            audio = Audio.objects.get(id = id)
+            request.data.pop('audiofile')
+            audio_data = request.data
+            ser = AudioSerializer(audio, data = audio_data, partial=True)
+
+            if ser.is_valid():
+
+                ser.save()
+                return JsonResponse(ser.data)
+
+            return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request,id):
         """ POST audio/
 
             post an audio
@@ -77,7 +96,7 @@ class AudiosView(APIView):
             noBase.remove('base')
             request.data['rooms'] = (',').join(noBase) 
             self.send(request)           
-            self.put2(request, request.data['id'])
+            self.put2(request, id)
         else:
             self.send(request)
         return HttpResponse(status=204)
@@ -111,21 +130,3 @@ class AudiosView(APIView):
             return JsonResponse(ser.data)
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
-
-
-
-class AudioView(APIView):
-
-    parser_classes = (MultiPartParser,)
-
-    def get(self, request, id):
-
-        """ GET 
-
-            Gets a specific audio
-        """
-
-
-        audio = Audio.objects.get(id = id)
-
-        return HttpResponse(FileWrapper(audio.audiofile), content_type = "audio/mp3")

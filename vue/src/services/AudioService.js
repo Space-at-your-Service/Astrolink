@@ -6,14 +6,14 @@ class AudioService {
 	
 
 	async getAudio(id) {
-		return http.get('/audio/audios/audio/'+id, {responseType: 'blob'})
+		return http.get('/audio/audios/'+id, {responseType: 'blob'})
 	}
 	async getAudios() {
 		return http.get('/audio/audios/')
 	}
 
 	async postAudio(formData, onUploadProgress) {
-		return http.post('/audio/audios/', formData, {
+		return http.post('/audio/audios/'+formData.get('id'), formData, {
 			headers: {
 				'Content-Type': 'multipart/form-data'
 			},

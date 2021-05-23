@@ -821,12 +821,14 @@ export default {
 
           const fileURL = URL.createObjectURL(response.data)
           this.audioList[title]=fileURL
+          console.log(this.audioList)
+          
           document.getElementById(title+"media_src").src=fileURL;
           document.getElementById(title+"media").load();
 					return fileURL
 				})
-				.catch(() => {
-          console.log("Error during audio reloading")
+				.catch((e) => {
+
 				})
 			},
     async onResult(data) {
@@ -939,7 +941,7 @@ export default {
       for (var i=0; i<this.audios.length; i++){
         if(!(this.audios[i].id in this.audioList)){
           this.dlAudio(this.audios[i].id)
-          
+          console.log("WENTHERE")
         }
       }
 
