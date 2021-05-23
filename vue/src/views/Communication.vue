@@ -827,7 +827,7 @@ export default {
           document.getElementById(title+"media").load();
 					return fileURL
 				})
-				.catch((e) => {
+				.catch(() => {
 
 				})
 			},
