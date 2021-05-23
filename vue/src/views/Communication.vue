@@ -821,15 +821,13 @@ export default {
 				.then(response => {
 
           const fileURL = URL.createObjectURL(response.data)
-          console.log("downalasdfj" + fileURL)
           this.audioList[title]=fileURL
           document.getElementById(title+"media_src").src=fileURL;
           document.getElementById(title+"media").load();
-          console.log("reloaded")
 					return fileURL
 				})
 				.catch(() => {
-					Notif.toastError(this, 'Could not find audio', 'Could not find audio you are looking for.')
+          console.log("Error during audio reloading")
 				})
 			},
     async onResult(data) {
