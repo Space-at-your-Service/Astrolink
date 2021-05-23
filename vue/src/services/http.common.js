@@ -3,7 +3,7 @@
 import axios from 'axios'
 
 const http = axios.create({
-	baseURL: 'http://localhost:8000',
+	baseURL: 'https://astrolink.earth/api',
 	timeout: 3000
 });
 

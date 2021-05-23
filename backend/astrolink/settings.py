@@ -24,20 +24,13 @@ except ImportError:
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = [".localhost"]
-
-#The following allows requests from Vue's development server
-#It is therefore NOT needed in production
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:8080", 
-)
+ALLOWED_HOSTS = ["astrolink.earth"]
 
 #Security settings
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
 
@@ -51,7 +44,6 @@ INSTALLED_APPS = [
     #Imported apps
     "rest_framework", #Enable Django Rest Framework (DRF)
     "rest_framework.authtoken", #Enable DRF's Token generation
-    "corsheaders", #Enable front-end REST requests in development environment
 
     #Custom apps
     "activities",
@@ -71,7 +63,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
 
 ]
 
