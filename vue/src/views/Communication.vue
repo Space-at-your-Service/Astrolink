@@ -809,7 +809,6 @@ export default {
         current.getSeconds();
       const dateTime = date + "" + time + Math.round(Math.random() * 100);
       const id = dateTime + this.username;
-      console.log(id);
       return id;
     },
     sleep(ms) {
@@ -820,9 +819,7 @@ export default {
 				.then(response => {
 
           const fileURL = URL.createObjectURL(response.data)
-          this.audioList[title]=fileURL
-          console.log(this.audioList)
-          
+          this.audioList[title]=fileURL          
           document.getElementById(title+"media_src").src=fileURL;
           document.getElementById(title+"media").load();
 					return fileURL
@@ -941,7 +938,6 @@ export default {
       for (var i=0; i<this.audios.length; i++){
         if(!(this.audios[i].id in this.audioList)){
           this.dlAudio(this.audios[i].id)
-          console.log("WENTHERE")
         }
       }
 
