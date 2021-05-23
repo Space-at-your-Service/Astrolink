@@ -5,8 +5,8 @@ import http from './http.common';
 class AudioService {
 	
 
-	async getAudio(pk) {
-		return http.get('/audio/audios/'+pk, {responseType: 'blob'})
+	async getAudio(id) {
+		return http.get('/audio/audios/audio/'+id, {responseType: 'blob'})
 	}
 	async getAudios() {
 		return http.get('/audio/audios/')
