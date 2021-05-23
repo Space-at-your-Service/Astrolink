@@ -6,7 +6,10 @@ REST Endpoints
 
 
 import logging
+from wsgiref.util import FileWrapper
+
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.http import HttpResponse
 
 from django.http import JsonResponse
 from rest_framework import status
@@ -109,23 +112,20 @@ class AudiosView(APIView):
 
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
-'''
+
 
 class AudioView(APIView):
 
     parser_classes = (MultiPartParser,)
 
-    def get(self, request, pk):
+    def get(self, request, id):
 
-        """ GET activities/procedure/<procedure_title>
+        """ GET 
 
             Gets a specific audio
         """
 
-        log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
 
-        audio = Audio.objects.get(pk = pk)
+        audio = Audio.objects.get(id = id)
 
-        return HttpResponse(FileWrapper(audio.audioFile), content_type = "audio/wav")
-
-'''
+        return HttpResponse(FileWrapper(audio.audiofile), content_type = "audio/mp3")

@@ -522,10 +522,10 @@
                             >
                               seen</i
                             >
-                            <audio controls v-on:play="listenned(audio.id)">
-                              <source
-                                :src="'https://astrolink.earth' + audio.audiofile"
-                                type="audio/mp3"
+                           <audio :id="audio.id+'media'" controls v-on:play="listenned(audio.id)">
+                              <source :id="audio.id+'media_src'"
+                                :src="audioList[audio.id]"
+                                
                               />
                               Your browser does not support the audio tag.
                             </audio>
@@ -596,6 +596,8 @@
 // template
 
 //
+import AudioService from '../services/AudioService'
+
 import Vue from "vue";
 import VueDictaphone from "vue-dictaphone";
 Vue.use(VueDictaphone);
@@ -607,6 +609,7 @@ import { Colors } from "../utils/colors.js";
 import Audio from "../models/Audio.js";
 import vueCustomScrollbar from "vue-custom-scrollbar";
 import "vue-custom-scrollbar/dist/vueScrollbar.css";
+import Notif from '../utils/Notif.js'
 
 export default {
   data() {
@@ -653,7 +656,7 @@ export default {
       selected: [],
       isBusy: false,
       editedRoom: { id: "0", name: "", users: "", usersSpeaking: "" },
-
+      audioList: {},
       roomsList: [
         "Global",
         "Flight",
@@ -710,9 +713,7 @@ export default {
     ascii(a) {
       return a.charCodeAt(0);
     },
-    fuckoff() {
-      console.log("fuckoff");
-    },
+
     listenned(id) {
       let editedAudio = { ...this.audios.find((x) => x.id === id) };
       let listennedByUsers = this.audios.find((x) => x.id === id).seenBy;
@@ -815,7 +816,20 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
-  
+    dlAudio(title) {
+				AudioService.getAudio(title)
+				.then(response => {
+
+          const fileURL = URL.createObjectURL(response.data)
+          this.audioList[title]=fileURL
+          document.getElementById(title+"media_src").src=fileURL;
+          document.getElementById(title+"media").load();
+					return fileURL
+				})
+				.catch(() => {
+          console.log("Error during audio reloading")
+				})
+			},
     async onResult(data) {
 
         this.createdAudio.id = this.genId();
@@ -922,9 +936,20 @@ export default {
     scrolling() {
       this.scrolled = false;
     },
+    updateAudioList(){
+      for (var i=0; i<this.audios.length; i++){
+        if(!(this.audios[i].id in this.audioList)){
+          this.dlAudio(this.audios[i].id)
+          
+        }
+      }
+
+
+    },
     refresh() {
       this.$store.dispatch("communication/getRooms");
       this.$store.dispatch("audio/getAudios");
+      this.updateAudioList();
       this.actualiseRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
