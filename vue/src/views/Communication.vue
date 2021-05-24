@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <h3 class="section-title">
-      Communication 
+      Communication
       <b-button
         class="helpShortcut"
         @click="helpShortcut = !helpShortcut"
@@ -499,7 +499,6 @@
                     <vue-custom-scrollbar
                       class="scroll-area scrollingClass"
                       :settings="settings"
-                      
                       @ps-scroll-up="scrolling()"
                     >
                       <div id="audiosContainer">
@@ -522,10 +521,14 @@
                             >
                               seen</i
                             >
-                           <audio :class="audio.id+'media'" controls v-on:play="listenned(audio.id)">
-                              <source :class="audio.id+'media_src'"
+                            <audio 
+                              :class="audio.id + 'media'"
+                              controls
+                              v-on:play="listenned(audio.id)"
+                            >
+                              <source
+                                :class="audio.id + 'media_src'"
                                 :src="audioList[audio.id]"
-                                
                               />
                               Your browser does not support the audio tag.
                             </audio>
@@ -581,8 +584,16 @@
               >Video: {{ videoOn }}
             </label>
             <b-row id="videosRow">
-              <b-col v-for="(channel, index) in roomsList" :key="index" :class="{'hide': !roomsListJoined.includes(channel)}">
-                <WRTCRoom v-if="roomsListJoined.includes(channel)"  :roomName="channel" :videoOn="videoOn" />
+              <b-col
+                v-for="(channel, index) in roomsList"
+                :key="index"
+                :class="{ hide: !roomsListJoined.includes(channel) }"
+              >
+                <WRTCRoom
+                  v-if="roomsListJoined.includes(channel)"
+                  :roomName="channel"
+                  :videoOn="videoOn"
+                />
               </b-col>
             </b-row>
           </div>
@@ -596,7 +607,7 @@
 // template
 
 //
-import AudioService from '../services/AudioService'
+import AudioService from "../services/AudioService";
 
 import Vue from "vue";
 import VueDictaphone from "vue-dictaphone";
@@ -706,9 +717,7 @@ export default {
       }
       return false;
     },
-    scrollHanle() {
-      
-    },
+    scrollHanle() {},
     ascii(a) {
       return a.charCodeAt(0);
     },
@@ -739,7 +748,7 @@ export default {
     addRoom(room) {
       if (!this.roomsListJoined.includes(room)) {
         this.roomsListJoined.push(room);
-        console.log(this.roomsListJoined )
+        console.log(this.roomsListJoined);
       }
     },
     delRoom(room) {
@@ -815,33 +824,34 @@ export default {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
     dlAudio(title) {
-				AudioService.getAudio(title)
-				.then(response => {
-
-          const fileURL = URL.createObjectURL(response.data)
-          this.audioList[title]=fileURL
-          for(var i=0;i<document.getElementsByClassName(title+'media').length;++i){
-          document.getElementsByClassName(title+"media_src")[i].src=fileURL;
-          document.getElementsByClassName(title+"media")[i].load();
+      AudioService.getAudio(title)
+        .then((response) => {
+          const fileURL = URL.createObjectURL(response.data);
+          this.audioList[title] = fileURL;
+          for (
+            var i = 0;
+            i < document.getElementsByClassName(title + "media").length;
+            ++i
+          ) {
+            document.getElementsByClassName(title + "media_src")[
+              i
+            ].src = fileURL;
+            document.getElementsByClassName(title + "media")[i].load();
           }
 
-					return fileURL
-				})
-				.catch(() => {
-
-				})
-			},
+          return fileURL;
+        })
+        .catch(() => {});
+    },
     async onResult(data) {
+      this.createdAudio.id = this.genId();
+      this.createdAudio.user = this.firstName + ":" + this.lastName;
+      this.createdAudio.rooms = this.roomsUserIsIn.join(",");
+      this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
+      const myFile = new File([data.blob], "audio.mp3");
 
-        this.createdAudio.id = this.genId();
-        this.createdAudio.user = this.firstName + ":" + this.lastName;
-        this.createdAudio.rooms = this.roomsUserIsIn.join(",");
-        this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
-        const myFile = new File([data.blob], "audio.mp3");
-
-        this.createdAudio.audiofile = myFile;
-        this.$store.dispatch("audio/createAudio", this.createdAudio);
-      
+      this.createdAudio.audiofile = myFile;
+      this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
     onResultGlobal(data) {
       this.createdAudio.id = this.genId();
@@ -937,14 +947,12 @@ export default {
     scrolling() {
       this.scrolled = false;
     },
-    updateAudioList(){
-      for (var i=0; i<this.audios.length; i++){
-        if(!(this.audios[i].id in this.audioList)){
-          this.dlAudio(this.audios[i].id)
+    updateAudioList() {
+      for (var i = 0; i < this.audios.length; i++) {
+        if (!(this.audios[i].id in this.audioList)) {
+          this.dlAudio(this.audios[i].id);
         }
       }
-
-
     },
     refresh() {
       this.$store.dispatch("communication/getRooms");
@@ -970,8 +978,6 @@ export default {
         }
       }
 
-
-
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
       ) {
@@ -988,13 +994,13 @@ export default {
         document.getElementsByClassName("active")[0].id.slice(0, 9) ==
         "audiosTab"
       ) {
-      if (e.key == " " && this.userIsRecording) {
-        this.stopRecord("1");
+        if (e.key == " " && this.userIsRecording) {
+          this.stopRecord("1");
+        }
+        if (e.key == "AltGraph" && this.userIsRecording) {
+          this.stopRecord("2");
+        }
       }
-      if (e.key == "AltGraph" && this.userIsRecording) {
-        this.stopRecord("2");
-      }}
-
 
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
@@ -1012,6 +1018,16 @@ export default {
         this.addRoom(room);
       } else {
         this.delRoom(room);
+      }
+    },
+    leaving() {
+      var length = this.roomsListJoined.length;
+      for (let i = 0; i < this.roomsUserIsIn.length; i++) {
+        this.removePresence(this.roomsUserIsIn[i]);
+      }
+      for (let i = 0; i < length; i++) {
+        console.log(i + " " + this.roomsListJoined);
+        this.delRoom(this.roomsListJoined[0]);
       }
     },
     addRemove(room) {
@@ -1168,6 +1184,22 @@ export default {
       }
     },
   },
+  
+    beforeRouteLeave(to, from, next) {
+    var answer = true;
+    if (this.roomsListJoined.length > 0 || this.roomsUserIsIn.length > 0) {
+      answer = window.confirm(
+        "Do you really want to leave all rooms ?"
+      );
+    }
+
+    if (answer) {
+      this.leaving();
+      next();
+    } else {
+      next(false);
+    }
+  },
   created() {
     window.addEventListener("keydown", this.onDown);
     window.addEventListener("keyup", this.onUp);
@@ -1175,6 +1207,8 @@ export default {
 
     setInterval(this.refresh, 1000);
   },
+
+
   mounted() {
     this.$store.dispatch("communication/getRooms");
   },
