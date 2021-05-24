@@ -594,6 +594,7 @@
                   :roomName="channel"
                   :videoOn="videoOn"
                 />
+                <hr>
               </b-col>
             </b-row>
           </div>
@@ -748,7 +749,6 @@ export default {
     addRoom(room) {
       if (!this.roomsListJoined.includes(room)) {
         this.roomsListJoined.push(room);
-        console.log(this.roomsListJoined);
       }
     },
     delRoom(room) {
@@ -800,7 +800,6 @@ export default {
     },
     handleRecording({ blob, src }) {
       this.audioSource = src;
-      console.log(blob);
     },
     genId() {
       const current = new Date();
@@ -1026,7 +1025,6 @@ export default {
         this.removePresence(this.roomsUserIsIn[i]);
       }
       for (let i = 0; i < length; i++) {
-        console.log(i + " " + this.roomsListJoined);
         this.delRoom(this.roomsListJoined[0]);
       }
     },
