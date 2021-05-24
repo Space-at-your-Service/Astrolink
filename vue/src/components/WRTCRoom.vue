@@ -139,6 +139,7 @@ export default {
   width: auto;
 }
 .mutebtn {
+  background-color: rgb(97, 102, 110);
   width: 140px;
   height: 100px;
   margin-top: 10px;
@@ -148,7 +149,7 @@ export default {
   margin-bottom: 10px;
 }
 .video-list{
-  background-color: rgb(153, 196, 252);
+  background-color: rgb(166, 174, 185);;
   width:860px;
 }
 .leavebtn {
