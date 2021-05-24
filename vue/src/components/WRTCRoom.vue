@@ -131,12 +131,12 @@ export default {
   margin-left: 20px;
 }
 .btndiv {
-  margin-right: 60px;
+  width:180px;
 }
 .callBox {
-  width: 200px;
+  margin-left: 10px;
   border-radius: 30px;
-  width: 780px;
+  width: auto;
 }
 .mutebtn {
   width: 140px;
@@ -147,7 +147,10 @@ export default {
   border-radius: 30px;
   margin-bottom: 10px;
 }
-
+.video-list{
+  background-color: rgb(153, 196, 252);
+  width:860px;
+}
 .leavebtn {
   display: none;
   background-color: rgba(255, 0, 0, 0.698);
