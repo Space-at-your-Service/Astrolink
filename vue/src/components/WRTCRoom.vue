@@ -49,7 +49,7 @@
         width="100%"
         :roomId="roomName"
         socketURL="https://rtcmulticonnection.herokuapp.com:443/"
-        stunServer='stun.l.google.com:19302'
+        stunServer='stun:stun.l.google.com:19302'
         :enableVideo="videoOn"
         v-on:joined-room="logEvent"
         v-on:left-room="logEvent"
