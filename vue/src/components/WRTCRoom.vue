@@ -49,8 +49,7 @@
         width="100%"
         :roomId="roomName"
         socketURL="https://rtcmulticonnection.herokuapp.com:443/"
-        stunServer='stun:stun.astrolink.earth:3478'
-        turnServer='AsclepiosTurn@lQ18dWYmVYBqF^C0P6K%turn:turn.astrolink.earth:3478'
+        stunServer='stun:stun.l.google.com:19302'
         :enableVideo="videoOn"
         v-on:joined-room="logEvent"
         v-on:left-room="logEvent"
@@ -139,6 +138,7 @@ export default {
   width: auto;
 }
 .mutebtn {
+  background-color: rgb(97, 102, 110);
   width: 140px;
   height: 100px;
   margin-top: 10px;
@@ -148,8 +148,8 @@ export default {
   margin-bottom: 10px;
 }
 .video-list{
-  background-color: rgb(153, 196, 252);
-  width:860px;
+  background-color: rgb(166, 174, 185);;
+  width:760px;
 }
 .leavebtn {
   display: none;
