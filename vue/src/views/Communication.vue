@@ -278,7 +278,7 @@
                       </b-col>
                     </b-row>
                   </b-col>
-                  <b-col class="sm-4 channelEmpty rounded p-3 text-center">
+                  <b-col v-if="group.unit !== 'Astronauts'" class="sm-4 channelEmpty rounded p-3 text-center">
                     <vue-dictaphone
                       @stop="onResultGlobal($event)"
                       v-slot="{ isRecording, startRecording, stopRecording }"
