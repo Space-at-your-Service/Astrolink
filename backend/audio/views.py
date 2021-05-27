@@ -59,16 +59,17 @@ class AudioView(APIView):
 
         return HttpResponse(FileWrapper(audio.audiofile), content_type = "audio/mp3")
 
-    def put2(self, request, id):
+    def put(self, request, id, posting=False):
 
             """ 
             put2 modifies the rooms of a given audio to add the base room in it
             after a given timeout. 
             """
-
-            withBase = request.data['rooms'].split(',')
-            withBase.append('base')
-            request.data['rooms'] = (',').join(withBase)
+            if posting:
+                time.sleep(8)
+                withBase = request.data['rooms'].split(',')
+                withBase.append('base')
+                request.data['rooms'] = (',').join(withBase)
             audio = Audio.objects.get(id = id)
             request.data.pop('audiofile')
             audio_data = request.data
@@ -94,12 +95,15 @@ class AudioView(APIView):
             noBase = request.data['rooms'].split(',')
             noBase.remove('base')
             request.data['rooms'] = (',').join(noBase) 
-            self.send(request) 
-            time.sleep(8)          
-            self.put2(request, id)
-        else:
-            self.send(request)
-        return HttpResponse(status=204)
+            self.put(request, id, posting=True)
+
+        audio_data = request.data
+        ser = AudioSerializer( data = audio_data)
+
+        if ser.is_valid():
+            ser.save()
+            return JsonResponse(ser.data)
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
     def send(self, request):
         audio_data = request.data
         ser = AudioSerializer( data = audio_data)
@@ -108,22 +112,3 @@ class AudioView(APIView):
 
             ser.save()
             return JsonResponse(ser.data)
-    def put(self, request, id):
-
-        """ PUT audio/<room_id>
-
-            Edits a given audio
-        """
-
-
-        audio = Audio.objects.get(id = id)
-        request.data.pop('audiofile')
-        audio_data = request.data
-        ser = AudioSerializer(audio, data = audio_data, partial=True)
-
-        if ser.is_valid():
-
-            ser.save()
-            return JsonResponse(ser.data)
-
-        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
