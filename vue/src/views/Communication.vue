@@ -316,6 +316,10 @@
                       />
                     </vue-dictaphone>
                   </b-col>
+                <b-col v-else class="sm-4 channelEmpty rounded p-3 text-center">
+            
+                 
+                  </b-col>
                   <b-col class="sm-4 channel rounded p-3" id="rec">
                     <h5 v-if="helpShortcut">REC (7)</h5>
                     <h5 v-else>REC</h5>
