@@ -97,8 +97,7 @@ class AudioView(APIView):
             noBase = request.data['rooms'].split(',')
             noBase.remove('base')
             request.data['rooms'] = (',').join(noBase) 
-            print("Begin Thread")
-            Thread(target=self.put, args=(request, id, posting=True)).start()
+            Thread(target=self.put, args=(request, id, True,)).start()
 
         audio_data = request.data
         ser = AudioSerializer( data = audio_data)
