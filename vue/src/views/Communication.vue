@@ -850,9 +850,7 @@ export default {
       const id = dateTime + this.username;
       return id;
     },
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
+
     dlAudio(title) {
       AudioService.getAudio(title)
         .then((response) => {

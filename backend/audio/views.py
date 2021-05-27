@@ -106,11 +106,3 @@ class AudioView(APIView):
             ser.save()
             return JsonResponse(ser.data)
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
-    def send(self, request):
-        audio_data = request.data
-        ser = AudioSerializer( data = audio_data)
-
-        if ser.is_valid():
-
-            ser.save()
-            return JsonResponse(ser.data)
