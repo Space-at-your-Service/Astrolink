@@ -33,8 +33,8 @@ class AudiosView(APIView):
             Retrieves all the audios
         """
 
-        request.user.check_perms(("communication.view_communication",))
-        log.info(f"{request.user} accessed GET audios/")
+        #request.user.check_perms(("communication.view_communication",))
+        #log.info(f"{request.user} accessed GET communication/")
 
         all_audios = Audio.objects.all().order_by("timestamp")
         ser = AudioSerializer(all_audios, many = True)
@@ -54,8 +54,6 @@ class AudioView(APIView):
             Gets a specific audio
         """
 
-        request.user.check_perms(("communication.view_communication",))
-        log.info(f"{request.user} accessed GET audio/")
 
         audio = Audio.objects.get(id = id)
 
@@ -68,10 +66,6 @@ class AudioView(APIView):
             after a given timeout. 
             """
 
-            request.user.check_perms(("communication.view_communication",))
-            log.info(f"{request.user} accessed PUT audios/")
-
-            time.sleep(8)
             withBase = request.data['rooms'].split(',')
             withBase.append('base')
             request.data['rooms'] = (',').join(withBase)
@@ -100,27 +94,27 @@ class AudioView(APIView):
             noBase = request.data['rooms'].split(',')
             noBase.remove('base')
             request.data['rooms'] = (',').join(noBase) 
-            self.send(request)           
+            self.send(request) 
+            time.sleep(8)          
             self.put2(request, id)
         else:
             self.send(request)
         return HttpResponse(status=204)
-        
     def send(self, request):
-        ser = AudioSerializer(data = request.data)
+        audio_data = request.data
+        ser = AudioSerializer( data = audio_data)
 
         if ser.is_valid():
+
             ser.save()
             return JsonResponse(ser.data)
-
-        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
-
     def put(self, request, id):
 
         """ PUT audio/<room_id>
 
             Edits a given audio
         """
+
 
         audio = Audio.objects.get(id = id)
         request.data.pop('audiofile')
