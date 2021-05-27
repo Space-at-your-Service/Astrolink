@@ -2,10 +2,7 @@
   <div class="main-container">
     <h3 class="section-title">
       Communication
-      <b-button
-        class="helpShortcut"
-        @click="helpShortcut = !helpShortcut"
-        
+      <b-button class="helpShortcut" @click="helpShortcut = !helpShortcut"
         >Shortcut help</b-button
       >
     </h3>
@@ -19,19 +16,19 @@
             <b-row>
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
-                  <b-col id="base" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">BASE (1)</h5>
-                    <h5 v-else>BASE</h5>
+                  <b-col id="base" class="sm-4 channel  rounded p-3">
+                    <h4 class="baseHeader" v-if="helpShortcut">BASE (1)</h4>
+                    <h4 class="baseHeader" v-else>BASE</h4>
                     <div
                       class="DoubleBtn"
                       v-for="group in groups"
                       :key="group.role"
                     >
-                      <div >
+                      <div>
                         <button
                           type="button"
                           @click="removePresence('base')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           <!-- :class={: 'float-right'} -->
                           Out
@@ -39,7 +36,7 @@
                         <button
                           type="button"
                           @click="addPresence('base')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -72,14 +69,14 @@
                         <button
                           type="button"
                           @click="removePresence('flight')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('flight')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -111,14 +108,14 @@
                         <button
                           type="button"
                           @click="removePresence('cap')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('cap')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -152,14 +149,14 @@
                         <button
                           type="button"
                           @click="removePresence('plan')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('plan')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -187,7 +184,7 @@
                         v-if="group.unit !== 'Astronauts'"
                         type="button"
                         @click="removePresence('global')"
-                        class="float-right btn btn-danger"
+                        class="float-right btn btnOut"
                       >
                         Out
                       </button>
@@ -195,7 +192,7 @@
                         v-if="group.unit !== 'Astronauts'"
                         type="button"
                         @click="addPresence('global')"
-                        class="float-left btn btn-success"
+                        class="float-left btn btnIn"
                       >
                         In
                       </button>
@@ -213,14 +210,14 @@
                         <button
                           type="button"
                           @click="removePresence('science')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('science')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -254,14 +251,14 @@
                         <button
                           type="button"
                           @click="removePresence('pro')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('pro')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -331,14 +328,14 @@
                         <button
                           type="button"
                           @click="removePresence('rec')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('rec')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -372,14 +369,14 @@
                         <button
                           type="button"
                           @click="removePresence('bme')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('bme')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -454,14 +451,14 @@
                         <button
                           type="button"
                           @click="removePresence('contact')"
-                          class="float-right btn btn-danger"
+                          class="float-right btn btnOut"
                         >
                           Out
                         </button>
                         <button
                           type="button"
                           @click="addPresence('contact')"
-                          class="float-right btn btn-success"
+                          class="float-right btn btnIn"
                         >
                           In
                         </button>
@@ -488,7 +485,7 @@
                 id="audiosCol"
                 md="15"
                 cols="3"
-                class="rounded ml-auto p-2 "
+                class="rounded ml-auto p-2"
               >
                 <b-tabs>
                   <b-tab
@@ -517,11 +514,15 @@
                                   .split(',')
                                   .includes(firstName + ':' + lastName)
                               "
-                              style="color: #42f5ad"
+                              style="color: white"
                             >
-                              seen</i
-                            >
-                            <audio 
+                              <img
+                                class="vu"
+                                src="../../public/vu.png"
+                                width="12.77"
+                                height="15"
+                            /></i>
+                            <audio
                               :class="audio.id + 'media'"
                               controls
                               v-on:play="listenned(audio.id)"
@@ -536,9 +537,22 @@
                         </div>
                       </div>
                     </vue-custom-scrollbar>
-            <button v-if="scrolled" @click="scrolled=!scrolled" type="button" class="btn btnScroll btn-secondary">Automatic scrolldown ON</button>
-            <button v-else @click="scrolled=!scrolled" type="button" class="btn btnScroll btn-secondary">Automatic scrolldown OFF</button>
-
+                    <button
+                      v-if="scrolled"
+                      @click="scrolled = !scrolled"
+                      type="button"
+                      class="btn btnScroll btn-secondary"
+                    >
+                      Automatic scrolldown ON
+                    </button>
+                    <button
+                      v-else
+                      @click="scrolled = !scrolled"
+                      type="button"
+                      class="btn btnScroll btn-secondary"
+                    >
+                      Automatic scrolldown OFF
+                    </button>
                   </b-tab>
                 </b-tabs>
               </b-col>
@@ -578,8 +592,22 @@
                 </button>
               </b-col>
             </b-row>
-            <button v-if="videoOn" @click="videoOn=!videoOn" type="button" class="btn checkboxVideo btn-secondary">Video ON</button>
-            <button v-else @click="videoOn=!videoOn" type="button" class="btn checkboxVideo btn-secondary">Video OFF</button>
+            <button
+              v-if="videoOn"
+              @click="videoOn = !videoOn"
+              type="button"
+              class="btn checkboxVideo btn-secondary"
+            >
+              Video ON
+            </button>
+            <button
+              v-else
+              @click="videoOn = !videoOn"
+              type="button"
+              class="btn checkboxVideo btn-secondary"
+            >
+              Video OFF
+            </button>
 
             <b-row id="videosRow">
               <b-col
@@ -592,7 +620,7 @@
                   :roomName="channel"
                   :videoOn="videoOn"
                 />
-                <hr>
+                <hr />
               </b-col>
             </b-row>
           </div>
@@ -668,14 +696,14 @@ export default {
       audioList: {},
       roomsList: [
         "Global",
-        "Flight",
         "Base",
-        "Science",
+        "Flight",
         "Cap",
-        "Pro",
-        "Bme",
-        "Rec",
         "Plan",
+        "Science",
+        "Pro",
+        "Rec",
+        "Bme",
         "Contact",
       ],
       roomsListJoined: [],
@@ -797,7 +825,7 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     handleRecording({ blob, src }) {
-      console.log(blob)
+      console.log(blob);
       this.audioSource = src;
     },
     genId() {
@@ -1181,13 +1209,11 @@ export default {
       }
     },
   },
-  
-    beforeRouteLeave(to, from, next) {
+
+  beforeRouteLeave(to, from, next) {
     var answer = true;
     if (this.roomsListJoined.length > 0 || this.roomsUserIsIn.length > 0) {
-      answer = window.confirm(
-        "Do you really want to leave all rooms ?"
-      );
+      answer = window.confirm("Do you really want to leave all rooms ?");
     }
 
     if (answer) {
@@ -1205,7 +1231,6 @@ export default {
     setInterval(this.refresh, 1000);
   },
 
-
   mounted() {
     this.$store.dispatch("communication/getRooms");
   },
@@ -1214,13 +1239,20 @@ export default {
   
 
 <style scoped>
+.btnIn {
+  width: 52.89px;
+  background-color: #0f55ca;
+}
+.btnOut {
+  background-color: #ba2525;
+}
 .checkboxVideo {
   margin: 5px;
   float: right;
 }
 .btnScroll {
   background-color: #a1a7ac;
-  margin-top:2px;
+  margin-top: 2px;
   margin-right: 6px;
   float: right;
 }
@@ -1231,7 +1263,6 @@ export default {
   position: relative;
   margin: auto;
   width: 600px;
-  height: 600px;
 }
 #videosRow {
   margin-top: 40px;
@@ -1245,28 +1276,36 @@ export default {
   border-radius: 40px;
 }
 .recording {
-  background: red;
+  background: #BA2525;
+}
+.baseHeader{
+  color:black;
+    font-weight: bold;
+
 }
 .helpShortcut {
   float: right;
-  background-color: #0F55CA;
+  background-color: #0f55ca;
 }
 .DoubleBtn {
   margin-left: 30px;
-  width: 100px;
+  width: 106px;
   height: 35px;
   float: right;
   margin-top: -40px;
 }
 #audiosContainer {
-  height: 652px;
+  height: 12px;
+}
+.vu {
+  margin-left: 5px;
 }
 .roomSelector {
-  background-color: #0F55CA;
+  background-color: #0f55ca;
   width: 95px;
 }
 .roomSelectorLeave {
-  background-color: #BA2525;
+  background-color: #ba2525;
   width: 95px;
 }
 .roomSelectorCol {
@@ -1279,10 +1318,14 @@ export default {
   border-radius: 40px;
 }
 #channelMenu {
+  
   background-color: rgb(88, 88, 100);
   margin-top: 30px;
   border-radius: 30px;
   padding: 10px;
+}
+.btn {
+  color: white;
 }
 .ps {
   width: 320px;
@@ -1291,6 +1334,9 @@ export default {
 
   border-radius: 30px;
 }
+#audiosCol {
+  width: 50px;
+}
 .badgesDiv {
   width: 45px;
 }
@@ -1298,27 +1344,26 @@ export default {
   width: 250px;
 }
 #comDiv {
-  background-color: rgb(166, 174, 185);
+  background-color: #c2c6c8;;
   padding-bottom: 20px;
   height: auto;
   border-radius: 30px;
 }
 .channel {
+  color: black;
   height: 150px;
   margin-left: 5px;
   margin-right: 5px;
-  background-color: #a1a7ac;
-}
-.channelEmpty{
-    height: 150px;
+  background-color: #c2c6c8;
+} 
+.channelEmpty {
+  height: 150px;
   margin-left: 5px;
   margin-right: 5px;
-
 }
 
 #global {
   height: 100px;
   margin-top: 50px;
 }
-
 </style>

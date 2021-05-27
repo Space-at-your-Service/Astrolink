@@ -58,7 +58,7 @@
 </script>
 <style scoped>
 .isSpeaking {
-  background:red;
+  background:#BA2525;
   
 }
 .hide {

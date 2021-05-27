@@ -33,8 +33,8 @@ class AudiosView(APIView):
             Retrieves all the audios
         """
 
-        #request.user.check_perms(("communication.view_communication",))
-        #log.info(f"{request.user} accessed GET communication/")
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed GET audios/")
 
         all_audios = Audio.objects.all().order_by("timestamp")
         ser = AudioSerializer(all_audios, many = True)
@@ -54,6 +54,8 @@ class AudioView(APIView):
             Gets a specific audio
         """
 
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed GET audio/")
 
         audio = Audio.objects.get(id = id)
 
@@ -65,6 +67,9 @@ class AudioView(APIView):
             put2 modifies the rooms of a given audio to add the base room in it
             after a given timeout. 
             """
+
+            request.user.check_perms(("communication.view_communication",))
+            log.info(f"{request.user} accessed PUT audios/")
 
             time.sleep(8)
             withBase = request.data['rooms'].split(',')
@@ -100,6 +105,7 @@ class AudioView(APIView):
         else:
             self.send(request)
         return HttpResponse(status=204)
+        
     def send(self, request):
         ser = AudioSerializer(data = request.data)
 
@@ -116,9 +122,6 @@ class AudioView(APIView):
             Edits a given audio
         """
 
-        if('base' in request.data['rooms'].split(',')):
-            #add timeout for the delay
-            time.sleep(7)
         audio = Audio.objects.get(id = id)
         request.data.pop('audiofile')
         audio_data = request.data

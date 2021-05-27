@@ -2,7 +2,7 @@
   <div :id="uuid + 'callBoxId'" class="rounded row callBox">
     <div class="col-xs-2 btndiv">
       <div class="title">
-        <h1>{{ roomName }}</h1>
+        <h1 class="inBlack">{{ roomName }}</h1>
       </div>
       <button
         type="button"
@@ -12,7 +12,7 @@
         @click="join()"
       >
         Join
-        <h3>{{ roomName }}</h3>
+        <h3 >{{ roomName }}</h3>
       </button>
       <button
         type="button"
@@ -137,6 +137,9 @@ export default {
   border-radius: 30px;
   width: auto;
 }
+.inBlack{
+  color: black;
+}
 .mutebtn {
   background-color: rgb(97, 102, 110);
   width: 140px;
@@ -148,7 +151,7 @@ export default {
   margin-bottom: 10px;
 }
 .video-list{
-  background-color: rgb(166, 174, 185);;
+  background-color: #c2c6c8;
   width:760px;
 }
 .leavebtn {
