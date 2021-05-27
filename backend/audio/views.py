@@ -7,6 +7,8 @@ REST Endpoints
 
 import logging
 from wsgiref.util import FileWrapper
+from threading import Thread
+
 
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.http import HttpResponse
@@ -95,7 +97,8 @@ class AudioView(APIView):
             noBase = request.data['rooms'].split(',')
             noBase.remove('base')
             request.data['rooms'] = (',').join(noBase) 
-            self.put(request, id, posting=True)
+            print("Begin Thread")
+            Thread(target=self.put, args=(request, id, True,)).start()
 
         audio_data = request.data
         ser = AudioSerializer( data = audio_data)
