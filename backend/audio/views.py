@@ -116,9 +116,7 @@ class AudioView(APIView):
             Edits a given audio
         """
 
-        if('base' in request.data['rooms'].split(',')):
-            #add timeout for the delay
-            time.sleep(7)
+
         audio = Audio.objects.get(id = id)
         request.data.pop('audiofile')
         audio_data = request.data
