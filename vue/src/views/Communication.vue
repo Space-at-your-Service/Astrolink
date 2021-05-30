@@ -16,7 +16,7 @@
             <b-row>
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
-                  <b-col id="base" class="sm-4 channel  rounded p-3">
+                  <b-col id="base" class="sm-4 channel rounded p-3">
                     <h4 class="baseHeader" v-if="helpShortcut">BASE (1)</h4>
                     <h4 class="baseHeader" v-else>BASE</h4>
                     <div
@@ -280,7 +280,7 @@
                   </b-col>
                   <b-col class="sm-4 channelEmpty rounded p-3 text-center">
                     <vue-dictaphone
-                      @stop="onResultGlobal($event)"
+                      @stop="onResult($event, (isGlobal = true))"
                       v-slot="{ isRecording, startRecording, stopRecording }"
                       mime-type="audio/mp3"
                     >
@@ -401,7 +401,7 @@
                     align-v="center"
                   >
                     <vue-dictaphone
-                      @stop="onResult($event)"
+                      @stop="onResult($event, (isGlobal = false))"
                       v-slot="{ isRecording, startRecording, stopRecording }"
                       mime-type="audio/mp3"
                     >
@@ -496,7 +496,7 @@
                     <vue-custom-scrollbar
                       class="scroll-area scrollingClass"
                       :settings="settings"
-                      @ps-scroll-up="scrolling()"
+                      @ps-scroll-up="scrolled=false"
                     >
                       <div id="audiosContainer">
                         <div
@@ -569,7 +569,7 @@
                 :key="channel"
               >
                 <button
-                  v-if="!roomsListJoined.includes(channel)"
+                  v-if="!commRoomsJoined.includes(channel)"
                   class="btn btn-primary roomSelector"
                   @click="addRoom(channel)"
                 >
@@ -580,7 +580,7 @@
                   <h5 v-else>Join {{ channel }}</h5>
                 </button>
                 <button
-                  v-if="roomsListJoined.includes(channel)"
+                  v-if="commRoomsJoined.includes(channel)"
                   class="btn btn-danger roomSelectorLeave"
                   @click="delRoom(channel)"
                 >
@@ -613,10 +613,10 @@
               <b-col
                 v-for="(channel, index) in roomsList"
                 :key="index"
-                :class="{ hide: !roomsListJoined.includes(channel) }"
+                :class="{ hide: !commRoomsJoined.includes(channel) }"
               >
                 <WRTCRoom
-                  v-if="roomsListJoined.includes(channel)"
+                  v-if="commRoomsJoined.includes(channel)"
                   :roomName="channel"
                   :videoOn="videoOn"
                 />
@@ -706,7 +706,7 @@ export default {
         "Bme",
         "Contact",
       ],
-      roomsListJoined: [],
+      commRoomsJoined: [],
     };
   },
   computed: {
@@ -737,6 +737,13 @@ export default {
 
   methods: {
     isThisOneSpeaking(person, roomName) {
+      /**
+       * returns true if the the user is speaking in a given room
+       *
+       * @param {String}   person      User in a given room.
+       * @param {String}   roomName    Name of the room.
+       * @return {Boolean}             True if person is speaking in the room, else false.
+       */
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
       speaking = speaking.split(",");
       if (speaking.includes(person)) {
@@ -745,11 +752,15 @@ export default {
       return false;
     },
     scrollHanle() {},
-    ascii(a) {
-      return a.charCodeAt(0);
-    },
 
     listenned(id) {
+      /**
+       * Triggered when the user listens to an audio.
+       * Checks if a given audio has been listenned by user. If not, send the modifying request to
+       * add the user to the seenBy field of the audio.
+       *
+       * @param {String}   id          Id of the audio
+       */
       let editedAudio = { ...this.audios.find((x) => x.id === id) };
       let listennedByUsers = this.audios.find((x) => x.id === id).seenBy;
       listennedByUsers = listennedByUsers.split(",");
@@ -761,11 +772,17 @@ export default {
       this.$store.dispatch("audio/updateAudio", editedAudio);
     },
 
-    toReadable(s) {
-      if (s == undefined) {
+    toReadable(timestamp) {
+      /**
+       * Returns the timestamp in a more readable format.
+       *
+       * @param {String}   timestamp   Timestamp of an audio.
+       * @return {String}              Returns new readable timestamp.
+       */
+      if (timestamp == undefined) {
         return "";
       }
-      var news = s.slice(5, 19).replace("T", " ");
+      var news = timestamp.slice(5, 19).replace("T", " ");
       return news;
     },
 
@@ -773,17 +790,32 @@ export default {
       console.log(this.$refs.scrollbar.ps, event);
     },
     addRoom(room) {
-      if (!this.roomsListJoined.includes(room)) {
-        this.roomsListJoined.push(room);
+      /**
+       * Add a room to the communication rooms joined list.
+       *
+       * @param {String}   room        room to add to the commRoomsJoined list.
+       */
+      if (!this.commRoomsJoined.includes(room)) {
+        this.commRoomsJoined.push(room);
       }
     },
     delRoom(room) {
-      if (this.roomsListJoined.includes(room)) {
+      /**
+       * Delete a room from the communication rooms joined list.
+       *
+       * @param {String}   room        room to delete from the commRoomsJoined list.
+       */
+      if (this.commRoomsJoined.includes(room)) {
         document.getElementById(room + "leave").click();
-        this.roomsListJoined = this.arrayRemove(this.roomsListJoined, room);
+        this.commRoomsJoined = this.arrayRemove(this.commRoomsJoined, room);
       }
     },
     startRecord(ind) {
+      /**
+       * Triggered when user starts speaking.
+       *
+       * @param {String}   ind        button index (1 for global 2 for All).
+       */
       this.userIsRecording = true;
       document.getElementById("realRecordBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
@@ -791,6 +823,11 @@ export default {
       }
     },
     stopRecord(ind) {
+      /**
+       * Triggered when user stops speaking.
+       *
+       * @param {String}   ind        button index (1 for global 2 for All).
+       */
       this.userIsRecording = false;
       document.getElementById("realStopBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
@@ -798,6 +835,11 @@ export default {
       }
     },
     stopSpeaking(roomName) {
+      /**
+       * Triggered when user stops speaking. This function will update the usersspeaking field of a given room.
+       *
+       * @param {String}   roomName    name of the room where user should appear as non-speaking.
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
@@ -813,6 +855,11 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     startSpeaking(roomName) {
+      /**
+       * Triggered when user starts speaking. This function will update the usersspeaking field of a given room.
+       *
+       * @param {String}   roomName    name of the room where user should appear as speaking.
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
@@ -829,6 +876,12 @@ export default {
       this.audioSource = src;
     },
     genId() {
+      /**
+       * This funtion will generate an id for an audio. The id will be the date/hour/minutes/seconds/milliseconds/username
+       * concatenated.
+       *
+       * @return {String} id for the audio
+       */
       const current = new Date();
       const date =
         current.getFullYear() +
@@ -841,15 +894,21 @@ export default {
         "" +
         current.getMinutes() +
         "" +
-        current.getSeconds();
-      const dateTime = date + "" + time + Math.round(Math.random() * 100);
+        current.getSeconds() +
+        "" +
+        current.getMilliseconds();
+      const dateTime = date + "" + time;
       const id = dateTime + this.username;
       return id;
     },
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
+
     dlAudio(title) {
+      /**
+       * This function will download an audio from the backend server using a GET request.
+       *
+       * @param {String}   title    title of the audio to get.
+       * @return {Blob}             returns an mp3 audio blob.
+       */
       AudioService.getAudio(title)
         .then((response) => {
           const fileURL = URL.createObjectURL(response.data);
@@ -869,28 +928,42 @@ export default {
         })
         .catch(() => {});
     },
-    async onResult(data) {
+    async onResult(data, globalRoom) {
+      /**
+       * This function is triggered when a user stops recording. It will send the audio to the backend server.
+       *
+       * @param {Blob}      data          audio blob.
+       * @param {Boolean}   globalRoom    true if record button was the global room button.
+       */
       this.createdAudio.id = this.genId();
       this.createdAudio.user = this.firstName + ":" + this.lastName;
-      this.createdAudio.rooms = this.roomsUserIsIn.join(",");
+      if (globalRoom) {
+        this.createdAudio.rooms = "global";
+      } else {
+        this.createdAudio.rooms = this.roomsUserIsIn.join(",");
+      }
       this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
       const myFile = new File([data.blob], "audio.mp3");
 
       this.createdAudio.audiofile = myFile;
       this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
-    onResultGlobal(data) {
-      this.createdAudio.id = this.genId();
-      this.createdAudio.user = this.firstName + ":" + this.lastName;
-      this.createdAudio.rooms = "global";
-      this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
-      const myFile = new File([data.blob], "audio.wav");
 
-      this.createdAudio.audiofile = myFile;
-      this.$store.dispatch("audio/createAudio", this.createdAudio);
+    ascii(a) {
+      /**
+       *
+       * @param {Blob}      a     a char.
+       * @return {int}            returns the char code of a char.
+       */
+      return a.charCodeAt(0);
     },
-
     computeColor(s) {
+      /**
+       * This function will compute the color of a user given his name. The color will be used for his communication badge.
+       *
+       * @param   {string}    s        name of the user
+       * @return  {String}             returns the attributed color for the user.
+       */
       var score = s
         .split("")
         .map(this.ascii)
@@ -899,6 +972,10 @@ export default {
       return Colors.names[k];
     },
     splitUsers() {
+      /**
+       * This function will update the users list 'userList' in every room at each refresh function call.
+       *
+       */
       for (let room_ in this.userLists) {
         try {
           let users = this.rooms.find((x) => x.name === room_).users;
@@ -919,12 +996,24 @@ export default {
     },
 
     arrayRemove(arr, value) {
-      return arr.filter(function (ele) {
-        return ele != value;
+      /**
+       * Removes the value value from the array arr
+       *
+       * @param   {Array}    arr       array to delete a value from.
+       * @param   {String}   value     value to delete from an array.
+       * @return  {Array}              resulting array
+       */
+      return arr.filter(function (e) {
+        return e != value;
       });
     },
 
     addPresence(roomName) {
+      /**
+       * add user presence in a given room by sending a PUT request.
+       *
+       * @param   {String}   roomName  room 
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
 
@@ -937,6 +1026,11 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     removePresence(roomName) {
+      /**
+       * removes user presence in a given room by sending a PUT request.
+       *
+       * @param   {String}   roomName  room 
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
       users = users.split(",");
@@ -954,7 +1048,11 @@ export default {
     logEvent(event) {
       console.log("Event : ", event);
     },
-    actualiseRooms() {
+    refreshRooms() {
+      /**
+       * Refreshes the list containing all the rooms the user has joined.
+       *
+       */
       this.roomsUserIsIn = [];
       for (let room in this.userLists) {
         if (
@@ -964,16 +1062,23 @@ export default {
         }
       }
     },
+
     updateScroll() {
+      /**
+       * if the automatic scrolldown is selected, will scroll down every scrollbar.
+       *
+       */
       var element = document.getElementsByClassName("scrollingClass");
       for (var i = 0; i < element.length; i++) {
         element[i].scrollTop = element[i].scrollHeight;
       }
     },
-    scrolling() {
-      this.scrolled = false;
-    },
+
     updateAudioList() {
+      /**
+       * update the audio list by downloading the audios that haven't been dowloaded.
+       *
+       */
       for (var i = 0; i < this.audios.length; i++) {
         if (!(this.audios[i].id in this.audioList)) {
           this.dlAudio(this.audios[i].id);
@@ -981,10 +1086,13 @@ export default {
       }
     },
     refresh() {
+      /**
+       * Refresh function, actualise all the userlists in rooms, the rooms user are in, the audios and the scrollbars scrolldown.
+       */
       this.$store.dispatch("communication/getRooms");
       this.$store.dispatch("audio/getAudios");
       this.updateAudioList();
-      this.actualiseRooms();
+      this.refreshRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
       if (this.scrolled) {
@@ -1040,19 +1148,19 @@ export default {
       }
     },
     addDel(room) {
-      if (!this.roomsListJoined.includes(room)) {
+      if (!this.commRoomsJoined.includes(room)) {
         this.addRoom(room);
       } else {
         this.delRoom(room);
       }
     },
     leaving() {
-      var length = this.roomsListJoined.length;
+      var length = this.commRoomsJoined.length;
       for (let i = 0; i < this.roomsUserIsIn.length; i++) {
         this.removePresence(this.roomsUserIsIn[i]);
       }
       for (let i = 0; i < length; i++) {
-        this.delRoom(this.roomsListJoined[0]);
+        this.delRoom(this.commRoomsJoined[0]);
       }
     },
     addRemove(room) {
@@ -1212,7 +1320,7 @@ export default {
 
   beforeRouteLeave(to, from, next) {
     var answer = true;
-    if (this.roomsListJoined.length > 0 || this.roomsUserIsIn.length > 0) {
+    if (this.commRoomsJoined.length > 0 || this.roomsUserIsIn.length > 0) {
       answer = window.confirm("Do you really want to leave all rooms ?");
     }
 
@@ -1276,12 +1384,11 @@ export default {
   border-radius: 40px;
 }
 .recording {
-  background: #BA2525;
+  background: #ba2525;
 }
-.baseHeader{
-  color:black;
-    font-weight: bold;
-
+.baseHeader {
+  color: black;
+  font-weight: bold;
 }
 .helpShortcut {
   float: right;
@@ -1318,7 +1425,6 @@ export default {
   border-radius: 40px;
 }
 #channelMenu {
-  
   background-color: rgb(88, 88, 100);
   margin-top: 30px;
   border-radius: 30px;
@@ -1344,7 +1450,7 @@ export default {
   width: 250px;
 }
 #comDiv {
-  background-color: #c2c6c8;;
+  background-color: #c2c6c8;
   padding-bottom: 20px;
   height: auto;
   border-radius: 30px;
@@ -1355,7 +1461,7 @@ export default {
   margin-left: 5px;
   margin-right: 5px;
   background-color: #c2c6c8;
-} 
+}
 .channelEmpty {
   height: 150px;
   margin-left: 5px;
