@@ -10,7 +10,7 @@
     <b-container fluid="sm">
       <b-tabs content-class="mt-3" fill>
         <b-tab id="audiosTab" title="Audios" active>
-          <!--#####################################AUDIO PART ########################################################################################### -->
+          <!--##################################### AUDIO PART ########################################################################################### -->
 
           <div id="channelContainer">
             <b-row>
@@ -496,7 +496,7 @@
                     <vue-custom-scrollbar
                       class="scroll-area scrollingClass"
                       :settings="settings"
-                      @ps-scroll-up="scrolled=false"
+                      @ps-scroll-up="scrolled = false"
                     >
                       <div id="audiosContainer">
                         <div
@@ -1012,7 +1012,7 @@ export default {
       /**
        * add user presence in a given room by sending a PUT request.
        *
-       * @param   {String}   roomName  room 
+       * @param   {String}   roomName  room
        */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
@@ -1029,7 +1029,7 @@ export default {
       /**
        * removes user presence in a given room by sending a PUT request.
        *
-       * @param   {String}   roomName  room 
+       * @param   {String}   roomName  room
        */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
@@ -1100,6 +1100,11 @@ export default {
       }
     },
     onDown(e) {
+      /**
+       * When user presses a given key, launches a function.
+       *
+       * @param   {Object}   e  key that has been pressed
+       */
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 9) ==
         "audiosTab"
@@ -1124,6 +1129,11 @@ export default {
       }
     },
     onUp(e) {
+      /**
+       * When user releases a given key, launches a function.
+       *
+       * @param   {Object}   e  key that has been pressed
+       */
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 9) ==
         "audiosTab"
@@ -1148,6 +1158,11 @@ export default {
       }
     },
     addDel(room) {
+      /**
+       * If user has joined a live communication room, it will remove him, and inversively.
+       *
+       * @param   {String}   room  room to join/leave
+       */
       if (!this.commRoomsJoined.includes(room)) {
         this.addRoom(room);
       } else {
@@ -1155,6 +1170,10 @@ export default {
       }
     },
     leaving() {
+      /**
+       * This function is launched whenever the user leaves the page without quitting all rooms.
+       * It will make the user leave all the rooms in the communication and audio tab.
+       */
       var length = this.commRoomsJoined.length;
       for (let i = 0; i < this.roomsUserIsIn.length; i++) {
         this.removePresence(this.roomsUserIsIn[i]);
@@ -1164,6 +1183,11 @@ export default {
       }
     },
     addRemove(room) {
+      /**
+       * If user has joined a audio room, it will remove him, and inversively.
+       *
+       * @param   {String}   room  room to join/leave
+       */
       if (!this.roomsUserIsIn.includes(room)) {
         this.addPresence(room);
       } else {
@@ -1171,154 +1195,108 @@ export default {
       }
     },
     onPressed(e) {
-      switch (e.key) {
-        case "1":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
+      /**
+       * If user presses a key, he will join/leave a room depending which tab he is using.
+       *
+       * @param   {Object}  e  key pressed
+       */
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+        "audiosTab"
+      ) {
+        switch (e.key) {
+          case "1":
             this.addRemove("base");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Base");
-          }
-          break;
-        case "2":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("flight");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Flight");
-          }
-          break;
-        case "3":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("cap");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Cap");
-          }
-          break;
-        case "4":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("plan");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Plan");
-          }
-          break;
-        case "5":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("science");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Science");
-          }
-          break;
-        case "6":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("pro");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Pro");
-          }
-          break;
-        case "7":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("rec");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Rec");
-          }
-          break;
-        case "8":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("bme");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Bme");
-          }
-          break;
-        case "9":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("contact");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Contact");
-          }
-          break;
-        case "0":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("global");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Global");
-          }
-          break;
+            break;
 
-        default:
+          case "2":
+            this.addRemove("flight");
+            break;
+
+          case "3":
+            this.addRemove("cap");
+            break;
+
+          case "4":
+            this.addRemove("plan");
+            break;
+
+          case "5":
+            this.addRemove("science");
+            break;
+
+          case "6":
+            this.addRemove("pro");
+            break;
+
+          case "7":
+            this.addRemove("rec");
+            break;
+
+          case "8":
+            this.addRemove("bme");
+            break;
+
+          case "9":
+            this.addRemove("contact");
+            break;
+
+          case "0":
+            this.addRemove("global");
+            break;
+        }
+      }
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
+      ) {
+        switch (e.key) {
+          case "1":
+            this.addDel("Base");
+            break;
+          case "2":
+            this.addDel("Flight");
+            break;
+
+          case "3":
+            this.addDel("Cap");
+            break;
+
+          case "4":
+            this.addDel("Plan");
+            break;
+
+          case "5":
+            this.addDel("Science");
+            break;
+
+          case "6":
+            this.addDel("Pro");
+            break;
+
+          case "7":
+            this.addDel("Rec");
+            break;
+
+          case "8":
+            this.addDel("Bme");
+            break;
+
+          case "9":
+            this.addDel("Contact");
+            break;
+
+          case "0":
+            this.addDel("Global");
+            break;
+        }
       }
     },
   },
 
   beforeRouteLeave(to, from, next) {
+  /**
+   * If user leaves the page without quitting the rooms, triggers a warning.
+   */
     var answer = true;
     if (this.commRoomsJoined.length > 0 || this.roomsUserIsIn.length > 0) {
       answer = window.confirm("Do you really want to leave all rooms ?");
