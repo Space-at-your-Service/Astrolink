@@ -1,7 +1,9 @@
 <template>
   <b-col :id="id" :class="[((empty)?'channelEmpty':'channel'),'sm-4  rounded p-3']">
-    <h5  v-if="helpShortcut">{{ id.toUpperCase() }} ({{ number }})</h5>
-    <h5 :class="[((id=='base')? 'baseHeader':'')]" v-else>{{ id.toUpperCase() }}</h5>
+    <h5  v-if="helpShortcut && id!='global'">{{ id.toUpperCase() }} ({{ number }})</h5>
+    <h5 :class="[((id=='base')? 'baseHeader':'')]" v-if="!helpShortcut && id!='global'">{{ id.toUpperCase() }}</h5>
+    <h5 align="center" v-if="helpShortcut && id=='global'">GLOBAL (0)</h5>
+    <h5  v-if="!helpShortcut && id=='global'" align="center">GLOBAL</h5>
     <div class="DoubleBtn">
       <div v-if="!astronaut">
         <button
@@ -21,7 +23,7 @@
       </div>
     </div>
 
-    <b-row class="badgesRow">
+    <b-row class="badgesRow" v-if="id!='global'">
       <b-col
         class="badgesDiv"
         v-for="person in userList"
@@ -217,7 +219,7 @@ export default {
   margin-top: -40px;
 }
 #global {
-
-  background-color:burlywood;
+padding-top: 50px;
+height:100px;
 }
 </style>
