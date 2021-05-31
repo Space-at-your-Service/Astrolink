@@ -16,268 +16,19 @@
             <b-row>
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
-                  <b-col id="base" class="sm-4 channel rounded p-3">
-                    <h4 class="baseHeader" v-if="helpShortcut">BASE (1)</h4>
-                    <h4 class="baseHeader" v-else>BASE</h4>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div>
-                        <button
-                          type="button"
-                          @click="removePresence('base')"
-                          class="float-right btn btnOut"
-                        >
-                          <!-- :class={: 'float-right'} -->
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('base')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
+                <room id='base' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="1" :userList="userLists['base']" :astronaut="false"/>
+                <room id='flight' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="2" :userList="userLists['flight']" :astronaut="false"/>
+                <room id='cap' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="3" :userList="userLists['cap']" :astronaut="false"/>
+                </b-row>
+                <b-row class="mb-3">
+                <room id='plan' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="4" :userList="userLists['plan']" :astronaut="false"/>
+                <room id='global' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="true" :helpShortcut="helpShortcut" :number="0" :userList="userLists['global']" :astronaut="false"/>
+                <room id='science' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="5" :userList="userLists['science']" :astronaut="false"/>
 
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['base']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'base')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="flight" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">FLIGHT (2)</h5>
-                    <h5 v-else>FLIGHT</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('flight')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('flight')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['flight']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'flight')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="cap" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">CAP (3)</h5>
-                    <h5 v-else>CAP</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('cap')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('cap')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['cap']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'cap')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
                 </b-row>
                 <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="plan">
-                    <h5 v-if="helpShortcut">PLAN (4)</h5>
-                    <h5 v-else>PLAN</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('plan')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('plan')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['plan']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'plan')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="global" class="sm-4 channelEmpty rounded p-3">
-                    <h5 align="center" v-if="helpShortcut">GLOBAL (0)</h5>
-                    <h5 v-else align="center">GLOBAL</h5>
-                    <div v-for="group in groups" :key="group.role">
-                      <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="removePresence('global')"
-                        class="float-right btn btnOut"
-                      >
-                        Out
-                      </button>
-                      <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="addPresence('global')"
-                        class="float-left btn btnIn"
-                      >
-                        In
-                      </button>
-                    </div>
-                  </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="science">
-                    <h5 v-if="helpShortcut">SCIENCE (5)</h5>
-                    <h5 v-else>SCIENCE</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('science')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('science')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['science']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'science')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                </b-row>
-                <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="pro">
-                    <h5 v-if="helpShortcut">PRO (6)</h5>
-                    <h5 v-else>PRO</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('pro')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('pro')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['pro']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'pro')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                <room id='pro' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="6" :userList="userLists['pro']" :astronaut="false"/>
+
                   <b-col class="sm-4 channelEmpty rounded p-3 text-center">
                     <vue-dictaphone
                       @stop="onResult($event, (isGlobal = true))"
@@ -316,86 +67,12 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="rec">
-                    <h5 v-if="helpShortcut">REC (7)</h5>
-                    <h5 v-else>REC</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('rec')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('rec')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['rec']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'rec')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                <room id='rec' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="7" :userList="userLists['rec']" :astronaut="false"/>
+
                 </b-row>
                 <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="bme">
-                    <h5 v-if="helpShortcut">BME (8)</h5>
-                    <h5 v-else>BME</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('bme')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('bme')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['bme']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'bme')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                <room id='bme' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="8" :userList="userLists['bme']" :astronaut="false"/>
+
                   <b-col
                     class="sm-4 channelEmpty rounded p-3 text-center"
                     align-v="center"
@@ -439,45 +116,8 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="contact">
-                    <h5 v-if="helpShortcut">CONTACT (9)</h5>
-                    <h5 v-else>CONTACT</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('contact')"
-                          class="float-right btn btnOut"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('contact')"
-                          class="float-right btn btnIn"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['contact']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'contact')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                <room id='contact' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="9" :userList="userLists['contact']" :astronaut="false"/>
+
                 </b-row>
               </b-col>
 
@@ -642,8 +282,7 @@ Vue.use(VueDictaphone);
 import WRTCRoom from "../components/WRTCRoom.vue";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import comBadge from "../components/CommunicationBadge.vue";
-import { Colors } from "../utils/colors.js";
+import room from "../components/Room.vue";
 import Audio from "../models/Audio.js";
 import vueCustomScrollbar from "vue-custom-scrollbar";
 import "vue-custom-scrollbar/dist/vueScrollbar.css";
@@ -732,25 +371,11 @@ export default {
   components: {
     WRTCRoom,
     vueCustomScrollbar,
-    comBadge,
+    room,
   },
 
   methods: {
-    isThisOneSpeaking(person, roomName) {
-      /**
-       * returns true if the the user is speaking in a given room
-       *
-       * @param {String}   person      User in a given room.
-       * @param {String}   roomName    Name of the room.
-       * @return {Boolean}             True if person is speaking in the room, else false.
-       */
-      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
-      speaking = speaking.split(",");
-      if (speaking.includes(person)) {
-        return true;
-      }
-      return false;
-    },
+
     scrollHanle() {},
 
     listenned(id) {
@@ -949,28 +574,6 @@ export default {
       this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
 
-    ascii(a) {
-      /**
-       *
-       * @param {Blob}      a     a char.
-       * @return {int}            returns the char code of a char.
-       */
-      return a.charCodeAt(0);
-    },
-    computeColor(s) {
-      /**
-       * This function will compute the color of a user given his name. The color will be used for his communication badge.
-       *
-       * @param   {string}    s        name of the user
-       * @return  {String}             returns the attributed color for the user.
-       */
-      var score = s
-        .split("")
-        .map(this.ascii)
-        .reduce((a, b) => a + b, 0);
-      var k = Object.keys(Colors.names)[score % 42];
-      return Colors.names[k];
-    },
     splitUsers() {
       /**
        * This function will update the users list 'userList' in every room at each refresh function call.
@@ -1325,13 +928,7 @@ export default {
   
 
 <style scoped>
-.btnIn {
-  width: 52.89px;
-  background-color: #0f55ca;
-}
-.btnOut {
-  background-color: #ba2525;
-}
+
 .checkboxVideo {
   margin: 5px;
   float: right;
@@ -1364,21 +961,12 @@ export default {
 .recording {
   background: #ba2525;
 }
-.baseHeader {
-  color: black;
-  font-weight: bold;
-}
+
 .helpShortcut {
   float: right;
   background-color: #0f55ca;
 }
-.DoubleBtn {
-  margin-left: 30px;
-  width: 106px;
-  height: 35px;
-  float: right;
-  margin-top: -40px;
-}
+
 #audiosContainer {
   height: 12px;
 }
@@ -1421,33 +1009,13 @@ export default {
 #audiosCol {
   width: 50px;
 }
-.badgesDiv {
-  width: 45px;
-}
-.badgesRow {
-  width: 250px;
-}
+
 #comDiv {
   background-color: #c2c6c8;
   padding-bottom: 20px;
   height: auto;
   border-radius: 30px;
 }
-.channel {
-  color: black;
-  height: 150px;
-  margin-left: 5px;
-  margin-right: 5px;
-  background-color: #c2c6c8;
-}
-.channelEmpty {
-  height: 150px;
-  margin-left: 5px;
-  margin-right: 5px;
-}
 
-#global {
-  height: 100px;
-  margin-top: 50px;
-}
+
 </style>
