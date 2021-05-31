@@ -2,10 +2,10 @@
   <b-col :id="id" :class="[((empty)?'channelEmpty':'channel'),'sm-4  rounded p-3']">
     <h5  v-if="helpShortcut && id!='global'">{{ id.toUpperCase() }} ({{ number }})</h5>
     <h5 :class="[((id=='base')? 'baseHeader':'')]" v-if="!helpShortcut && id!='global'">{{ id.toUpperCase() }}</h5>
-    <h5 align="center" v-if="helpShortcut && id=='global'">GLOBAL (0)</h5>
-    <h5  v-if="!helpShortcut && id=='global'" align="center">GLOBAL</h5>
-    <div class="DoubleBtn">
-      <div v-if="!astronaut">
+    <h4 align="center" v-if="helpShortcut && id=='global'">GLOBAL (0)</h4>
+    <h4  v-if="!helpShortcut && id=='global'" align="center">GLOBAL</h4>
+    <div :class="[((id=='global')? 'DoubleBtnGlobal' : 'DoubleBtn')]">
+      <div v-if="!astronaut || id=='base'">
         <button
           type="button"
           @click="removePresence(id.toLowerCase())"
@@ -147,9 +147,7 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
   },
-  created: {
-
-  },
+ 
 
   computed: {
     contourColor() {
@@ -218,8 +216,12 @@ export default {
   float: right;
   margin-top: -40px;
 }
+.DoubleBtnGlobal {
+  width: auto;;
+  height: 35px;
+  margin-top:50px;
+}
 #global {
-padding-top: 50px;
-height:100px;
+  height: 100px;
 }
 </style>

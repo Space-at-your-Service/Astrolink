@@ -16,20 +16,89 @@
             <b-row>
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
-                <room id='base' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="1" :userList="userLists['base']" :astronaut="false"/>
-                <room id='flight' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="2" :userList="userLists['flight']" :astronaut="false"/>
-                <room id='cap' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="3" :userList="userLists['cap']" :astronaut="false"/>
+                  <room
+                    id="base"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="1"
+                    :userList="userLists['base']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="flight"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="2"
+                    :userList="userLists['flight']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="cap"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="3"
+                    :userList="userLists['cap']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
                 <b-row class="mb-3">
-                <room id='plan' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="4" :userList="userLists['plan']" :astronaut="false"/>
-                <room id='global' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="true" :helpShortcut="helpShortcut" :number="0" :userList="userLists['global']" :astronaut="false"/>
-                <room id='science' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="5" :userList="userLists['science']" :astronaut="false"/>
-
+                  <room
+                    id="plan"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="4"
+                    :userList="userLists['plan']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="global"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="true"
+                    :helpShortcut="helpShortcut"
+                    :number="0"
+                    :userList="userLists['global']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="science"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="5"
+                    :userList="userLists['science']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
                 <b-row class="mb-3">
-                <room id='pro' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="6" :userList="userLists['pro']" :astronaut="false"/>
+                  <room
+                    id="pro"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="6"
+                    :userList="userLists['pro']"
+                    :astronaut="isAstronaut"
+                  />
 
-                  <b-col class="sm-4 channelEmpty rounded p-3 text-center">
+                  <b-col v-if="!isAstronaut" class="sm-4 channelEmpty rounded p-3 text-center">
                     <vue-dictaphone
                       @stop="onResult($event, (isGlobal = true))"
                       v-slot="{ isRecording, startRecording, stopRecording }"
@@ -67,11 +136,32 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                <room id='rec' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="7" :userList="userLists['rec']" :astronaut="false"/>
+                  <b-col v-else class="sm-4 channelEmpty rounded p-3 text-center"></b-col>
 
+                  <room
+                    id="rec"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="7"
+                    :userList="userLists['rec']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
                 <b-row class="mb-3">
-                <room id='bme' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="8" :userList="userLists['bme']" :astronaut="false"/>
+                  <room
+                    id="bme"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="8"
+                    :userList="userLists['bme']"
+                    :astronaut="isAstronaut"
+                  />
 
                   <b-col
                     class="sm-4 channelEmpty rounded p-3 text-center"
@@ -116,8 +206,17 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                <room id='contact' :rooms="rooms" :firstName="firstName" :lastName="lastName" :empty="false" :helpShortcut="helpShortcut" :number="9" :userList="userLists['contact']" :astronaut="false"/>
-
+                  <room
+                    id="contact"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="9"
+                    :userList="userLists['contact']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
               </b-col>
 
@@ -269,13 +368,8 @@
     </b-container>
   </div>
 </template>
-
-  <script>
-// template
-
-//
+<script>
 import AudioService from "../services/AudioService";
-
 import Vue from "vue";
 import VueDictaphone from "vue-dictaphone";
 Vue.use(VueDictaphone);
@@ -302,6 +396,7 @@ export default {
       roomsUserIsIn: [],
       createdAudio: new Audio(),
       speaking: false,
+      isAstronaut: false,
       usersColors: {},
       userLists: {
         bme: [],
@@ -375,7 +470,6 @@ export default {
   },
 
   methods: {
-
     scrollHanle() {},
 
     listenned(id) {
@@ -897,9 +991,9 @@ export default {
   },
 
   beforeRouteLeave(to, from, next) {
-  /**
-   * If user leaves the page without quitting the rooms, triggers a warning.
-   */
+    /**
+     * If user leaves the page without quitting the rooms, triggers a warning.
+     */
     var answer = true;
     if (this.commRoomsJoined.length > 0 || this.roomsUserIsIn.length > 0) {
       answer = window.confirm("Do you really want to leave all rooms ?");
@@ -922,13 +1016,17 @@ export default {
 
   mounted() {
     this.$store.dispatch("communication/getRooms");
+    for(var i=0;i<this.groups.length;++i){
+      if(this.groups[i].unit=='Astronauts'){
+        this.isAstronaut=true;
+      }
+    }
   },
 };
 </script>
   
 
 <style scoped>
-
 .checkboxVideo {
   margin: 5px;
   float: right;
@@ -1016,6 +1114,9 @@ export default {
   height: auto;
   border-radius: 30px;
 }
-
-
+.channelEmpty {
+  height: 150px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
 </style>
