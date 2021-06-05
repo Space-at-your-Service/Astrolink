@@ -1,3 +1,6 @@
+<!--
+Audio room component
+ -->
 <template>
   <b-col :id="id" :class="[((empty)?'channelEmpty':'channel'),'sm-4  rounded p-3']">
     <h5  v-if="helpShortcut && id!='global'">{{ id.toUpperCase() }} ({{ number }})</h5>
