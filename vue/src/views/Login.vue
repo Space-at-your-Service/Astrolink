@@ -50,6 +50,9 @@
             Astrolink by Asclepios @2021<br/>
             This web app has been developed by Julien Corsin & Valentin Vierge
         </div>
+
+        <rocketSpinner style="margin-right: 50px; margin-top: 80px;"/>
+
     </div>
 </template>
 
@@ -57,8 +60,12 @@
     import {mapActions} from 'vuex'
     import {mapState} from 'vuex'
     import User from '../models/User'
+    import rocketSpinner from '../components/rocketSpinner.vue'
 
     export default {
+        components: {
+            rocketSpinner
+        },
         data() {
             return {
                 user: new User(),
