@@ -11,8 +11,9 @@ class TaskService {
 		return http.get('/activities/planning/');
 	}
 
-	async postTask() {
-		return http.post('/activities/planning/');
+	async postTask(task) {
+		console.log(JSON.stringify(task));
+		return http.post('/activities/planning/', task);
 	}
 }
 

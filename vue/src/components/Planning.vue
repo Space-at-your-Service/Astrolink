@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<!-- <strong>Astronauts:</strong> {{astronautsNames}}<br/>
-		<strong>Tasks:</strong> {{tasks}} -->
+		<strong>Astronauts:</strong> {{astronautsNames}}<br/>
+		<strong>Tasks:</strong> {{tasks}}<br/>
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col v-if="isAllowed('activities.change_task')">
@@ -41,7 +41,7 @@
 				:sticky-split-labels="true"
 				:disable-views="['years', 'year', 'month', 'week']"
 				hide-view-selector
-				:show-all-day-events="false"
+				show-all-day-events="short"
 				today-button
 				:watchRealTime="true"
 				:timeCellHeight="30"
@@ -106,7 +106,7 @@
 								<b-form-group 
 								label="From"
 								label-for="startTimeInput">
-									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required></b-form-timepicker>
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
 								</b-form-group>
 							</b-col>
 
@@ -114,10 +114,18 @@
 								<b-form-group 
 								label="To"
 								label-for="endTimeInput">
-									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required></b-form-timepicker>
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
 								</b-form-group>
 							</b-col>
 						</b-row>
+
+						<b-form-group
+						label="All day:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
 
 						<b-form-group 
 						label="Title"
@@ -158,7 +166,7 @@
 							<template #label>
 								Performed by
 								<br/>
-								<b-form-checkbox @change="toggleAllSplits" class="mt-2">
+								<b-form-checkbox @change="selectAllSplits" class="mt-2">
 									<strong>Everyone</strong>
 								</b-form-checkbox>
 							</template>
@@ -198,7 +206,7 @@
 						label-for="createdProceduresInput"
 						v-if="showLinkToInput"
 						>
-							<b-form-select id="createdProceduresInput" v-model="linkedProcedures" :options="proceduresAsOptions" multiple :select-size="10" >
+							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
 								<template #first>
 									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
 								</template>
@@ -308,7 +316,7 @@
 		data() {
 			return {
 				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
-				selectedEvent: {},
+				selectedEvent: new Task(),
 				eventsCssClasses: ['Break', 'Routine', 'IBS', 'OBS', 'Sport', 'External-contact'],
 				showEventModal: false,
 				showCreateModal: false,
@@ -317,8 +325,7 @@
 				selectedEventEveryday: false,
 				showMoreOptions: false,
 				showLinkToInput: false,
-				isEditingEvent: false,
-				linkedProcedures: []
+				isEditingEvent: false
 			}
 		},
 
@@ -371,7 +378,7 @@
 		},
 
 		methods: {
-			toggleAllSplits(checked) {
+			selectAllSplits(checked) {
 				this.selectedEventSplits = checked ? this.astronautsNames.slice() : []
 			},
 
@@ -401,7 +408,7 @@
 			},
 
 			onEventCreate(event, deleteEventFunction) {
-				this.selectedEvent = event
+				this.selectedEvent = {...event, ...{ procedures: [] }}
 				this.deleteEventFunction = deleteEventFunction
 				this.selectedEventSplits = [event.split]
 				return event
@@ -424,8 +431,12 @@
 			createTask() {
 				var selectedEvent = this.selectedEvent
 				for (var astronaut of this.selectedEventSplits) {
-					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, astronaut, this.linkedProcedures, selectedEvent.background, selectedEvent.allDay)
-					this.tasks.push(newTask)
+					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+					// this.tasks.push(newTask)
+					this.$store.dispatch('flightplan/createTask', newTask)
+					.catch(() => {
+						this.deleteEventFunction()
+					})
 				}
 				this.showCreateModal = false
 			},
@@ -435,11 +446,10 @@
 			},
 
 			resetSelectedEvent() {
-				this.selectedEvent = {}
+				this.selectedEvent = new Task()
 				this.showLinkToInput = false
 				this.selectedEventSplits = []
 				this.selectedEventEveryday = false
-				this.showLinkToInput = false
 
 				this.isEditingEvent = false
 			}

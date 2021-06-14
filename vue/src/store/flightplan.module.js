@@ -15,6 +15,11 @@ export const flightplan = {
 	mutations: {
 		SET_STATE(state, payload) {
 			state.flightplan = payload
+		},
+
+		CREATE_SUCCESS(state, payload) {
+			const task = {...payload}
+			flightplan.push(task)
 		}
 	},
 
@@ -31,6 +36,16 @@ export const flightplan = {
 				console.log('loading error (flightplan)')
 				throw err
 			})
+		},
+
+
+		async createTask({ commit }, task) {
+			return TaskService.postTask(task)
+			.then(() => { 
+				commit('CREATE_SUCCESS', task)
+				console.log('task ' + task.title + ' created for ' + task.split) 
+			})
+
 		}
 	}
 }
