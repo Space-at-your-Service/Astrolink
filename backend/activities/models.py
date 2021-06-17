@@ -176,7 +176,9 @@ class Task(models.Model):
                                                             ("IBS", "IBS"),
                                                             ("OBS", "OBS"),
                                                             ("Sport", "Sport"),
-                                                            ("External-contact", "External-contact")], default = "Break")
+                                                            ("External-contact", "External-contact"),
+                                                            ("Preparation", "Preparation"),
+                                                            ("Data-analysis", "Data-analysis")], default = "Break")
 
     background = models.BooleanField(default = False)
     allDay = models.BooleanField(default = False)
