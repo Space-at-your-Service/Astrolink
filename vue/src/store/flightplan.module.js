@@ -1,6 +1,7 @@
 // Store module that contains the flightplan, i.e the astronauts' schedule
 
 import TaskService from '../services/TaskService.js'
+import Serializer from '../utils/Serializer.js'
 
 export const flightplan = {
 	namespaced: true,
@@ -19,7 +20,7 @@ export const flightplan = {
 
 		CREATE_SUCCESS(state, payload) {
 			const task = {...payload}
-			flightplan.push(task)
+			state.flightplan.push(task)
 		}
 	},
 
@@ -29,7 +30,11 @@ export const flightplan = {
 			return TaskService.getFlightplan()
 			.then(response => {
 				payload = response.data
-				commit('SET_STATE', payload)
+				const flightplan = []
+				for (const serializedTask of payload) {
+					flightplan.push(Serializer.deserializeTask(serializedTask))
+				}
+				commit('SET_STATE', flightplan)
 				console.log('flightplan loaded')
 			})
 			.catch(err => {
@@ -40,7 +45,8 @@ export const flightplan = {
 
 
 		async createTask({ commit }, task) {
-			return TaskService.postTask(task)
+			const serializedTask = Serializer.serializeTask(task)
+			return TaskService.postTask(serializedTask)
 			.then(() => { 
 				commit('CREATE_SUCCESS', task)
 				console.log('task ' + task.title + ' created for ' + task.split) 
