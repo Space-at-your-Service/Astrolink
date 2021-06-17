@@ -39,7 +39,7 @@ const store = new Vuex.Store({
 
 	// general mission and functional data, which doesn't belong in any other module
 	state: {
-		missionStartDate: new Date(2021,4,15,0,0,0), // HARDCODED
+		missionStartDate: new Date(2021,7,12,0,0,0), // HARDCODED
 		staff: {
 			astronauts: [],
 			mcc: [],
