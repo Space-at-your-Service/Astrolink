@@ -11,7 +11,7 @@
 			<b-collapse id="nav-collapse" is-nav>
 				<b-navbar-nav>
 					<b-nav-text>
-						Alpha Version 0.8
+						{{ missionName }}
 						<a href="https://github.com/Space-at-your-Service/Astrolink/issues" target="__blank" class="ml-2">
 							<b-icon id="bug" icon="bug-fill"></b-icon>
 						</a>
@@ -53,6 +53,7 @@
 			}
 		},
 		computed: {
+			...mapState(['missionName']),
 			...mapState('user', ['username']),
 			...mapGetters('user', ['isAllowed'])
 		},
