@@ -1,7 +1,6 @@
 <template>
 	<div>
-		<strong>Astronauts:</strong> {{astronautsNames}}<br/>
-		<strong>Tasks:</strong> {{tasks}}<br/>
+		{{selectedDate}}
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col v-if="isAllowed('activities.change_task')">
@@ -25,13 +24,23 @@
 						Enable event drag and drop placement
 					</b-form-checkbox>
 				</b-col>
+				<b-col>
+					<b-button @click="selectedDate= new Date(missionStartDate);" style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
+						MISSION
+					</b-button>
+				</b-col>
+				<b-col>
+					<b-button @click="selectedDate = new Date()" variant="primary"  style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
+						TODAY
+					</b-button>
+				</b-col>
 			</b-row>
 		</b-container>
-		<div style="height: 1105px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
+		<div style="height: 1129px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
-				:selected-date="new Date()"
+				:selected-date="selectedDate"
 				:min-date="minDate"
 				:maxDate="maxDate"
 				:time-from="6 * 60"
@@ -42,20 +51,20 @@
 				:disable-views="['years', 'year', 'month', 'week']"
 				hide-view-selector
 				show-all-day-events="short"
-				today-button
 				:watchRealTime="true"
 				:timeCellHeight="30"
 				:events="tasks"
 				:on-event-click="onEventClick"
 				:on-event-create="onEventCreate"
-				@event-drag-create="showCreateModal = true"
+				@event-drag-create="selectAndShowCreateModal"
 				:split-days="splitDays"
 				class="font-roboto"
 				>
 
 				<template v-slot:title="{ title, view }" >
 					<span style="font-family: Roboto, sans-serif;"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
-					<strong style="font-family: Roboto, sans-serif; color: navy;">(Mission Day {{ getMissionDayNumber(view.startDate) }} )</strong>
+					<strong style="font-family: Roboto, sans-serif; color: navy;" v-if="getMissionDayNumber(view.startDate) < 0">{{ -1* getMissionDayNumber(view.startDate) }} days before MISSION</strong>
+					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
 				</template>
 
 				<template v-slot:today-button >
@@ -315,9 +324,10 @@
 
 		data() {
 			return {
+				selectedDate: new Date(),
 				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
 				selectedEvent: new Task(),
-				eventsCssClasses: ['Break', 'Routine', 'IBS', 'OBS', 'Sport', 'External-contact'],
+				eventsCssClasses: ['Break', 'Routine', 'Preparation', 'IBS', 'OBS', 'Data-analysis', 'Sport', 'External-contact'],
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,
@@ -428,11 +438,10 @@
 				else this.createTask()
 			},
 
-			createTask() {
+			async createTask() {
 				var selectedEvent = this.selectedEvent
 				for (var astronaut of this.selectedEventSplits) {
 					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
-					// this.tasks.push(newTask)
 					this.$store.dispatch('flightplan/createTask', newTask)
 					.catch(() => {
 						this.deleteEventFunction()
@@ -452,6 +461,11 @@
 				this.selectedEventEveryday = false
 
 				this.isEditingEvent = false
+			},
+
+			selectAndShowCreateModal(event) {
+				this.showCreateModal = true
+				this.selectedEvent = event
 			}
 		}
 
@@ -499,12 +513,20 @@
 		background-color: green; 
 		color: #fff;
 	}
+	.vuecal__event.Preparation {
+		background-color: cyan; 
+		color: #fff;
+	}
 	.vuecal__event.IBS {
 		background-color: blue; 
 		color: #fff;
 	}
 	.vuecal__event.OBS {
 		background-color: red; 
+		color: #fff;
+	}
+	.vuecal__event.Data-analysis {
+		background-color: coral; 
 		color: #fff;
 	}
 	.vuecal__event.Sport {
@@ -526,5 +548,5 @@
 		border-left: 1px solid black;
 	}
 
-	.vuecal__now-line {color: red;}
+	.vuecal__now-line {color: lime;}
 </style>
