@@ -1,6 +1,5 @@
 <template>
 	<div>
-		{{selectedDate}}
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col v-if="isAllowed('activities.change_task')">
@@ -21,28 +20,39 @@
 						switch
 						size="lg"
 						>
-						Enable event drag and drop placement
+						Drag and drop
 					</b-form-checkbox>
 				</b-col>
 				<b-col>
-					<b-button @click="selectedDate= new Date(missionStartDate);" style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
-						MISSION
-					</b-button>
-				</b-col>
-				<b-col>
-					<b-button @click="selectedDate = new Date()" variant="primary"  style="border-radius: 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
+					<b-button @click="selectedDate = new Date()" variant="primary"  style="border-bottom-right-radius: : 15px; border-top-right-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
 						TODAY
+					</b-button>
+					<b-button @click="selectedDate= new Date(missionStartDate);" style="border-bottom-left-radius: : 15px; border-top-left-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
+						MISSION
 					</b-button>
 				</b-col>
 			</b-row>
 		</b-container>
+
+		
+
 		<div style="height: 1129px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
+			<div style="position: absolute;" v-show="showDatePicker">
+			<vue-cal 
+				xsmall
+				:time="false"
+				hide-view-selector
+				active-view="month"
+				:disable-views="['years', 'year', 'week', 'day']"
+				@cell-focus="selectedDate = $event"
+				class="vuecal--blue-theme vuecal--rounded-theme"
+				style="max-width: 270px;height: 290px">
+			</vue-cal>
+		</div>
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
 				:selected-date="selectedDate"
-				:min-date="minDate"
-				:maxDate="maxDate"
 				:time-from="6 * 60"
 				:time-to="23*60"
 				:time-step="30"
@@ -128,14 +138,6 @@
 							</b-col>
 						</b-row>
 
-						<b-form-group
-						label="All day:"
-						label-cols="auto">
-							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
-								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
-							</b-form-checkbox>
-						</b-form-group>
-
 						<b-form-group 
 						label="Title"
 						label-for="titleInput">
@@ -145,7 +147,7 @@
 						<b-form-group 
 						label="Content"
 						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50" required></b-form-textarea>
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
 						</b-form-group>
 
 						<b-form-group 
@@ -156,53 +158,6 @@
 									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
 								</template>
 							</b-form-select>
-						</b-form-group>
-					</b-container>
-
-					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold">
-						<span v-if="!showMoreOptions" class="hover-pointer">
-							<b-icon icon="chevron-down"></b-icon>
-							More options
-						</span>
-						<span v-if="showMoreOptions" class="hover-pointer">
-							<b-icon icon="chevron-up"></b-icon>
-							Less options
-						</span>
-					</div>
-					<b-container v-if="showMoreOptions" class="mt-2">
-						<b-form-group
-						>
-							<template #label>
-								Performed by
-								<br/>
-								<b-form-checkbox @change="selectAllSplits" class="mt-2">
-									<strong>Everyone</strong>
-								</b-form-checkbox>
-							</template>
-
-							<b-form-checkbox-group
-							v-model="selectedEventSplits"
-							:options="astronautsNames"
-							inline
-							>
-							</b-form-checkbox-group>
-
-						</b-form-group>
-
-						<b-form-group
-						label="Repeated daily:"
-						label-cols="auto">
-							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1" disabled>
-								{{ selectedEventEveryday ? 'Yes' : 'No' }}
-							</b-form-checkbox>
-						</b-form-group>
-
-						<b-form-group
-						label="Background task (can be overriden):"
-						label-cols="auto">
-							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
-								{{ selectedEvent.background ? 'Yes' : 'No' }}
-							</b-form-checkbox>
 						</b-form-group>
 
 						<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
@@ -221,88 +176,195 @@
 								</template>
 							</b-form-select>
 						</b-form-group>
+
+					</b-container>
+
+					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold">
+						<span v-if="!showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-down"></b-icon>
+							More options
+						</span>
+						<span v-if="showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-up"></b-icon>
+							Less options
+						</span>
+					</div>
+					<b-container v-if="showMoreOptions" class="mt-2">
+						<b-form-group
+						>
+							<template #label>
+								Performed by:
+								<br/>
+								<b-form-checkbox @change="selectAllSplits" class="mt-2">
+									<strong>Everyone</strong>
+								</b-form-checkbox>
+							</template>
+
+							<b-form-checkbox-group
+							v-model="selectedEventSplits"
+							:options="astronautsNames"
+							inline
+							>
+							</b-form-checkbox-group>
+
+						</b-form-group>
+
+						<b-form-group
+						label="All day:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<b-form-group
+						label="Repeated daily:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEventEveryday" switch class="mt-2 ml-1" disabled>
+								{{ selectedEventEveryday ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<b-form-group
+						label="Background task (can be overriden):"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
+								{{ selectedEvent.background ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
 					</b-container>
 				</b-form>
 			</b-modal>
 
-			<b-modal id="eventModal" :title="selectedEvent.title" v-model="showEventModal" @hidden="resetSelectedEvent">
+			<b-modal id="eventModal" v-model="showEventModal" @hidden="resetSelectedEvent">
+				<template #modal-title>
+					{{ selectedEvent.split }}: {{ selectedEvent.title }}
+					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
+				</template>
+				<template #modal-footer>
+					<b-button variant="danger" v-if="!isEditingEvent">
+						<b-icon icon="trash"></b-icon> Delete
+					</b-button>
+					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent">
+						<b-icon icon="pencil-square"></b-icon> Edit
+					</b-button>
+					<b-button variant="info" v-if="isEditingEvent">
+						Confirm
+					</b-button>
+				</template>
 				<b-container v-if="!isEditingEvent">
 					<b-row>
-						From {{ selectedEvent.start}}
-						<br/> 
-						To {{ selectedEvent.end}} 
+						<strong>{{ selectedEvent.content}}</strong>
 					</b-row>
+					<br/>
 					<b-row>
-						Content
-						{{ selectedEvent.content}}
+						{{ (new Date(selectedEvent.start)).toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}}
 					</b-row>
-					<b-row>
-						Category
-						{{ selectedEvent.class}}
+					<b-row v-if="!selectedEvent.allDay">
+						From {{ (new Date(selectedEvent.start)).formatTime('HH:mm') }} to {{ (new Date(selectedEvent.end)).formatTime('HH:mm') }} 
 					</b-row>
-					<b-row>
-						Background
-						{{ selectedEvent.background}}
-						<br/>
+					<b-row v-if="selectedEvent.allDay">
 						All day
-						{{ selectedEvent.allDay}}
+					</b-row>
+					<b-row class="mt-3" v-if="selectedEvent.procedures.length > 0">
+						Linked procedures:
 					</b-row>
 					<b-row>
-						Linked to
-						{{ selectedEvent.procedures }}
-					</b-row>
-
-					<b-row class="float-right">
-						<b-button @click="isEditingEvent = true" variant="info" disabled>
-							<b-icon icon="pencil-square"></b-icon> Edit
-						</b-button>
+						<ul>
+							<li v-for="procedure in selectedEvent.procedures" :key="procedure.nick" @click="openPDF(procedure.title)" class="hover-pointer text-primary">
+								[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
+							</li>
+						</ul>
 					</b-row>
 				</b-container>
 				<b-container v-if="isEditingEvent">
-					<form>
-						<b-row>
-							<b-col>
-								<b-form-group 
-								label="From"
-								label-for="startTimeInput">
-									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-								</b-form-group>
-							</b-col>
+					<b-row>
+						<b-col>
+							<b-form-group 
+							label="From"
+							label-for="startTimeInput">
+								<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+							</b-form-group>
+						</b-col>
 
-							<b-col>
-								<b-form-group 
-								label="To"
-								label-for="endTimeInput">
-									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-								</b-form-group>
-							</b-col>
-						</b-row>
+						<b-col>
+							<b-form-group 
+							label="To"
+							label-for="endTimeInput">
+								<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+							</b-form-group>
+						</b-col>
+					</b-row>
 
-						<b-form-group 
-						label="Title"
-						label-for="titleInput">
-							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
-						</b-form-group>
+					<b-form-group 
+					label="Title"
+					label-for="titleInput">
+						<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
+					</b-form-group>
+				
+					<b-form-group 
+					label="Content"
+					label-for="contentInput">
+						<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
+					</b-form-group>
 
-						<b-form-group 
-						label="Content"
-						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
-						</b-form-group>
+					<b-form-group 
+					label="Category"
+					label-for="categoryInput">
+						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class" required>
+							<template #first>
+								<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+							</template>
+						</b-form-select>
+					</b-form-group>
 
-						<b-form-group 
-						label="Category"
-						label-for="categoryInput">
-							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
-								<template #first>
-									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
-								</template>
-							</b-form-select>
-						</b-form-group>
-					</form>
-					<b-button size="sm" variant="danger">
-						<b-icon icon="trash"></b-icon> Delete event
-					</b-button>
+					<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
+						<b-icon icon="link45deg"></b-icon>
+						Link to procedures
+					</div>
+
+					<b-form-group
+					label="Link to"
+					label-for="createdProceduresInput"
+					v-if="showLinkToInput"
+					>
+						<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
+							<template #first>
+								<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
+							</template>
+						</b-form-select>
+					</b-form-group>
+
+				</b-container>
+				<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold" v-if="isEditingEvent">
+					<span v-if="!showMoreOptions" class="hover-pointer">
+						<b-icon icon="chevron-down"></b-icon>
+						More options
+					</span>
+					<span v-if="showMoreOptions" class="hover-pointer">
+						<b-icon icon="chevron-up"></b-icon>
+						Less options
+					</span>
+				</div>
+				<b-container v-if="showMoreOptions && isEditingEvent" class="mt-2">
+
+					<b-form-group
+					label="All day:"
+					label-cols="auto">
+						<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+							{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+						</b-form-checkbox>
+					</b-form-group>
+
+					<b-form-group
+					label="Background task (can be overriden):"
+					label-cols="auto">
+						<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
+							{{ selectedEvent.background ? 'Yes' : 'No' }}
+						</b-form-checkbox>
+					</b-form-group>
+
 				</b-container>
 			</b-modal>
 		</div>
@@ -317,6 +379,7 @@
 	import 'vue-cal/dist/drag-and-drop.js'
 	import Task from '../models/Task'
 	import Dialog from '../utils/Dialog.js'
+	import ProcedureService from '../services/ProcedureService.js'
 
 	export default {
 		components: { VueCal },
@@ -335,7 +398,8 @@
 				selectedEventEveryday: false,
 				showMoreOptions: false,
 				showLinkToInput: false,
-				isEditingEvent: false
+				isEditingEvent: false,
+				showDatePicker: false
 			}
 		},
 
@@ -466,13 +530,28 @@
 			selectAndShowCreateModal(event) {
 				this.showCreateModal = true
 				this.selectedEvent = event
+			},
+			openPDF(title) {
+				ProcedureService.getFile(title)
+				.then(response => {
+					const file = new Blob([response.data], {type: "application/pdf"})
+					const fileURL = URL.createObjectURL(file)
+					return fileURL
+				})
+				.then(fileURL => {
+					window.open(fileURL, title)
+				})
 			}
 		}
-
 	}
 </script>
 
 <style>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+
 	.font-roboto * {
 		font-family: Roboto, sans-serif;
 	}
@@ -509,15 +588,31 @@
 		background-color: yellow; 
 		color: black;
 	}
+	.Break {
+		background-color: yellow; 
+		color: black;
+	}
 	.vuecal__event.Routine {
+		background-color: green; 
+		color: #fff;
+	}
+	.Routine {
 		background-color: green; 
 		color: #fff;
 	}
 	.vuecal__event.Preparation {
 		background-color: cyan; 
-		color: #fff;
+		color: black;
+	}
+	.Preparation {
+		background-color: cyan; 
+		color: black;
 	}
 	.vuecal__event.IBS {
+		background-color: blue; 
+		color: #fff;
+	}
+	.IBS {
 		background-color: blue; 
 		color: #fff;
 	}
@@ -525,7 +620,15 @@
 		background-color: red; 
 		color: #fff;
 	}
+	.OBS {
+		background-color: red; 
+		color: #fff;
+	}
 	.vuecal__event.Data-analysis {
+		background-color: coral; 
+		color: #fff;
+	}
+	.Data-analysis {
 		background-color: coral; 
 		color: #fff;
 	}
@@ -533,7 +636,15 @@
 		background-color: purple; 
 		color: #fff;
 	}
+	.Sport {
+		background-color: purple; 
+		color: #fff;
+	}
 	.vuecal__event.External-contact {
+		background-color: orange; 
+		color: black;
+	}
+	.External-contact {
 		background-color: orange; 
 		color: black;
 	}
