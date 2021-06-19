@@ -44,12 +44,16 @@
 
     </div>
     <div class="col-xs-2">
+      <div v-if="!videoOn" class="Name">
+        
+      </div>
       <vue-webrtc
         :ref="uuid + roomName"
         width="100%"
         :roomId="roomName"
         socketURL="https://rtcmulticonnection.herokuapp.com:443/"
         stunServer='stun:stun.l.google.com:19302'
+        turnServer='username@password%turn:turn.astrolink.earth:3478'
         :enableVideo="videoOn"
         v-on:joined-room="logEvent"
         v-on:left-room="logEvent"
@@ -92,6 +96,7 @@ export default {
       type: Boolean,
       required: true,
     },
+
   },
   methods: {
     onCapture() {
