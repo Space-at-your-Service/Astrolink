@@ -113,6 +113,9 @@ class TaskSerializer(serializers.ModelSerializer):
         if "holder" in validated_data:
             validated_data["holder"] = get_user_model().objects.get(username = validated_data.pop("holder"))
 
+        if "procedures" in validated_data:
+            validated_data["procedures"] = Procedure.objects.filter(title__in = validated_data.pop("procedures"))
+
         return super().update(instance, validated_data)
 
 
