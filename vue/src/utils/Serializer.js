@@ -11,7 +11,10 @@ class Serializer {
 		serializedTask.title = task.title
 		serializedTask.content = task.content
 		serializedTask.category = task.class
-		serializedTask.procedures = task.procedures
+		serializedTask.procedures = []
+		for (const procedure of task.procedures) {
+			serializedTask.procedures.push(procedure.title)
+		}
 		serializedTask.background = task.background
 		serializedTask.allDay = task.allDay
 		return serializedTask
