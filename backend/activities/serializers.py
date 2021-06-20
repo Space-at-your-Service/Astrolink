@@ -112,7 +112,10 @@ class TaskSerializer(serializers.ModelSerializer):
 
         self.fields["procedures"] = ProcedureSerializer(many = True)
 
-        return serializers.ModelSerializer.to_representation(self, instance)
+        rep = serializers.ModelSerializer.to_representation(self, instance)
+        rep["id"] = instance.id
+
+        return rep
 
 
 class TextsheetSerializer(serializers.ModelSerializer):
