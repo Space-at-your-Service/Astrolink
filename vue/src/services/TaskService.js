@@ -12,8 +12,15 @@ class TaskService {
 	}
 
 	async postTask(task) {
-		console.log(JSON.stringify(task));
 		return http.post('/activities/planning/', task);
+	}
+
+	async updateTask(task) {
+		return http.put('/activities/tasks/'+task.id.toString(), task);
+	}
+
+	async deleteTask(task) {
+		return http.delete('/activities/tasks/'+task.id.toString());
 	}
 }
 

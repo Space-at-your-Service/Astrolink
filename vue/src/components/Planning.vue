@@ -233,13 +233,13 @@
 					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
 				</template>
 				<template #modal-footer>
-					<b-button variant="danger" v-if="!isEditingEvent">
+					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent">
 						<b-icon icon="trash"></b-icon> Delete
 					</b-button>
 					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent">
 						<b-icon icon="pencil-square"></b-icon> Edit
 					</b-button>
-					<b-button variant="info" v-if="isEditingEvent">
+					<b-button variant="info" @click="okEdit" v-if="isEditingEvent">
 						Confirm
 					</b-button>
 				</template>
@@ -268,94 +268,96 @@
 						</ul>
 					</b-row>
 				</b-container>
-				<b-container v-if="isEditingEvent">
-					<b-row>
-						<b-col>
-							<b-form-group 
-							label="From"
-							label-for="startTimeInput">
-								<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
-							</b-form-group>
-						</b-col>
+				<b-form ref="editForm" @submit.stop.prevent="handleSubmit">
+					<b-container v-if="isEditingEvent">
+						<b-row>
+							<b-col>
+								<b-form-group 
+								label="From"
+								label-for="startTimeInput">
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+								</b-form-group>
+							</b-col>
 
-						<b-col>
-							<b-form-group 
-							label="To"
-							label-for="endTimeInput">
-								<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
-							</b-form-group>
-						</b-col>
-					</b-row>
+							<b-col>
+								<b-form-group 
+								label="To"
+								label-for="endTimeInput">
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+						</b-row>
 
-					<b-form-group 
-					label="Title"
-					label-for="titleInput">
-						<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
-					</b-form-group>
-				
-					<b-form-group 
-					label="Content"
-					label-for="contentInput">
-						<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
-					</b-form-group>
+						<b-form-group 
+						label="Title"
+						label-for="titleInput">
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
+						</b-form-group>
+					
+						<b-form-group 
+						label="Content"
+						label-for="contentInput">
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
+						</b-form-group>
 
-					<b-form-group 
-					label="Category"
-					label-for="categoryInput">
-						<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class" required>
-							<template #first>
-								<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
-							</template>
-						</b-form-select>
-					</b-form-group>
+						<b-form-group 
+						label="Category"
+						label-for="categoryInput">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class" required>
+								<template #first>
+									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
 
-					<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
-						<b-icon icon="link45deg"></b-icon>
-						Link to procedures
+						<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
+							<b-icon icon="link45deg"></b-icon>
+							Link to procedures
+						</div>
+
+						<b-form-group
+						label="Link to"
+						label-for="createdProceduresInput"
+						v-if="showLinkToInput"
+						>
+							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
+								<template #first>
+									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+
+					</b-container>
+					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold" v-if="isEditingEvent">
+						<span v-if="!showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-down"></b-icon>
+							More options
+						</span>
+						<span v-if="showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-up"></b-icon>
+							Less options
+						</span>
 					</div>
+					<b-container v-if="showMoreOptions && isEditingEvent" class="mt-2">
 
-					<b-form-group
-					label="Link to"
-					label-for="createdProceduresInput"
-					v-if="showLinkToInput"
-					>
-						<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
-							<template #first>
-								<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
-							</template>
-						</b-form-select>
-					</b-form-group>
+						<b-form-group
+						label="All day:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
 
-				</b-container>
-				<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold" v-if="isEditingEvent">
-					<span v-if="!showMoreOptions" class="hover-pointer">
-						<b-icon icon="chevron-down"></b-icon>
-						More options
-					</span>
-					<span v-if="showMoreOptions" class="hover-pointer">
-						<b-icon icon="chevron-up"></b-icon>
-						Less options
-					</span>
-				</div>
-				<b-container v-if="showMoreOptions && isEditingEvent" class="mt-2">
+						<b-form-group
+						label="Background task (can be overriden):"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
+								{{ selectedEvent.background ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
 
-					<b-form-group
-					label="All day:"
-					label-cols="auto">
-						<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
-							{{ selectedEvent.allDay ? 'Yes' : 'No' }}
-						</b-form-checkbox>
-					</b-form-group>
-
-					<b-form-group
-					label="Background task (can be overriden):"
-					label-cols="auto">
-						<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
-							{{ selectedEvent.background ? 'Yes' : 'No' }}
-						</b-form-checkbox>
-					</b-form-group>
-
-				</b-container>
+					</b-container>
+				</b-form>
 			</b-modal>
 		</div>
 	</div>
@@ -370,6 +372,7 @@
 	import Task from '../models/Task'
 	import Dialog from '../utils/Dialog.js'
 	import ProcedureService from '../services/ProcedureService.js'
+	import Notif from '../utils/Notif.js'
 
 	export default {
 		components: { VueCal },
@@ -467,7 +470,7 @@
 
 			onEventClick(event, e) {
 				e.stopPropagation()
-				this.selectedEvent = event
+				this.selectedEvent = {...event}
 				this.showEventModal = true
 			},
 
@@ -478,17 +481,16 @@
 				return event
 			},
 			
-			checkCreateForm() {
-				const isValid = this.$refs['createForm'].checkValidity()
+			checkForm(formRef) {
+				const isValid = this.$refs[formRef].checkValidity()
 				return isValid
 			},
 
 			okCreate() {
-				if (!this.checkCreateForm()) {
+				if (!this.checkForm('createForm')) {
 					Dialog.okMessage(this, 'Invalid form')
 					return
 				}
-
 				else this.createTask()
 			},
 
@@ -497,15 +499,49 @@
 				for (var astronaut of this.selectedEventSplits) {
 					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
 					this.$store.dispatch('flightplan/createTask', newTask)
+					.then(() => {
+						this.showCreateModal = false
+					})
 					.catch(() => {
-						this.deleteEventFunction()
+						Notif.toastError(this, 'Request failed', 'Could not create the task')
 					})
 				}
-				this.showCreateModal = false
 			},
 
 			cancelCreate() {
 				this.deleteEventFunction()
+			},
+
+			okEdit() {
+				if (!this.checkForm('editForm')) {
+					Dialog.okMessage(this, 'Invalid form')
+					return
+				}
+				else this.editTask()
+			},
+
+			async editTask() {
+				var selectedEvent = this.selectedEvent
+				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+				editedTask.id = selectedEvent.id
+				this.$store.dispatch('flightplan/updateTask', editedTask)
+				.then(() => {
+					this.showEventModal = false
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not update the task')
+				})
+				
+			},
+
+			async deleteTask(task) {
+				this.$store.dispatch('flightplan/deleteTask', task)
+				.then(() => {
+					this.$bvModal.hide('eventModal')
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not delete the task')
+				})	
 			},
 
 			resetSelectedEvent() {
@@ -518,7 +554,7 @@
 			},
 
 			selectAndShowCreateModal(event) {
-				this.selectedEvent = event
+				this.selectedEvent = {...event}
 				this.selectedEvent.procedures = []
 				this.showCreateModal = true
 			},

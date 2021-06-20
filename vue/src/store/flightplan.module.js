@@ -21,6 +21,23 @@ export const flightplan = {
 		CREATE_SUCCESS(state, payload) {
 			const task = {...payload}
 			state.flightplan.push(task)
+		},
+
+		DELETE_SUCCESS(state, payload) {
+			const index = state.flightplan.findIndex(task => {return task.id === payload.id})
+			if (index > -1) {
+				state.flightplan.splice(index, 1)
+			}
+		},
+
+		UPDATE_SUCCESS(state, payload) {
+			const index = state.flightplan.findIndex(task => {return task.id === payload.id})
+			if (index > -1) {
+				state.flightplan.splice(index, 1)
+
+				const task = {...payload}
+				state.flightplan.push(task)
+			}
 		}
 	},
 
@@ -43,15 +60,34 @@ export const flightplan = {
 			})
 		},
 
-
 		async createTask({ commit }, task) {
+			var payload = undefined
 			const serializedTask = Serializer.serializeTask(task)
 			return TaskService.postTask(serializedTask)
-			.then(() => { 
-				commit('CREATE_SUCCESS', task)
-				console.log('task ' + task.title + ' created for ' + task.split) 
+			.then(response => { 
+				payload = Serializer.deserializeTask(response.data)
+				commit('CREATE_SUCCESS', payload)
+				console.log('task ' + payload.title + ' created for ' + payload.split) 
 			})
+		},
 
+		async updateTask({ commit }, task) {
+			var payload = undefined
+			const serializedTask = Serializer.serializeTask(task)
+			return TaskService.updateTask(serializedTask)
+			.then(response => { 
+				payload = Serializer.deserializeTask(response.data)
+				commit('UPDATE_SUCCESS', payload)
+				console.log('task ' + payload.id + ' updated ') 
+			})
+		},
+
+		async deleteTask({ commit }, task) {
+			return TaskService.deleteTask(task)
+			.then(() => { 
+				commit('DELETE_SUCCESS', task)
+				console.log('task ' + task.id + ' deleted') 
+			})
 		}
 	}
 }

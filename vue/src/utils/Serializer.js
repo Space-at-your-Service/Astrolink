@@ -2,6 +2,9 @@ class Serializer {
 
 	serializeTask(task) {
 		const serializedTask = {}
+		if (typeof task.id !== 'undefined') {
+			serializedTask.id = task.id
+		}
 		serializedTask.holder = task.split
 		serializedTask.start = task.start
 		serializedTask.end = task.end
@@ -16,6 +19,7 @@ class Serializer {
 
 	deserializeTask(serializedTask) {
 		const task = {}
+		task.id = serializedTask.id
 		task.split = serializedTask.holder
 		task.start = new Date(serializedTask.start)
 		task.end = new Date(serializedTask.end)
