@@ -37,18 +37,6 @@
 		
 
 		<div style="height: 1129px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
-			<div style="position: absolute;" v-show="showDatePicker">
-			<vue-cal 
-				xsmall
-				:time="false"
-				hide-view-selector
-				active-view="month"
-				:disable-views="['years', 'year', 'week', 'day']"
-				@cell-focus="selectedDate = $event"
-				class="vuecal--blue-theme vuecal--rounded-theme"
-				style="max-width: 270px;height: 290px">
-			</vue-cal>
-		</div>
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
@@ -58,8 +46,8 @@
 				:time-step="30"
 				:snap-to-time="5"
 				:sticky-split-labels="true"
-				:disable-views="['years', 'year', 'month', 'week']"
-				hide-view-selector
+				:disable-views="['years', 'year', 'week']"
+				active-view = 'day'
 				show-all-day-events="short"
 				:watchRealTime="true"
 				:timeCellHeight="30"
@@ -72,9 +60,11 @@
 				>
 
 				<template v-slot:title="{ title, view }" >
-					<span style="font-family: Roboto, sans-serif;"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
-					<strong style="font-family: Roboto, sans-serif; color: navy;" v-if="getMissionDayNumber(view.startDate) < 0">{{ -1* getMissionDayNumber(view.startDate) }} days before MISSION</strong>
-					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
+					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'day'"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
+					<strong style="font-family: Roboto, sans-serif; color: navy;" v-if="getMissionDayNumber(view.startDate) < 0 && view.id === 'day'">{{ -1* getMissionDayNumber(view.startDate) }} days before MISSION</strong>
+					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0 && view.id === 'day'">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
+
+					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'month'"> {{ view.startDate.toLocaleDateString('en-CH', { year: 'numeric', month: 'long'}) }} </span>
 				</template>
 
 				<template v-slot:today-button >
@@ -528,8 +518,9 @@
 			},
 
 			selectAndShowCreateModal(event) {
-				this.showCreateModal = true
 				this.selectedEvent = event
+				this.selectedEvent.procedures = []
+				this.showCreateModal = true
 			},
 			openPDF(title) {
 				ProcedureService.getFile(title)
