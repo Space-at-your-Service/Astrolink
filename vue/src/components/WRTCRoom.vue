@@ -2,7 +2,7 @@
   <div :id="uuid + 'callBoxId'" class="rounded row callBox">
     <div class="col-xs-2 btndiv">
       <div class="title">
-        <h1>{{ roomName }}</h1>
+        <h1 class="inBlack">{{ roomName }}</h1>
       </div>
       <button
         type="button"
@@ -12,7 +12,7 @@
         @click="join()"
       >
         Join
-        <h3>{{ roomName }}</h3>
+        <h3 >{{ roomName }}</h3>
       </button>
       <button
         type="button"
@@ -44,11 +44,16 @@
 
     </div>
     <div class="col-xs-2">
+      <div v-if="!videoOn" class="Name">
+        
+      </div>
       <vue-webrtc
         :ref="uuid + roomName"
         width="100%"
         :roomId="roomName"
         socketURL="https://rtcmulticonnection.herokuapp.com:443/"
+        stunServer='stun:stun.l.google.com:19302'
+        turnServer='Astrolink1@PASSWORD%turn:turn.astrolink.earth:5349'
         :enableVideo="videoOn"
         v-on:joined-room="logEvent"
         v-on:left-room="logEvent"
@@ -91,6 +96,7 @@ export default {
       type: Boolean,
       required: true,
     },
+
   },
   methods: {
     onCapture() {
@@ -129,14 +135,18 @@ export default {
   margin-left: 20px;
 }
 .btndiv {
-  margin-right: 60px;
+  width:180px;
 }
 .callBox {
-  width: 200px;
+  margin-left: 10px;
   border-radius: 30px;
-  width: 780px;
+  width: auto;
+}
+.inBlack{
+  color: black;
 }
 .mutebtn {
+  background-color: rgb(97, 102, 110);
   width: 140px;
   height: 100px;
   margin-top: 10px;
@@ -145,7 +155,10 @@ export default {
   border-radius: 30px;
   margin-bottom: 10px;
 }
-
+.video-list{
+  background-color: #c2c6c8;
+  width:760px;
+}
 .leavebtn {
   display: none;
   background-color: rgba(255, 0, 0, 0.698);

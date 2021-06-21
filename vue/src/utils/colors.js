@@ -19,7 +19,7 @@ const Colors = {};
     darkorange: "#ff8c00",
     darkorchid: "#9932cc",
     darkred: "#8b0000",
-    darksalmon: "#e9967a",
+    //darksalmon: "#e9967a",
     darkviolet: "#9400d3",
     fuchsia: "#ff00ff",
     gold: "#ffd700",

@@ -4,7 +4,7 @@ import axios from 'axios'
 
 const http = axios.create({
 	baseURL: 'http://localhost:8000',
-	timeout: 9000
+	timeout: 3000
 });
 
 // add the user's authentication token to all requests if logged in

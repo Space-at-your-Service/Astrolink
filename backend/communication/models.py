@@ -15,6 +15,8 @@ class Room(models.Model):
     @field id (str) : A unique id for the room 
     @field room (str) : the  name for the room (ex: global)
     @field users (str) : list of the users in the room  
+    @field usersSpeaking (str) : list of the users in the room who are speaking 
+
     """
    
     id = models.SlugField(max_length = 6, primary_key = True, unique = True)

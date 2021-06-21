@@ -1,11 +1,8 @@
 <template>
   <div class="main-container">
     <h3 class="section-title">
-      Communication 
-      <b-button
-        class="helpShortcut"
-        @click="helpShortcut = !helpShortcut"
-        variant="outline-info"
+      Communication
+      <b-button class="helpShortcut" @click="helpShortcut = !helpShortcut"
         >Shortcut help</b-button
       >
     </h3>
@@ -13,277 +10,97 @@
     <b-container fluid="sm">
       <b-tabs content-class="mt-3" fill>
         <b-tab id="audiosTab" title="Audios" active>
-          <!--#####################################AUDIO PART ########################################################################################### -->
+          <!--##################################### AUDIO PART ########################################################################################### -->
 
           <div id="channelContainer">
             <b-row>
               <b-col cols="9" class="rounded p-2">
                 <b-row class="mb-3">
-                  <b-col id="flight" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">FLIGHT (1)</h5>
-                    <h5 v-else>FLIGHT</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('flight')"
-                          class="float-right btn btn-danger"
-                        >
-                          <!-- :class={: 'float-right'} -->
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('flight')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
+                  <room
+                    id="base"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="1"
+                    :userList="userLists['base']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="flight"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="2"
+                    :userList="userLists['flight']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="cap"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="3"
+                    :userList="userLists['cap']"
+                    :astronaut="isAstronaut"
+                  />
+                </b-row>
+                <b-row class="mb-3">
+                  <room
+                    id="plan"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="4"
+                    :userList="userLists['plan']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="global"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="true"
+                    :helpShortcut="helpShortcut"
+                    :number="0"
+                    :userList="userLists['global']"
+                    :astronaut="isAstronaut"
+                  />
+                  <room
+                    id="science"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="5"
+                    :userList="userLists['science']"
+                    :astronaut="isAstronaut"
+                  />
+                </b-row>
+                <b-row class="mb-3">
+                  <room
+                    id="pro"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="6"
+                    :userList="userLists['pro']"
+                    :astronaut="isAstronaut"
+                  />
 
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['flight']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'flight')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="base" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">BASE (2)</h5>
-                    <h5 v-else>BASE</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div>
-                        <button
-                          type="button"
-                          @click="removePresence('base')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('base')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['base']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'base')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="science" class="sm-4 channel rounded p-3">
-                    <h5 v-if="helpShortcut">SCIENCE (3)</h5>
-                    <h5 v-else>SCIENCE</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('science')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('science')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['science']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'science')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                </b-row>
-                <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="cap">
-                    <h5 v-if="helpShortcut">CAP (4)</h5>
-                    <h5 v-else>CAP</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('cap')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('cap')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['cap']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'cap')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col id="global" class="sm-4 channel rounded p-3">
-                    <h5 align="center" v-if="helpShortcut">GLOBAL (0)</h5>
-                    <h5 v-else align="center">GLOBAL</h5>
-                    <div v-for="group in groups" :key="group.role">
-                      <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="removePresence('global')"
-                        class="float-right btn btn-danger"
-                      >
-                        Out
-                      </button>
-                      <button
-                        v-if="group.unit !== 'Astronauts'"
-                        type="button"
-                        @click="addPresence('global')"
-                        class="float-left btn btn-success"
-                      >
-                        In
-                      </button>
-                    </div>
-                  </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="pro">
-                    <h5 v-if="helpShortcut">PRO (5)</h5>
-                    <h5 v-else>PRO</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('pro')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('pro')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['pro']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'pro')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                </b-row>
-                <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="bme">
-                    <h5 v-if="helpShortcut">BME (6)</h5>
-                    <h5 v-else>BME</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('bme')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('bme')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['bme']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'bme')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
-                  <b-col class="sm-4 channel rounded p-3 text-center">
+                  <b-col v-if="!isAstronaut" class="sm-4 channelEmpty rounded p-3 text-center">
                     <vue-dictaphone
-                      @stop="onResultGlobal($event)"
+                      @stop="onResult($event, (isGlobal = true))"
                       v-slot="{ isRecording, startRecording, stopRecording }"
                       mime-type="audio/mp3"
                     >
@@ -298,8 +115,8 @@
                         v-if="!isRecording"
                         @click="startRecord('2')"
                       >
-                        <h6 v-if="helpShortcut">Global (keep AltGR pressed)</h6>
-                        <h6 v-else>Global</h6>
+                        <h4 v-if="helpShortcut">Global (keep AltGR pressed)</h4>
+                        <h4 v-else>Global</h4>
                       </button>
                       <button
                         id="realStopBtn2"
@@ -319,92 +136,39 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="rec">
-                    <h5 v-if="helpShortcut">REC (7)</h5>
-                    <h5 v-else>REC</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('rec')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('rec')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['rec']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'rec')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                  <b-col v-else class="sm-4 channelEmpty rounded p-3 text-center"></b-col>
+
+                  <room
+                    id="rec"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="7"
+                    :userList="userLists['rec']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
                 <b-row class="mb-3">
-                  <b-col class="sm-4 channel rounded p-3" id="plan">
-                    <h5 v-if="helpShortcut">PLAN (8)</h5>
-                    <h5 v-else>PLAN</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('plan')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('plan')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['plan']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'plan')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                  <room
+                    id="bme"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="8"
+                    :userList="userLists['bme']"
+                    :astronaut="isAstronaut"
+                  />
+
                   <b-col
-                    class="sm-4 channel rounded p-3 text-center"
+                    class="sm-4 channelEmpty rounded p-3 text-center"
                     align-v="center"
                   >
                     <vue-dictaphone
-                      @stop="onResult($event)"
+                      @stop="onResult($event, (isGlobal = false))"
                       v-slot="{ isRecording, startRecording, stopRecording }"
                       mime-type="audio/mp3"
                     >
@@ -421,8 +185,8 @@
                         v-if="!isRecording"
                         @click="startRecord('1')"
                       >
-                        <h6 v-if="helpShortcut">ALl (keep Space pressed)</h6>
-                        <h6 v-else>ALL</h6>
+                        <h4 v-if="helpShortcut">ALl (keep Space pressed)</h4>
+                        <h4 v-else>ALL</h4>
                       </button>
                       <button
                         id="realStopBtn1"
@@ -442,45 +206,17 @@
                       />
                     </vue-dictaphone>
                   </b-col>
-                  <b-col class="sm-4 channel rounded p-3" id="contact">
-                    <h5 v-if="helpShortcut">CONTACT (9)</h5>
-                    <h5 v-else>CONTACT</h5>
-                    <div
-                      class="DoubleBtn"
-                      v-for="group in groups"
-                      :key="group.role"
-                    >
-                      <div v-if="group.unit !== 'Astronauts'">
-                        <button
-                          type="button"
-                          @click="removePresence('contact')"
-                          class="float-right btn btn-danger"
-                        >
-                          Out
-                        </button>
-                        <button
-                          type="button"
-                          @click="addPresence('contact')"
-                          class="float-right btn btn-success"
-                        >
-                          In
-                        </button>
-                      </div>
-                    </div>
-                    <b-row class="badgesRow">
-                      <b-col
-                        class="badgesDiv"
-                        v-for="person in userLists['contact']"
-                        :key="person"
-                      >
-                        <comBadge
-                          :color="computeColor(person)"
-                          :id="person"
-                          :speaking="isThisOneSpeaking(person, 'contact')"
-                        />
-                      </b-col>
-                    </b-row>
-                  </b-col>
+                  <room
+                    id="contact"
+                    :rooms="rooms"
+                    :firstName="firstName"
+                    :lastName="lastName"
+                    :empty="false"
+                    :helpShortcut="helpShortcut"
+                    :number="9"
+                    :userList="userLists['contact']"
+                    :astronaut="isAstronaut"
+                  />
                 </b-row>
               </b-col>
 
@@ -488,7 +224,7 @@
                 id="audiosCol"
                 md="15"
                 cols="3"
-                class="rounded ml-auto p-2 audiosDiv"
+                class="rounded ml-auto p-2"
               >
                 <b-tabs>
                   <b-tab
@@ -499,8 +235,7 @@
                     <vue-custom-scrollbar
                       class="scroll-area scrollingClass"
                       :settings="settings"
-                      @ps-scroll-y="scrollHanle"
-                      @ps-scroll-up="scrolling()"
+                      @ps-scroll-up="scrolled = false"
                     >
                       <div id="audiosContainer">
                         <div
@@ -518,14 +253,22 @@
                                   .split(',')
                                   .includes(firstName + ':' + lastName)
                               "
-                              style="color: #42f5ad"
+                              style="color: white"
                             >
-                              seen</i
+                              <img
+                                class="vu"
+                                src="../../public/vu.png"
+                                width="12.77"
+                                height="15"
+                            /></i>
+                            <audio
+                              :class="audio.id + 'media'"
+                              controls
+                              v-on:play="listenned(audio.id)"
                             >
-                            <audio controls v-on:play="listenned(audio.id)">
                               <source
-                                :src="'http://localhost:8000' + audio.audiofile"
-                                type="audio/mp3"
+                                :class="audio.id + 'media_src'"
+                                :src="audioList[audio.id]"
                               />
                               Your browser does not support the audio tag.
                             </audio>
@@ -533,10 +276,22 @@
                         </div>
                       </div>
                     </vue-custom-scrollbar>
-                    <input type="checkbox" id="checkbox" v-model="scrolled" />
-                    <label for="checkbox"
-                      >Automatic scrolldown: {{ scrolled }}</label
+                    <button
+                      v-if="scrolled"
+                      @click="scrolled = !scrolled"
+                      type="button"
+                      class="btn btnScroll btn-secondary"
                     >
+                      Automatic scrolldown ON
+                    </button>
+                    <button
+                      v-else
+                      @click="scrolled = !scrolled"
+                      type="button"
+                      class="btn btnScroll btn-secondary"
+                    >
+                      Automatic scrolldown OFF
+                    </button>
                   </b-tab>
                 </b-tabs>
               </b-col>
@@ -553,7 +308,7 @@
                 :key="channel"
               >
                 <button
-                  v-if="!roomsListJoined.includes(channel)"
+                  v-if="!commRoomsJoined.includes(channel)"
                   class="btn btn-primary roomSelector"
                   @click="addRoom(channel)"
                 >
@@ -564,8 +319,8 @@
                   <h5 v-else>Join {{ channel }}</h5>
                 </button>
                 <button
-                  v-if="roomsListJoined.includes(channel)"
-                  class="btn btn-danger roomSelector"
+                  v-if="commRoomsJoined.includes(channel)"
+                  class="btn btn-danger roomSelectorLeave"
                   @click="delRoom(channel)"
                 >
                   <h5 v-if="helpShortcut">
@@ -576,13 +331,35 @@
                 </button>
               </b-col>
             </b-row>
-            <input type="checkbox" class="checkboxVideo" v-model="videoOn" />
-            <label class="checkboxVideo" for="checkbox"
-              >Video: {{ videoOn }}
-            </label>
+            <button
+              v-if="videoOn"
+              @click="videoOn = !videoOn"
+              type="button"
+              class="btn checkboxVideo btn-secondary"
+            >
+              Video ON
+            </button>
+            <button
+              v-else
+              @click="videoOn = !videoOn"
+              type="button"
+              class="btn checkboxVideo btn-secondary"
+            >
+              Video OFF
+            </button>
+
             <b-row id="videosRow">
-              <b-col v-for="(channel, index) in roomsList" :key="index" :class="{'hide': !roomsListJoined.includes(channel)}">
-                <WRTCRoom v-if="roomsListJoined.includes(channel)"  :roomName="channel" :videoOn="videoOn" />
+              <b-col
+                v-for="(channel, index) in roomsList"
+                :key="index"
+                :class="{ hide: !commRoomsJoined.includes(channel) }"
+              >
+                <WRTCRoom
+                  v-if="commRoomsJoined.includes(channel)"
+                  :roomName="channel"
+                  :videoOn="videoOn"
+                />
+                <hr />
               </b-col>
             </b-row>
           </div>
@@ -591,19 +368,15 @@
     </b-container>
   </div>
 </template>
-
-  <script>
-// template
-
-//
+<script>
+import AudioService from "../services/AudioService";
 import Vue from "vue";
 import VueDictaphone from "vue-dictaphone";
 Vue.use(VueDictaphone);
 import WRTCRoom from "../components/WRTCRoom.vue";
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
-import comBadge from "../components/CommunicationBadge.vue";
-import { Colors } from "../utils/colors.js";
+import room from "../components/Room.vue";
 import Audio from "../models/Audio.js";
 import vueCustomScrollbar from "vue-custom-scrollbar";
 import "vue-custom-scrollbar/dist/vueScrollbar.css";
@@ -623,6 +396,7 @@ export default {
       roomsUserIsIn: [],
       createdAudio: new Audio(),
       speaking: false,
+      isAstronaut: false,
       usersColors: {},
       userLists: {
         bme: [],
@@ -653,20 +427,20 @@ export default {
       selected: [],
       isBusy: false,
       editedRoom: { id: "0", name: "", users: "", usersSpeaking: "" },
-
+      audioList: {},
       roomsList: [
         "Global",
-        "Flight",
         "Base",
-        "Science",
+        "Flight",
         "Cap",
-        "Pro",
-        "Bme",
-        "Rec",
         "Plan",
+        "Science",
+        "Pro",
+        "Rec",
+        "Bme",
         "Contact",
       ],
-      roomsListJoined: [],
+      commRoomsJoined: [],
     };
   },
   computed: {
@@ -692,28 +466,20 @@ export default {
   components: {
     WRTCRoom,
     vueCustomScrollbar,
-    comBadge,
+    room,
   },
 
   methods: {
-    isThisOneSpeaking(person, roomName) {
-      let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
-      speaking = speaking.split(",");
-      if (speaking.includes(person)) {
-        return true;
-      }
-      return false;
-    },
-    scrollHanle(evt) {
-      console.log(evt);
-    },
-    ascii(a) {
-      return a.charCodeAt(0);
-    },
-    fuckoff() {
-      console.log("fuckoff");
-    },
+    scrollHanle() {},
+
     listenned(id) {
+      /**
+       * Triggered when the user listens to an audio.
+       * Checks if a given audio has been listenned by user. If not, send the modifying request to
+       * add the user to the seenBy field of the audio.
+       *
+       * @param {String}   id          Id of the audio
+       */
       let editedAudio = { ...this.audios.find((x) => x.id === id) };
       let listennedByUsers = this.audios.find((x) => x.id === id).seenBy;
       listennedByUsers = listennedByUsers.split(",");
@@ -725,11 +491,17 @@ export default {
       this.$store.dispatch("audio/updateAudio", editedAudio);
     },
 
-    toReadable(s) {
-      if (s == undefined) {
+    toReadable(timestamp) {
+      /**
+       * Returns the timestamp in a more readable format.
+       *
+       * @param {String}   timestamp   Timestamp of an audio.
+       * @return {String}              Returns new readable timestamp.
+       */
+      if (timestamp == undefined) {
         return "";
       }
-      var news = s.slice(5, 19).replace("T", " ");
+      var news = timestamp.slice(5, 19).replace("T", " ");
       return news;
     },
 
@@ -737,18 +509,32 @@ export default {
       console.log(this.$refs.scrollbar.ps, event);
     },
     addRoom(room) {
-      if (!this.roomsListJoined.includes(room)) {
-        this.roomsListJoined.push(room);
-        console.log(this.roomsListJoined )
+      /**
+       * Add a room to the communication rooms joined list.
+       *
+       * @param {String}   room        room to add to the commRoomsJoined list.
+       */
+      if (!this.commRoomsJoined.includes(room)) {
+        this.commRoomsJoined.push(room);
       }
     },
     delRoom(room) {
-      if (this.roomsListJoined.includes(room)) {
+      /**
+       * Delete a room from the communication rooms joined list.
+       *
+       * @param {String}   room        room to delete from the commRoomsJoined list.
+       */
+      if (this.commRoomsJoined.includes(room)) {
         document.getElementById(room + "leave").click();
-        this.roomsListJoined = this.arrayRemove(this.roomsListJoined, room);
+        this.commRoomsJoined = this.arrayRemove(this.commRoomsJoined, room);
       }
     },
     startRecord(ind) {
+      /**
+       * Triggered when user starts speaking.
+       *
+       * @param {String}   ind        button index (1 for global 2 for All).
+       */
       this.userIsRecording = true;
       document.getElementById("realRecordBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
@@ -756,6 +542,11 @@ export default {
       }
     },
     stopRecord(ind) {
+      /**
+       * Triggered when user stops speaking.
+       *
+       * @param {String}   ind        button index (1 for global 2 for All).
+       */
       this.userIsRecording = false;
       document.getElementById("realStopBtn" + ind).click();
       for (var i = 0; i < this.roomsUserIsIn.length; ++i) {
@@ -763,6 +554,11 @@ export default {
       }
     },
     stopSpeaking(roomName) {
+      /**
+       * Triggered when user stops speaking. This function will update the usersspeaking field of a given room.
+       *
+       * @param {String}   roomName    name of the room where user should appear as non-speaking.
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
@@ -778,6 +574,11 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     startSpeaking(roomName) {
+      /**
+       * Triggered when user starts speaking. This function will update the usersspeaking field of a given room.
+       *
+       * @param {String}   roomName    name of the room where user should appear as speaking.
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let speaking = this.rooms.find((x) => x.name === roomName).usersSpeaking;
 
@@ -790,10 +591,16 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     handleRecording({ blob, src }) {
-      this.audioSource = src;
       console.log(blob);
+      this.audioSource = src;
     },
     genId() {
+      /**
+       * This funtion will generate an id for an audio. The id will be the date/hour/minutes/seconds/milliseconds/username
+       * concatenated.
+       *
+       * @return {String} id for the audio
+       */
       const current = new Date();
       const date =
         current.getFullYear() +
@@ -806,48 +613,66 @@ export default {
         "" +
         current.getMinutes() +
         "" +
-        current.getSeconds();
-      const dateTime = date + "" + time + Math.round(Math.random() * 100);
+        current.getSeconds() +
+        "" +
+        current.getMilliseconds();
+      const dateTime = date + "" + time;
       const id = dateTime + this.username;
-      console.log(id);
       return id;
     },
-    sleep(ms) {
-      return new Promise((resolve) => setTimeout(resolve, ms));
-    },
-  
-    async onResult(data) {
 
-        this.createdAudio.id = this.genId();
-        this.createdAudio.user = this.firstName + ":" + this.lastName;
-        this.createdAudio.rooms = this.roomsUserIsIn.join(",");
-        this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
-        const myFile = new File([data.blob], "audio.mp3");
+    dlAudio(title) {
+      /**
+       * This function will download an audio from the backend server using a GET request.
+       *
+       * @param {String}   title    title of the audio to get.
+       * @return {Blob}             returns an mp3 audio blob.
+       */
+      AudioService.getAudio(title)
+        .then((response) => {
+          const fileURL = URL.createObjectURL(response.data);
+          this.audioList[title] = fileURL;
+          for (
+            var i = 0;
+            i < document.getElementsByClassName(title + "media").length;
+            ++i
+          ) {
+            document.getElementsByClassName(title + "media_src")[
+              i
+            ].src = fileURL;
+            document.getElementsByClassName(title + "media")[i].load();
+          }
 
-        this.createdAudio.audiofile = myFile;
-        this.$store.dispatch("audio/createAudio", this.createdAudio);
-      
+          return fileURL;
+        })
+        .catch(() => {});
     },
-    onResultGlobal(data) {
+    async onResult(data, globalRoom) {
+      /**
+       * This function is triggered when a user stops recording. It will send the audio to the backend server.
+       *
+       * @param {Blob}      data          audio blob.
+       * @param {Boolean}   globalRoom    true if record button was the global room button.
+       */
       this.createdAudio.id = this.genId();
       this.createdAudio.user = this.firstName + ":" + this.lastName;
-      this.createdAudio.rooms = "global";
+      if (globalRoom) {
+        this.createdAudio.rooms = "global";
+      } else {
+        this.createdAudio.rooms = this.roomsUserIsIn.join(",");
+      }
       this.createdAudio.seenBy = this.firstName + ":" + this.lastName;
-      const myFile = new File([data.blob], "audio.wav");
+      const myFile = new File([data.blob], "audio.mp3");
 
       this.createdAudio.audiofile = myFile;
       this.$store.dispatch("audio/createAudio", this.createdAudio);
     },
 
-    computeColor(s) {
-      var score = s
-        .split("")
-        .map(this.ascii)
-        .reduce((a, b) => a + b, 0);
-      var k = Object.keys(Colors.names)[score % 42];
-      return Colors.names[k];
-    },
     splitUsers() {
+      /**
+       * This function will update the users list 'userList' in every room at each refresh function call.
+       *
+       */
       for (let room_ in this.userLists) {
         try {
           let users = this.rooms.find((x) => x.name === room_).users;
@@ -868,12 +693,24 @@ export default {
     },
 
     arrayRemove(arr, value) {
-      return arr.filter(function (ele) {
-        return ele != value;
+      /**
+       * Removes the value value from the array arr
+       *
+       * @param   {Array}    arr       array to delete a value from.
+       * @param   {String}   value     value to delete from an array.
+       * @return  {Array}              resulting array
+       */
+      return arr.filter(function (e) {
+        return e != value;
       });
     },
 
     addPresence(roomName) {
+      /**
+       * add user presence in a given room by sending a PUT request.
+       *
+       * @param   {String}   roomName  room
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
 
@@ -886,6 +723,11 @@ export default {
       this.$store.dispatch("communication/updateRoom", editedRoom);
     },
     removePresence(roomName) {
+      /**
+       * removes user presence in a given room by sending a PUT request.
+       *
+       * @param   {String}   roomName  room
+       */
       const editedRoom = { ...this.rooms.find((x) => x.name === roomName) };
       let users = this.rooms.find((x) => x.name === roomName).users;
       users = users.split(",");
@@ -903,7 +745,11 @@ export default {
     logEvent(event) {
       console.log("Event : ", event);
     },
-    actualiseRooms() {
+    refreshRooms() {
+      /**
+       * Refreshes the list containing all the rooms the user has joined.
+       *
+       */
       this.roomsUserIsIn = [];
       for (let room in this.userLists) {
         if (
@@ -913,19 +759,37 @@ export default {
         }
       }
     },
+
     updateScroll() {
+      /**
+       * if the automatic scrolldown is selected, will scroll down every scrollbar.
+       *
+       */
       var element = document.getElementsByClassName("scrollingClass");
       for (var i = 0; i < element.length; i++) {
         element[i].scrollTop = element[i].scrollHeight;
       }
     },
-    scrolling() {
-      this.scrolled = false;
+
+    updateAudioList() {
+      /**
+       * update the audio list by downloading the audios that haven't been dowloaded.
+       *
+       */
+      for (var i = 0; i < this.audios.length; i++) {
+        if (!(this.audios[i].id in this.audioList)) {
+          this.dlAudio(this.audios[i].id);
+        }
+      }
     },
     refresh() {
+      /**
+       * Refresh function, actualise all the userlists in rooms, the rooms user are in, the audios and the scrollbars scrolldown.
+       */
       this.$store.dispatch("communication/getRooms");
       this.$store.dispatch("audio/getAudios");
-      this.actualiseRooms();
+      this.updateAudioList();
+      this.refreshRooms();
       this.splitRooms = Object.assign({}, this.rooms);
       this.splitUsers();
       if (this.scrolled) {
@@ -933,6 +797,11 @@ export default {
       }
     },
     onDown(e) {
+      /**
+       * When user presses a given key, launches a function.
+       *
+       * @param   {Object}   e  key that has been pressed
+       */
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 9) ==
         "audiosTab"
@@ -944,8 +813,6 @@ export default {
           this.startRecord("2");
         }
       }
-
-
 
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
@@ -959,17 +826,22 @@ export default {
       }
     },
     onUp(e) {
+      /**
+       * When user releases a given key, launches a function.
+       *
+       * @param   {Object}   e  key that has been pressed
+       */
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 9) ==
         "audiosTab"
       ) {
-      if (e.key == " " && this.userIsRecording) {
-        this.stopRecord("1");
+        if (e.key == " " && this.userIsRecording) {
+          this.stopRecord("1");
+        }
+        if (e.key == "AltGraph" && this.userIsRecording) {
+          this.stopRecord("2");
+        }
       }
-      if (e.key == "AltGraph" && this.userIsRecording) {
-        this.stopRecord("2");
-      }}
-
 
       if (
         document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
@@ -983,13 +855,36 @@ export default {
       }
     },
     addDel(room) {
-      if (!this.roomsListJoined.includes(room)) {
+      /**
+       * If user has joined a live communication room, it will remove him, and inversively.
+       *
+       * @param   {String}   room  room to join/leave
+       */
+      if (!this.commRoomsJoined.includes(room)) {
         this.addRoom(room);
       } else {
         this.delRoom(room);
       }
     },
+    leaving() {
+      /**
+       * This function is launched whenever the user leaves the page without quitting all rooms.
+       * It will make the user leave all the rooms in the communication and audio tab.
+       */
+      var length = this.commRoomsJoined.length;
+      for (let i = 0; i < this.roomsUserIsIn.length; i++) {
+        this.removePresence(this.roomsUserIsIn[i]);
+      }
+      for (let i = 0; i < length; i++) {
+        this.delRoom(this.commRoomsJoined[0]);
+      }
+    },
     addRemove(room) {
+      /**
+       * If user has joined a audio room, it will remove him, and inversively.
+       *
+       * @param   {String}   room  room to join/leave
+       */
       if (!this.roomsUserIsIn.includes(room)) {
         this.addPresence(room);
       } else {
@@ -997,151 +892,119 @@ export default {
       }
     },
     onPressed(e) {
-      switch (e.key) {
-        case "1":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("flight");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Flight");
-          }
-          break;
-        case "2":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
+      /**
+       * If user presses a key, he will join/leave a room depending which tab he is using.
+       *
+       * @param   {Object}  e  key pressed
+       */
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 9) ==
+        "audiosTab"
+      ) {
+        switch (e.key) {
+          case "1":
             this.addRemove("base");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Base");
-          }
-          break;
-        case "3":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("science");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Science");
-          }
-          break;
-        case "4":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("cap");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Cap");
-          }
-          break;
-        case "5":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("pro");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Pro");
-          }
-          break;
-        case "6":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("bme");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Bme");
-          }
-          break;
-        case "7":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("rec");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Rec");
-          }
-          break;
-        case "8":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("plan");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Plan");
-          }
-          break;
-        case "9":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("contact");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Contact");
-          }
-          break;
-        case "0":
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 9) ==
-            "audiosTab"
-          ) {
-            this.addRemove("global");
-          }
-          if (
-            document.getElementsByClassName("active")[0].id.slice(0, 6) ==
-            "comTab"
-          ) {
-            this.addDel("Global");
-          }
-          break;
+            break;
 
-        default:
+          case "2":
+            this.addRemove("flight");
+            break;
+
+          case "3":
+            this.addRemove("cap");
+            break;
+
+          case "4":
+            this.addRemove("plan");
+            break;
+
+          case "5":
+            this.addRemove("science");
+            break;
+
+          case "6":
+            this.addRemove("pro");
+            break;
+
+          case "7":
+            this.addRemove("rec");
+            break;
+
+          case "8":
+            this.addRemove("bme");
+            break;
+
+          case "9":
+            this.addRemove("contact");
+            break;
+
+          case "0":
+            this.addRemove("global");
+            break;
+        }
+      }
+      if (
+        document.getElementsByClassName("active")[0].id.slice(0, 6) == "comTab"
+      ) {
+        switch (e.key) {
+          case "1":
+            this.addDel("Base");
+            break;
+          case "2":
+            this.addDel("Flight");
+            break;
+
+          case "3":
+            this.addDel("Cap");
+            break;
+
+          case "4":
+            this.addDel("Plan");
+            break;
+
+          case "5":
+            this.addDel("Science");
+            break;
+
+          case "6":
+            this.addDel("Pro");
+            break;
+
+          case "7":
+            this.addDel("Rec");
+            break;
+
+          case "8":
+            this.addDel("Bme");
+            break;
+
+          case "9":
+            this.addDel("Contact");
+            break;
+
+          case "0":
+            this.addDel("Global");
+            break;
+        }
       }
     },
+  },
+
+  beforeRouteLeave(to, from, next) {
+    /**
+     * If user leaves the page without quitting the rooms, triggers a warning.
+     */
+    var answer = true;
+    if (this.commRoomsJoined.length > 0 || this.roomsUserIsIn.length > 0) {
+      answer = window.confirm("Do you really want to leave all rooms ?");
+    }
+
+    if (answer) {
+      this.leaving();
+      next();
+    } else {
+      next(false);
+    }
   },
   created() {
     window.addEventListener("keydown", this.onDown);
@@ -1150,8 +1013,14 @@ export default {
 
     setInterval(this.refresh, 1000);
   },
+
   mounted() {
     this.$store.dispatch("communication/getRooms");
+    for(var i=0;i<this.groups.length;++i){
+      if(this.groups[i].unit=='Astronauts'){
+        this.isAstronaut=true;
+      }
+    }
   },
 };
 </script>
@@ -1159,6 +1028,13 @@ export default {
 
 <style scoped>
 .checkboxVideo {
+  margin: 5px;
+  float: right;
+}
+.btnScroll {
+  background-color: #a1a7ac;
+  margin-top: 2px;
+  margin-right: 6px;
   float: right;
 }
 .hide {
@@ -1168,7 +1044,6 @@ export default {
   position: relative;
   margin: auto;
   width: 600px;
-  height: 400px;
 }
 #videosRow {
   margin-top: 40px;
@@ -1182,37 +1057,45 @@ export default {
   border-radius: 40px;
 }
 .recording {
-  background: red;
+  background: #ba2525;
 }
+
 .helpShortcut {
   float: right;
+  background-color: #0f55ca;
 }
-.DoubleBtn {
-  margin-left: 30px;
-  width: 100px;
-  height: 35px;
-  float: right;
-  margin-top: -40px;
-}
+
 #audiosContainer {
-  height: 652px;
+  height: 12px;
+}
+.vu {
+  margin-left: 5px;
 }
 .roomSelector {
+  background-color: #0f55ca;
+  width: 95px;
+}
+.roomSelectorLeave {
+  background-color: #ba2525;
   width: 95px;
 }
 .roomSelectorCol {
   width: 95px;
 }
+
 .spectrum {
   width: 200px;
   color: white;
   border-radius: 40px;
 }
 #channelMenu {
-  background-color: rgb(68, 68, 190);
+  background-color: rgb(88, 88, 100);
   margin-top: 30px;
   border-radius: 30px;
   padding: 10px;
+}
+.btn {
+  color: white;
 }
 .ps {
   width: 320px;
@@ -1221,53 +1104,19 @@ export default {
 
   border-radius: 30px;
 }
-.badgesDiv {
-  width: 45px;
+#audiosCol {
+  width: 50px;
 }
-.badgesRow {
-  width: 250px;
-}
+
 #comDiv {
-  background-color: rgb(153, 196, 252);
+  background-color: #c2c6c8;
   padding-bottom: 20px;
   height: auto;
   border-radius: 30px;
 }
-.channel {
+.channelEmpty {
   height: 150px;
   margin-left: 5px;
   margin-right: 5px;
-}
-
-#global {
-  height: 100px;
-  margin-top: 50px;
-}
-#science {
-  background-color: rgb(135, 206, 235);
-}
-#base {
-  background-color: rgb(109, 151, 165);
-}
-#flight {
-  background-color: rgb(92, 156, 165);
-}
-#cap {
-  background-color: rgb(96, 182, 236);
-}
-#pro {
-  background-color: rgb(0, 191, 255);
-}
-#bme {
-  background-color: rgb(30, 144, 255);
-}
-#rec {
-  background-color: rgb(100, 149, 237);
-}
-#plan {
-  background-color: rgb(70, 130, 180);
-}
-#contact {
-  background-color: rgb(43, 120, 184);
 }
 </style>
