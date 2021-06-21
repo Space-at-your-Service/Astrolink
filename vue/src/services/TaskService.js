@@ -16,8 +16,6 @@ class TaskService {
 	}
 
 	async postTask(task) {
-				console.log(task)
-
 		return http.post('/activities/planning/', task);
 	}
 

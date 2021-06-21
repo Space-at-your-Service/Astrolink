@@ -1,38 +1,15 @@
 <template>
 	<div>
-		<b-container class="my-3 p-0">
-			<b-row class="no-gutters">
-				<b-col v-if="isAllowed('activities.change_task')">
-					<b-form-checkbox
-						id="eventResizeInput"
-						v-model="editionOptions.resize"
-						switch
-						size="lg"
-						>
-						Enable event resizing
-					</b-form-checkbox>
-				</b-col>
-
-				<b-col v-if="isAllowed('activities.change_task')">
-					<b-form-checkbox
-						id="eventDragInput"
-						v-model="editionOptions.drag"
-						switch
-						size="lg"
-						>
-						Drag and drop
-					</b-form-checkbox>
-				</b-col>
-				<b-col>
-					<b-button @click="selectedDate = new Date()" variant="primary"  style="border-bottom-right-radius: : 15px; border-top-right-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
-						TODAY
-					</b-button>
-					<b-button @click="selectedDate= new Date(missionStartDate);" style="border-bottom-left-radius: : 15px; border-top-left-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
-						MISSION
-					</b-button>
-				</b-col>
-			</b-row>
-		</b-container>
+		<div class="my-3 p-0">
+			<b-button-group>
+				<b-button @click="selectedDate = new Date()" variant="primary"  style="border-bottom-right-radius: : 15px; border-top-right-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
+					TODAY
+				</b-button>
+				<b-button @click="selectedDate= new Date(missionStartDate);" class="ml-1 " style="border-bottom-left-radius: : 15px; border-top-left-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
+					MISSION
+				</b-button>
+			</b-button-group>
+		</div>
 
 		
 
@@ -57,6 +34,8 @@
 				:on-event-click="onEventClick"
 				:on-event-create="onEventCreate"
 				@event-drag-create="selectAndShowCreateModal"
+				@event-duration-change="editTaskInteractive"
+				@event-drop="editTaskInteractive"
 				:split-days="splitDays"
 				class="font-roboto"
 				>
@@ -64,7 +43,8 @@
 				<template v-slot:title="{ title, view }" >
 					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'day'"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
 					<strong style="font-family: Roboto, sans-serif; color: navy;" v-if="getMissionDayNumber(view.startDate) < 0 && view.id === 'day'">{{ -1* getMissionDayNumber(view.startDate) }} days before MISSION</strong>
-					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0 && view.id === 'day'">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
+					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0 && getPostMissionDayNumber(view.startDate) <= 0 && view.id === 'day'">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
+					<strong style="font-family: Roboto, sans-serif; color: navy" v-if="getPostMissionDayNumber(view.startDate) > 0 && view.id === 'day'"> {{ getPostMissionDayNumber(view.startDate) }} days after MISSION</strong>
 
 					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'month'"> {{ view.startDate.toLocaleDateString('en-CH', { year: 'numeric', month: 'long'}) }} </span>
 				</template>
@@ -235,10 +215,10 @@
 					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
 				</template>
 				<template #modal-footer>
-					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent">
+					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowed('activities.change_task')">
 						<b-icon icon="trash"></b-icon> Delete
 					</b-button>
-					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent">
+					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent && isAllowed('activities.change_task')">
 						<b-icon icon="pencil-square"></b-icon> Edit
 					</b-button>
 					<b-button variant="info" @click="okEdit" v-if="isEditingEvent">
@@ -383,7 +363,6 @@
 		data() {
 			return {
 				selectedDate: new Date(),
-				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
 				selectedEvent: new Task(),
 				showEventModal: false,
 				showCreateModal: false,
@@ -398,11 +377,14 @@
 		},
 
 		computed: {
-			...mapState(['missionStartDate']),
-			...mapGetters(['missionDayNumber']),
+			...mapState(['missionStartDate', 'missionEndDate']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
 			...mapGetters('user', ['isAllowed']),
 
+			editionOptions() {
+				return { title: false, drag: this.isAllowed('activities.change_task'), resize: this.isAllowed('activities.change_task'), delete: false, create: this.isAllowed('activities.change_task') }
+				
+			},
 			minDate() {
 				return new Date().subtractDays(10)
 			},
@@ -448,8 +430,12 @@
 				this.selectedEventSplits = checked ? this.userNames.slice() : []
 			},
 
-			getMissionDayNumber(currentDate) {
-				return Math.floor((currentDate.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
+			getMissionDayNumber(date) {
+				return Math.floor((date.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
+			},
+
+			getPostMissionDayNumber(date) {
+				return Math.floor((date.getTime() - this.missionEndDate.getTime())/(1000*3600*24))
 			},
 
 			getDateString() {
@@ -490,11 +476,10 @@
 					Dialog.okMessage(this, 'Invalid form')
 					return
 				}
-				else this.createTask()
+				else this.createTask(this.selectedEvent)
 			},
 
-			async createTask() {
-				var selectedEvent = this.selectedEvent
+			async createTask(selectedEvent) {
 				for (var user of this.selectedEventSplits) {
 					var newTask = new Task(user, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
 					this.$store.dispatch(this.moduleName+'/createTask', newTask)
@@ -516,11 +501,25 @@
 					Dialog.okMessage(this, 'Invalid form')
 					return
 				}
-				else this.editTask()
+				else this.editTask(this.selectedEvent)
 			},
 
-			async editTask() {
-				var selectedEvent = this.selectedEvent
+			async editTask(selectedEvent) {
+				console.log(selectedEvent)
+				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+				editedTask.id = selectedEvent.id
+				this.$store.dispatch(this.moduleName+'/updateTask', editedTask)
+				.then(() => {
+					this.showEventModal = false
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not update the task')
+				})
+				
+			},
+
+			async editTaskInteractive(payload) {
+				const selectedEvent = payload.event
 				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
 				editedTask.id = selectedEvent.id
 				this.$store.dispatch(this.moduleName+'/updateTask', editedTask)
