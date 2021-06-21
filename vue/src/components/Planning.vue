@@ -1,6 +1,5 @@
 <template>
 	<div>
-		{{splitDays}}
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col v-if="isAllowed('activities.change_task')">
@@ -165,7 +164,7 @@
 						>
 							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
 								<template #first>
-									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
+									<b-form-select-option value="" disabled @click="selectedEvent.procedures = []">Select one or several procedures</b-form-select-option>
 								</template>
 							</b-form-select>
 						</b-form-group>
@@ -325,7 +324,7 @@
 						>
 							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
 								<template #first>
-									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
+									<b-form-select-option value="" disabled @click="selectedEvent.procedures = []">Select one or several procedures</b-form-select-option>
 								</template>
 							</b-form-select>
 						</b-form-group>

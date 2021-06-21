@@ -40,11 +40,11 @@
 <style>
 	.vuecal__event.Shift-tasks {
 		background-color: blue; 
-		color: black;
+		color: #fff;
 	}
 	.Shift-tasks {
 		background-color: blue; 
-		color: black;
+		color: #fff;
 	}
 	.vuecal__event.Briefing-debriefing {
 		background-color: cyan; 
