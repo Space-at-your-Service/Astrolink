@@ -215,7 +215,7 @@
 					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
 				</template>
 				<template #modal-footer>
-					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowed('activities.change_task')">
+					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowed('activities.delete_task')">
 						<b-icon icon="trash"></b-icon> Delete
 					</b-button>
 					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent && isAllowed('activities.change_task')">
@@ -382,7 +382,7 @@
 			...mapGetters('user', ['isAllowed']),
 
 			editionOptions() {
-				return { title: false, drag: this.isAllowed('activities.change_task'), resize: this.isAllowed('activities.change_task'), delete: false, create: this.isAllowed('activities.change_task') }
+				return { title: false, drag: this.isAllowed('activities.change_task'), resize: this.isAllowed('activities.change_task'), delete: false, create: this.isAllowed('activities.add_task') }
 				
 			},
 			minDate() {
