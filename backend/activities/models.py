@@ -171,14 +171,18 @@ class Task(models.Model):
     end = models.DateTimeField(default = datetime.now)
 
     content = models.CharField(max_length = 300, default = "Content")
-    category = models.CharField(max_length = 20, choices = [("Break", "Break"),
+    category = models.CharField(max_length = 50, choices = [("Break", "Break"),
                                                             ("Routine", "Routine"),
                                                             ("IBS", "IBS"),
                                                             ("OBS", "OBS"),
                                                             ("Sport", "Sport"),
                                                             ("External-contact", "External-contact"),
                                                             ("Preparation", "Preparation"),
-                                                            ("Data-analysis", "Data-analysis")], default = "Break")
+                                                            ("Data-analysis", "Data-analysis"),
+                                                            ("Shift-tasks", "Shift-tasks"),
+                                                            ("Briefing-debriefing", "Briefing-debriefing"),
+                                                            ("Change-of-shift", "Change-of-shift"),
+                                                            ("Meal", "Meal")], default = "Break")
 
     background = models.BooleanField(default = False)
     allDay = models.BooleanField(default = False)
