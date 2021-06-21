@@ -82,9 +82,9 @@ const routes = [
     component: () => import('../views/Profile.vue')
   },
   {
-    path: '/planning',
-    name: 'planning',
-    component: () => import('../views/Planning.vue')
+    path: '/mccPlanning',
+    name: 'mccPlanning',
+    component: () => import('../views/MCCPlanning.vue')
   }
 ]
 

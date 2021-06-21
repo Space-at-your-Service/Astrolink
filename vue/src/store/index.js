@@ -15,6 +15,7 @@ import Vuex from 'vuex'
 import { auth } from './auth.module.js'
 import { experiment } from './experiment.module.js'
 import { flightplan } from './flightplan.module.js'
+import { mccplanning } from './mccplanning.module.js'
 import { inventory } from './inventory.module.js'
 import { procedure } from './procedure.module.js'
 import { user } from './user.module.js'
@@ -30,6 +31,7 @@ const store = new Vuex.Store({
 		auth,
 		experiment,
 		flightplan,
+		mccplanning,
 		inventory,
 		procedure,
 		communication,
@@ -39,7 +41,9 @@ const store = new Vuex.Store({
 
 	// general mission and functional data, which doesn't belong in any other module
 	state: {
-		missionStartDate: new Date(2021,4,15,0,0,0), // HARDCODED
+		missionName: 'Asclepios I', // HARDCODED
+		missionStartDate: new Date(2021,6,12,0,0,0), // HARDCODED
+		missionEndDate: new Date(2021,6,20,0,0,0), // HARDCODED
 		staff: {
 			astronauts: [],
 			mcc: [],
@@ -129,6 +133,10 @@ const store = new Vuex.Store({
 					dispatch('displayOverlay', {msg: 'Loading FLIGHTPLAN', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'})
 					await dispatch('flightplan/getFlightplanState', null,  {root: true})
 					.catch((err) => { errorFlag = true; errors.push('Flightplan'); console.error(err) })
+
+					dispatch('displayOverlay', {msg: 'Loading MCC PLANNING', img: ' https://cdn.onlinewebfonts.com/svg/img_563113.png'})
+					await dispatch('mccplanning/getMccPlanningState', null,  {root: true})
+					.catch((err) => { errorFlag = true; errors.push('MCC Planning'); console.error(err) })
 				}
 
 				if (getters['user/isAllowed']('activities.view_experiment')) {

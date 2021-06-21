@@ -36,7 +36,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
-        log.info(f"{request.user} accessed GET activities/procedures/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         all_procedures = Procedure.objects.all()
         ser = ProcedureSerializer(all_procedures, context = {"request" : request}, many = True)
@@ -51,7 +51,7 @@ class ProceduresView(APIView):
         """
 
         request.user.check_perms(("activities.add_procedure",))
-        log.info(f"{request.user} accessed POST activities/procedures/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         ser = ProcedureSerializer(data = request.data)
 
@@ -75,7 +75,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.view_procedure",))
-        log.info(f"{request.user} accessed GET activities/procedure/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         procedure = Procedure.objects.get(pk = pk)
 
@@ -89,7 +89,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.change_procedure",))
-        log.info(f"{request.user} accessed PUT activities/procedure/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         procedure = Procedure.objects.get(pk = pk)
         #TODO : DELETE THE OLD FILE, otherwise we accumulate them
@@ -107,7 +107,7 @@ class ProcedureView(APIView):
         """
 
         request.user.check_perms(("activities.delete_procedure",))
-        log.info(f"{request.user} accessed DELETE activities/procedure/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         procedure = Procedure.objects.get(pk = pk)
         procedure.delete()
@@ -125,7 +125,7 @@ class ProcedureTypesView(APIView):
         """
 
         request.user.check_perms(("activities.view_proceduretype",))
-        log.info(f"{request.user} accessed GET activities/procedure_types/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         alltypes = ProcedureType.objects.all()
 
@@ -143,7 +143,7 @@ class PlanningView(APIView):
             Retrieves the planning of the user requesting
         """
 
-        log.info(f"{request.user} accessed GET activities/planning/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         planning = Task.objects.filter(holder = request.user)
 
@@ -163,7 +163,7 @@ class PlanningView(APIView):
         """
 
         request.user.check_perms(("activities.add_task",))
-        log.info(f"{request.user} accessed POST activities/planning/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         ser = TaskSerializer(data = request.data)
 
@@ -175,21 +175,81 @@ class PlanningView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
+class TaskView(APIView):
+
+    def get(self, request, pk):
+
+        """ GET activities/tasks/<id>/ """
+
+        request.user.check_perms(("activities.view_task"))
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        tsk = Task.objects.get(pk = pk)
+
+        ser = TaskSerializer(tsk)
+
+        return JsonResponse(ser.data)
+
+    def put(self, request, pk):
+
+        """ PUT activities/tasks/<id>/ """
+
+        request.user.check_perms(("activities.add_task",))
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        tsk = Task.objects.get(pk = pk)
+
+        ser = TaskSerializer(tsk, data = request.data, partial = True)
+
+        if ser.is_valid():
+
+            ser.save()
+            return JsonResponse(ser.data, status = status.HTTP_202_ACCEPTED)
+
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+
+        """ DELETE activities/tasks/<id>/ """
+
+        request.user.check_perms(("activities.delete_task",))
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        tsk = Task.objects.get(pk = pk)
+
+        tsk.delete()
+
+        return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)
+
 class FlightplanView(APIView):
 
     def get(self, request):
 
         """ GET activities/flightplan/
 
-            Gets the astronaut's planning, i.e flightplan
+            Gets the astronauts' planning, a.k.a flightplan
         """
 
         #TODO: add permission
 
-        log.info(f"{request.user} accessed GET activities/flightplan/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this, create method get_astronauts under asclepian for instance
         ser = TaskSerializer(Task.objects.filter(holder__in = astronauts), many = True)
+
+        return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
+
+
+class PlanningsView(APIView):
+
+    def get(self, request):
+
+        """ GET activities/plannings/ """
+
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        mcc = get_user_model().objects.filter(groups__unit__name = "MCC") #TODO : merge this with above method
+        ser = TaskSerializer(Task.objects.filter(holder__in = mcc), many = True)
 
         return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
 
@@ -224,7 +284,7 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.view_experiment",))
-        log.info(f"{request.user} accessed GET activities/experiments/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         all_experiments = Experiment.objects.all()
         ser = ExperimentSerializer(all_experiments, many = True)
@@ -240,7 +300,7 @@ class ExperimentsView(APIView):
         """
 
         request.user.check_perms(("activities.add_experiment",))
-        log.info(f"{request.user} accessed POST activities/experiments/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         inflate_experiment(request.data)
 
@@ -264,7 +324,7 @@ class ExperimentView(APIView):
         """
 
         request.user.check_perms(("activities.change_experiment",))
-        log.info(f"{request.user} accessed PUT activities/experiments/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         inflate_experiment(request.data)
 
@@ -313,7 +373,7 @@ class TextsheetsView(APIView):
         """
 
         request.user.check_perms(("activities.add_textsheet",))
-        log.info(f"{request.user} accessed POST activities/textsheets/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         inflate_textsheet(request.data)
         request.data["creator"] = request.user.pk
@@ -339,7 +399,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.view_textsheet",))
-        log.info(f"{request.user} accessed GET activities/textsheet/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         ts = Textsheet.objects.get(pk = pk)
         ser = TextsheetSerializer(ts)
@@ -354,7 +414,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.change_textsheet",))
-        log.info(f"{request.user} accessed PUT activities/textsheet/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         inflate_textsheet(request.data)
 
@@ -376,7 +436,7 @@ class TextsheetView(APIView):
         """
 
         request.user.check_perms(("activities.delete_textsheet",))
-        log.info(f"{request.user} accessed DELETE activities/textsheet/{pk}/")
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         ts = Textsheet.objects.get(pk = pk)
         ts.delete()

@@ -79,10 +79,15 @@ export const experiment = {
 		},
 
 		async createExperiment({ commit }, experiment) {
-			return ExperimentService.postExperiment(experiment)
+			const serializedExperiment = {...experiment}
+			serializedExperiment.procedures = []
+			for (const procedure of experiment.procedures) {
+				serializedExperiment.procedures.push(procedure.title)
+			}
+			return ExperimentService.postExperiment(serializedExperiment)
 			.then((response) => { 
 				commit('CREATE_SUCCESS', response.data)
-				console.log('experiment ' + experiment.title + ' created') 
+				console.log('experiment ' + serializedExperiment.title + ' created') 
 			})
 		},
 

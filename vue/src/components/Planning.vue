@@ -1,61 +1,52 @@
 <template>
 	<div>
-		<strong>Astronauts:</strong> {{astronautsNames}}<br/>
-		<strong>Tasks:</strong> {{tasks}}<br/>
-		<b-container class="my-3 p-0">
-			<b-row class="no-gutters">
-				<b-col v-if="isAllowed('activities.change_task')">
-					<b-form-checkbox
-						id="eventResizeInput"
-						v-model="editionOptions.resize"
-						switch
-						size="lg"
-						>
-						Enable event resizing
-					</b-form-checkbox>
-				</b-col>
+		<div class="my-3 p-0">
+			<b-button-group>
+				<b-button @click="selectedDate = new Date()" variant="primary"  style="border-bottom-right-radius: : 15px; border-top-right-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px">
+					TODAY
+				</b-button>
+				<b-button @click="selectedDate= new Date(missionStartDate);" class="ml-1 " style="border-bottom-left-radius: : 15px; border-top-left-radius: : 15px; font-weight: bold; font-color: white; letter-spacing: 1px; background-color: var(--crimson);">
+					MISSION
+				</b-button>
+			</b-button-group>
+		</div>
 
-				<b-col v-if="isAllowed('activities.change_task')">
-					<b-form-checkbox
-						id="eventDragInput"
-						v-model="editionOptions.drag"
-						switch
-						size="lg"
-						>
-						Enable event drag and drop placement
-					</b-form-checkbox>
-				</b-col>
-			</b-row>
-		</b-container>
-		<div style="height: 1105px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
+		
+
+		<div style="height: 1129px; background-color: #fff; color: black; border-radius: 15px 15px 0px 15px;">
 			
 			<vue-cal ref="vuecal"
 				:editable-events="editionOptions"
-				:selected-date="new Date()"
-				:min-date="minDate"
-				:maxDate="maxDate"
+				:selected-date="selectedDate"
 				:time-from="6 * 60"
 				:time-to="23*60"
 				:time-step="30"
 				:snap-to-time="5"
 				:sticky-split-labels="true"
-				:disable-views="['years', 'year', 'month', 'week']"
-				hide-view-selector
+				:disable-views="['years', 'year', 'week']"
+				active-view = 'day'
 				show-all-day-events="short"
-				today-button
+				click-to-navigate
+				hide-view-selector
 				:watchRealTime="true"
 				:timeCellHeight="30"
 				:events="tasks"
 				:on-event-click="onEventClick"
 				:on-event-create="onEventCreate"
-				@event-drag-create="showCreateModal = true"
+				@event-drag-create="selectAndShowCreateModal"
+				@event-duration-change="editTaskInteractive"
+				@event-drop="editTaskInteractive"
 				:split-days="splitDays"
 				class="font-roboto"
 				>
 
 				<template v-slot:title="{ title, view }" >
-					<span style="font-family: Roboto, sans-serif;"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
-					<strong style="font-family: Roboto, sans-serif; color: navy;">(Mission Day {{ getMissionDayNumber(view.startDate) }} )</strong>
+					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'day'"> {{ view.startDate.toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) }} </span>
+					<strong style="font-family: Roboto, sans-serif; color: navy;" v-if="getMissionDayNumber(view.startDate) < 0 && view.id === 'day'">{{ -1* getMissionDayNumber(view.startDate) }} days before MISSION</strong>
+					<strong style="font-family: Roboto, sans-serif; color: var(--crimson);" v-if="getMissionDayNumber(view.startDate) >= 0 && getPostMissionDayNumber(view.startDate) <= 0 && view.id === 'day'">MISSION day {{ getMissionDayNumber(view.startDate) + 1}} </strong>
+					<strong style="font-family: Roboto, sans-serif; color: navy" v-if="getPostMissionDayNumber(view.startDate) > 0 && view.id === 'day'"> {{ getPostMissionDayNumber(view.startDate) }} days after MISSION</strong>
+
+					<span style="font-family: Roboto, sans-serif;" v-if="view.id === 'month'"> {{ view.startDate.toLocaleDateString('en-CH', { year: 'numeric', month: 'long'}) }} </span>
 				</template>
 
 				<template v-slot:today-button >
@@ -119,14 +110,6 @@
 							</b-col>
 						</b-row>
 
-						<b-form-group
-						label="All day:"
-						label-cols="auto">
-							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
-								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
-							</b-form-checkbox>
-						</b-form-group>
-
 						<b-form-group 
 						label="Title"
 						label-for="titleInput">
@@ -136,7 +119,7 @@
 						<b-form-group 
 						label="Content"
 						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50" required></b-form-textarea>
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
 						</b-form-group>
 
 						<b-form-group 
@@ -148,6 +131,24 @@
 								</template>
 							</b-form-select>
 						</b-form-group>
+
+						<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
+							<b-icon icon="link45deg"></b-icon>
+							Link to procedures
+						</div>
+
+						<b-form-group
+						label="Link to"
+						label-for="createdProceduresInput"
+						v-if="showLinkToInput"
+						>
+							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
+								<template #first>
+									<b-form-select-option value="" disabled @click="selectedEvent.procedures = []">Select one or several procedures</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+
 					</b-container>
 
 					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold">
@@ -164,7 +165,7 @@
 						<b-form-group
 						>
 							<template #label>
-								Performed by
+								Performed by:
 								<br/>
 								<b-form-checkbox @change="selectAllSplits" class="mt-2">
 									<strong>Everyone</strong>
@@ -173,11 +174,19 @@
 
 							<b-form-checkbox-group
 							v-model="selectedEventSplits"
-							:options="astronautsNames"
+							:options="userNames"
 							inline
 							>
 							</b-form-checkbox-group>
 
+						</b-form-group>
+
+						<b-form-group
+						label="All day:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+							</b-form-checkbox>
 						</b-form-group>
 
 						<b-form-group
@@ -196,6 +205,93 @@
 							</b-form-checkbox>
 						</b-form-group>
 
+					</b-container>
+				</b-form>
+			</b-modal>
+
+			<b-modal id="eventModal" v-model="showEventModal" @hidden="resetSelectedEvent">
+				<template #modal-title>
+					{{ selectedEvent.split }}: {{ selectedEvent.title }}
+					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
+				</template>
+				<template #modal-footer>
+					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowed('activities.delete_task')">
+						<b-icon icon="trash"></b-icon> Delete
+					</b-button>
+					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent && isAllowed('activities.change_task')">
+						<b-icon icon="pencil-square"></b-icon> Edit
+					</b-button>
+					<b-button variant="info" @click="okEdit" v-if="isEditingEvent">
+						Confirm
+					</b-button>
+				</template>
+				<b-container v-if="!isEditingEvent">
+					<b-row>
+						<strong>{{ selectedEvent.content}}</strong>
+					</b-row>
+					<br/>
+					<b-row>
+						{{ (new Date(selectedEvent.start)).toLocaleDateString('en-CH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}}
+					</b-row>
+					<b-row v-if="!selectedEvent.allDay">
+						From {{ (new Date(selectedEvent.start)).formatTime('HH:mm') }} to {{ (new Date(selectedEvent.end)).formatTime('HH:mm') }} 
+					</b-row>
+					<b-row v-if="selectedEvent.allDay">
+						All day
+					</b-row>
+					<b-row class="mt-3" v-if="selectedEvent.procedures.length > 0">
+						Linked procedures:
+					</b-row>
+					<b-row>
+						<ul>
+							<li v-for="procedure in selectedEvent.procedures" :key="procedure.nick" @click="openPDF(procedure.title)" class="hover-pointer text-primary">
+								[{{ procedure.type }} > {{ procedure.subtype }}] <strong>{{ procedure.title }}</strong>
+							</li>
+						</ul>
+					</b-row>
+				</b-container>
+				<b-form ref="editForm" @submit.stop.prevent="handleSubmit">
+					<b-container v-if="isEditingEvent">
+						<b-row>
+							<b-col>
+								<b-form-group 
+								label="From"
+								label-for="startTimeInput">
+									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+
+							<b-col>
+								<b-form-group 
+								label="To"
+								label-for="endTimeInput">
+									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button required :disabled="selectedEvent.allDay"></b-form-timepicker>
+								</b-form-group>
+							</b-col>
+						</b-row>
+
+						<b-form-group 
+						label="Title"
+						label-for="titleInput">
+							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
+						</b-form-group>
+					
+						<b-form-group 
+						label="Content"
+						label-for="contentInput">
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
+						</b-form-group>
+
+						<b-form-group 
+						label="Category"
+						label-for="categoryInput">
+							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class" required>
+								<template #first>
+									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
+								</template>
+							</b-form-select>
+						</b-form-group>
+
 						<div class="text-primary hover-pointer" @click="showLinkToInput=true" v-if="!showLinkToInput">
 							<b-icon icon="link45deg"></b-icon>
 							Link to procedures
@@ -208,93 +304,42 @@
 						>
 							<b-form-select id="createdProceduresInput" v-model="selectedEvent.procedures" :options="proceduresAsOptions" multiple :select-size="10" >
 								<template #first>
-									<b-form-select-option value="" disabled>Select one or several procedures</b-form-select-option>
+									<b-form-select-option value="" disabled @click="selectedEvent.procedures = []">Select one or several procedures</b-form-select-option>
 								</template>
 							</b-form-select>
 						</b-form-group>
+
+					</b-container>
+					<div @click="showMoreOptions = !showMoreOptions" style="color: black; font-weight: bold" v-if="isEditingEvent">
+						<span v-if="!showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-down"></b-icon>
+							More options
+						</span>
+						<span v-if="showMoreOptions" class="hover-pointer">
+							<b-icon icon="chevron-up"></b-icon>
+							Less options
+						</span>
+					</div>
+					<b-container v-if="showMoreOptions && isEditingEvent" class="mt-2">
+
+						<b-form-group
+						label="All day:"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.allDay" switch class="mt-2 ml-1">
+								{{ selectedEvent.allDay ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
+						<b-form-group
+						label="Background task (can be overriden):"
+						label-cols="auto">
+							<b-form-checkbox v-model="selectedEvent.background" switch class="mt-2 ml-1">
+								{{ selectedEvent.background ? 'Yes' : 'No' }}
+							</b-form-checkbox>
+						</b-form-group>
+
 					</b-container>
 				</b-form>
-			</b-modal>
-
-			<b-modal id="eventModal" :title="selectedEvent.title" v-model="showEventModal" @hidden="resetSelectedEvent">
-				<b-container v-if="!isEditingEvent">
-					<b-row>
-						From {{ selectedEvent.start}}
-						<br/> 
-						To {{ selectedEvent.end}} 
-					</b-row>
-					<b-row>
-						Content
-						{{ selectedEvent.content}}
-					</b-row>
-					<b-row>
-						Category
-						{{ selectedEvent.class}}
-					</b-row>
-					<b-row>
-						Background
-						{{ selectedEvent.background}}
-						<br/>
-						All day
-						{{ selectedEvent.allDay}}
-					</b-row>
-					<b-row>
-						Linked to
-						{{ selectedEvent.procedures }}
-					</b-row>
-
-					<b-row class="float-right">
-						<b-button @click="isEditingEvent = true" variant="info" disabled>
-							<b-icon icon="pencil-square"></b-icon> Edit
-						</b-button>
-					</b-row>
-				</b-container>
-				<b-container v-if="isEditingEvent">
-					<form>
-						<b-row>
-							<b-col>
-								<b-form-group 
-								label="From"
-								label-for="startTimeInput">
-									<b-form-timepicker id="startTimeInput" v-model="selectedEventStartTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-								</b-form-group>
-							</b-col>
-
-							<b-col>
-								<b-form-group 
-								label="To"
-								label-for="endTimeInput">
-									<b-form-timepicker id="endTimeInput" v-model="selectedEventEndTime" minutes-step="5" hide-header no-close-button></b-form-timepicker>
-								</b-form-group>
-							</b-col>
-						</b-row>
-
-						<b-form-group 
-						label="Title"
-						label-for="titleInput">
-							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name"></b-input>
-						</b-form-group>
-
-						<b-form-group 
-						label="Content"
-						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="5" cols="50"></b-form-textarea>
-						</b-form-group>
-
-						<b-form-group 
-						label="Category"
-						label-for="categoryInput">
-							<b-form-select id="categoryInput" :options="eventsCssClasses" v-model="selectedEvent.class">
-								<template #first>
-									<b-form-select-option value="" disabled>Select a task category</b-form-select-option>
-								</template>
-							</b-form-select>
-						</b-form-group>
-					</form>
-					<b-button size="sm" variant="danger">
-						<b-icon icon="trash"></b-icon> Delete event
-					</b-button>
-				</b-container>
 			</b-modal>
 		</div>
 	</div>
@@ -308,16 +353,17 @@
 	import 'vue-cal/dist/drag-and-drop.js'
 	import Task from '../models/Task'
 	import Dialog from '../utils/Dialog.js'
+	import ProcedureService from '../services/ProcedureService.js'
+	import Notif from '../utils/Notif.js'
 
 	export default {
 		components: { VueCal },
-		props: ['tasks'],
+		props: ['tasks', 'eventsCssClasses', 'userList', 'userNames', 'moduleName'],
 
 		data() {
 			return {
-				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
+				selectedDate: new Date(),
 				selectedEvent: new Task(),
-				eventsCssClasses: ['Break', 'Routine', 'IBS', 'OBS', 'Sport', 'External-contact'],
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,
@@ -325,17 +371,19 @@
 				selectedEventEveryday: false,
 				showMoreOptions: false,
 				showLinkToInput: false,
-				isEditingEvent: false
+				isEditingEvent: false,
+				showDatePicker: false
 			}
 		},
 
 		computed: {
-			...mapState(['missionStartDate']),
-			...mapGetters(['astronautsCrew', 'missionDayNumber']),
+			...mapState(['missionStartDate', 'missionEndDate']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
 			...mapGetters('user', ['isAllowed']),
-			astronautsNames() {
-				return this.$store.getters['listUsernames']('astronauts')
+
+			editionOptions() {
+				return { title: false, drag: this.isAllowed('activities.change_task'), resize: this.isAllowed('activities.change_task'), delete: false, create: this.isAllowed('activities.add_task') }
+				
 			},
 			minDate() {
 				return new Date().subtractDays(10)
@@ -345,8 +393,8 @@
 			},
 			splitDays() { 
 				var splitDays = []
-				for (var astronaut of this.astronautsCrew){
-					var splitDay = { id: astronaut.username, class: astronaut.username, label: astronaut.username, hide: false }
+				for (var user of this.userList){
+					var splitDay = { id: user.username, class: user.username, label: user.username, hide: false }
 					splitDays.push(splitDay)
 				}
 				return splitDays
@@ -379,11 +427,15 @@
 
 		methods: {
 			selectAllSplits(checked) {
-				this.selectedEventSplits = checked ? this.astronautsNames.slice() : []
+				this.selectedEventSplits = checked ? this.userNames.slice() : []
 			},
 
-			getMissionDayNumber(currentDate) {
-				return Math.floor((currentDate.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
+			getMissionDayNumber(date) {
+				return Math.floor((date.getTime() - this.missionStartDate.getTime())/(1000*3600*24))
+			},
+
+			getPostMissionDayNumber(date) {
+				return Math.floor((date.getTime() - this.missionEndDate.getTime())/(1000*3600*24))
 			},
 
 			getDateString() {
@@ -403,7 +455,7 @@
 
 			onEventClick(event, e) {
 				e.stopPropagation()
-				this.selectedEvent = event
+				this.selectedEvent = {...event}
 				this.showEventModal = true
 			},
 
@@ -414,35 +466,80 @@
 				return event
 			},
 			
-			checkCreateForm() {
-				const isValid = this.$refs['createForm'].checkValidity()
+			checkForm(formRef) {
+				const isValid = this.$refs[formRef].checkValidity()
 				return isValid
 			},
 
 			okCreate() {
-				if (!this.checkCreateForm()) {
+				if (!this.checkForm('createForm')) {
 					Dialog.okMessage(this, 'Invalid form')
 					return
 				}
-
-				else this.createTask()
+				else this.createTask(this.selectedEvent)
 			},
 
-			createTask() {
-				var selectedEvent = this.selectedEvent
-				for (var astronaut of this.selectedEventSplits) {
-					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
-					// this.tasks.push(newTask)
-					this.$store.dispatch('flightplan/createTask', newTask)
+			async createTask(selectedEvent) {
+				for (var user of this.selectedEventSplits) {
+					var newTask = new Task(user, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+					this.$store.dispatch(this.moduleName+'/createTask', newTask)
+					.then(() => {
+						this.showCreateModal = false
+					})
 					.catch(() => {
-						this.deleteEventFunction()
+						Notif.toastError(this, 'Request failed', 'Could not create the task')
 					})
 				}
-				this.showCreateModal = false
 			},
 
 			cancelCreate() {
 				this.deleteEventFunction()
+			},
+
+			okEdit() {
+				if (!this.checkForm('editForm')) {
+					Dialog.okMessage(this, 'Invalid form')
+					return
+				}
+				else this.editTask(this.selectedEvent)
+			},
+
+			async editTask(selectedEvent) {
+				console.log(selectedEvent)
+				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+				editedTask.id = selectedEvent.id
+				this.$store.dispatch(this.moduleName+'/updateTask', editedTask)
+				.then(() => {
+					this.showEventModal = false
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not update the task')
+				})
+				
+			},
+
+			async editTaskInteractive(payload) {
+				const selectedEvent = payload.event
+				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+				editedTask.id = selectedEvent.id
+				this.$store.dispatch(this.moduleName+'/updateTask', editedTask)
+				.then(() => {
+					this.showEventModal = false
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not update the task')
+				})
+				
+			},
+
+			async deleteTask(task) {
+				this.$store.dispatch(this.moduleName+'/deleteTask', task)
+				.then(() => {
+					this.$bvModal.hide('eventModal')
+				})
+				.catch(() => {
+					Notif.toastError(this, 'Request failed', 'Could not delete the task')
+				})	
 			},
 
 			resetSelectedEvent() {
@@ -452,13 +549,34 @@
 				this.selectedEventEveryday = false
 
 				this.isEditingEvent = false
+			},
+
+			selectAndShowCreateModal(event) {
+				this.selectedEvent = {...event}
+				this.selectedEvent.procedures = []
+				this.showCreateModal = true
+			},
+			openPDF(title) {
+				ProcedureService.getFile(title)
+				.then(response => {
+					const file = new Blob([response.data], {type: "application/pdf"})
+					const fileURL = URL.createObjectURL(file)
+					return fileURL
+				})
+				.then(fileURL => {
+					window.open(fileURL, title)
+				})
 			}
 		}
-
 	}
 </script>
 
 <style>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+
 	.font-roboto * {
 		font-family: Roboto, sans-serif;
 	}
@@ -491,30 +609,6 @@
 		align-items: center;
 	}
 
-	.vuecal__event.Break {
-		background-color: yellow; 
-		color: black;
-	}
-	.vuecal__event.Routine {
-		background-color: green; 
-		color: #fff;
-	}
-	.vuecal__event.IBS {
-		background-color: blue; 
-		color: #fff;
-	}
-	.vuecal__event.OBS {
-		background-color: red; 
-		color: #fff;
-	}
-	.vuecal__event.Sport {
-		background-color: purple; 
-		color: #fff;
-	}
-	.vuecal__event.External-contact {
-		background-color: orange; 
-		color: black;
-	}
 	.vuecal__event.Background {
 		background: repeating-linear-gradient(45deg, transparent, transparent 10px, 
 			#d2d2d2 10px, #d2d2d2 20px);
@@ -526,5 +620,5 @@
 		border-left: 1px solid black;
 	}
 
-	.vuecal__now-line {color: red;}
+	.vuecal__now-line {color: lime;}
 </style>
