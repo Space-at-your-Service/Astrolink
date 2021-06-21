@@ -227,7 +227,7 @@ class FlightplanView(APIView):
 
         """ GET activities/flightplan/
 
-            Gets the astronaut's planning, i.e flightplan
+            Gets the astronauts' planning, a.k.a flightplan
         """
 
         #TODO: add permission
@@ -236,6 +236,20 @@ class FlightplanView(APIView):
 
         astronauts = get_user_model().objects.filter(groups__unit__name = "Astronauts") #TODO : don't hardcode this, create method get_astronauts under asclepian for instance
         ser = TaskSerializer(Task.objects.filter(holder__in = astronauts), many = True)
+
+        return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
+
+
+class PlanningsView(APIView):
+
+    def get(self, request):
+
+        """ GET activities/plannings/ """
+
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        mcc = get_user_model().objects.filter(groups__unit__name = "MCC") #TODO : merge this with above method
+        ser = TaskSerializer(Task.objects.filter(holder__in = mcc), many = True)
 
         return JsonResponse(ser.data, status = status.HTTP_200_OK, safe = False)
 
