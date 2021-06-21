@@ -20,8 +20,9 @@
 
 				<b-navbar-nav class="ml-auto">
 					<b-nav-item to="/flightplan" :class="[{ active : isActive === 'flightplan' }, 'hover-bg-crimson']" @click="isActive = 'flightplan'" v-if="isAllowed('activities.view_task')">Flightplan</b-nav-item>
-					<b-nav-item to="/crew" :class="[{ active : isActive === 'crew' }, 'hover-bg-crimson']" @click="isActive = 'crew'" v-if="isAllowed('activities.view_task')">Crew</b-nav-item>
-					<b-nav-item to="/procedures" :class="[{ active : isActive === 'procedures' }, 'hover-bg-crimson']" @click="isActive = 'procedures'" v-if="isAllowed('activities.view_procedure')">Procedures</b-nav-item>
+					<b-nav-item to="/mccPlanning" :class="[{ active : isActive === 'mccPlanning' }, 'hover-bg-crimson']" @click="isActive = 'mccPlanning'" v-if="isAllowed('activities.view_task')">MCC Planning</b-nav-item>
+					<!-- <b-nav-item to="/crew" :class="[{ active : isActive === 'crew' }, 'hover-bg-crimson']" @click="isActive = 'crew'" v-if="isAllowed('activities.view_task')">Crew</b-nav-item> -->
+					<b-nav-item to="/procedures" :class="[{ active : isActive === 'procedures' }, 'hover-bg-crimson']" @click="isActive = 'procedures'" v-if="isAllowed('activities.view_procedure')">SOPs</b-nav-item>
 					<b-nav-item to="/experiments" :class="[{ active : isActive === 'experiments' }, 'hover-bg-crimson']" @click="isActive = 'experiments'" v-if="isAllowed('activities.view_experiment')">Experiments</b-nav-item>
 					<b-nav-item to="/inventory" :class="[{ active : isActive === 'inventory' }, 'hover-bg-crimson']" @click="isActive = 'inventory'" v-if="isAllowed('inventory.view_item')">Inventory</b-nav-item>
 					<b-nav-item to="/communication" :class="[{ active : isActive === 'communication' }, 'hover-bg-crimson']" @click="isActive = 'communication'" v-if="isAllowed('communication.view_communication')">Communication</b-nav-item>
@@ -31,7 +32,6 @@
 							<em>{{ username }}</em>
 						</template>
 						<b-dropdown-item to="/profile" class="text-center" @click="isActive = 'profile'"><b-icon icon="person-circle"></b-icon> <strong>Profile</strong></b-dropdown-item>
-						<b-dropdown-item to="/mccPlanning" class="text-center" @click="isActive = 'mccPlanning'"><b-icon icon="calendar-range"></b-icon> <strong>MCC Planning</strong></b-dropdown-item>
 						<b-dropdown-item class="text-center" @click="handleLogout"><b-icon icon="box-arrow-left"></b-icon> <strong>Log Out</strong></b-dropdown-item>
 					</b-nav-item-dropdown>
 
