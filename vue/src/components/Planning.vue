@@ -50,6 +50,8 @@
 				:disable-views="['years', 'year', 'week']"
 				active-view = 'day'
 				show-all-day-events="short"
+				click-to-navigate
+				hide-view-selector
 				:watchRealTime="true"
 				:timeCellHeight="30"
 				:events="tasks"
