@@ -1,4 +1,4 @@
-// Store module that contains the flightplan, i.e the astronauts' schedule
+// Store module that contains the flightplan, i.e the astronauts' planning
 
 import TaskService from '../services/TaskService.js'
 import Serializer from '../utils/Serializer.js'

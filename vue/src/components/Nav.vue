@@ -31,7 +31,7 @@
 							<em>{{ username }}</em>
 						</template>
 						<b-dropdown-item to="/profile" class="text-center" @click="isActive = 'profile'"><b-icon icon="person-circle"></b-icon> <strong>Profile</strong></b-dropdown-item>
-						<b-dropdown-item to="/planning" class="text-center" @click="isActive = 'planning'"><b-icon icon="calendar-range"></b-icon> <strong>Planning</strong></b-dropdown-item>
+						<b-dropdown-item to="/mccPlanning" class="text-center" @click="isActive = 'mccPlanning'"><b-icon icon="calendar-range"></b-icon> <strong>MCC Planning</strong></b-dropdown-item>
 						<b-dropdown-item class="text-center" @click="handleLogout"><b-icon icon="box-arrow-left"></b-icon> <strong>Log Out</strong></b-dropdown-item>
 					</b-nav-item-dropdown>
 

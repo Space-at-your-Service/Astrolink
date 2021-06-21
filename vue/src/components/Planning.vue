@@ -1,5 +1,6 @@
 <template>
 	<div>
+		{{splitDays}}
 		<b-container class="my-3 p-0">
 			<b-row class="no-gutters">
 				<b-col v-if="isAllowed('activities.change_task')">
@@ -192,7 +193,7 @@
 
 							<b-form-checkbox-group
 							v-model="selectedEventSplits"
-							:options="astronautsNames"
+							:options="userNames"
 							inline
 							>
 							</b-form-checkbox-group>
@@ -376,14 +377,13 @@
 
 	export default {
 		components: { VueCal },
-		props: ['tasks'],
+		props: ['tasks', 'eventsCssClasses', 'userList', 'userNames', 'moduleName'],
 
 		data() {
 			return {
 				selectedDate: new Date(),
 				editionOptions: { title: false, drag: true, resize: false, delete: false, create: true },
 				selectedEvent: new Task(),
-				eventsCssClasses: ['Break', 'Routine', 'Preparation', 'IBS', 'OBS', 'Data-analysis', 'Sport', 'External-contact'],
 				showEventModal: false,
 				showCreateModal: false,
 				editable: false,
@@ -398,12 +398,10 @@
 
 		computed: {
 			...mapState(['missionStartDate']),
-			...mapGetters(['astronautsCrew', 'missionDayNumber']),
+			...mapGetters(['missionDayNumber']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
 			...mapGetters('user', ['isAllowed']),
-			astronautsNames() {
-				return this.$store.getters['listUsernames']('astronauts')
-			},
+
 			minDate() {
 				return new Date().subtractDays(10)
 			},
@@ -412,8 +410,8 @@
 			},
 			splitDays() { 
 				var splitDays = []
-				for (var astronaut of this.astronautsCrew){
-					var splitDay = { id: astronaut.username, class: astronaut.username, label: astronaut.username, hide: false }
+				for (var user of this.userList){
+					var splitDay = { id: user.username, class: user.username, label: user.username, hide: false }
 					splitDays.push(splitDay)
 				}
 				return splitDays
@@ -446,7 +444,7 @@
 
 		methods: {
 			selectAllSplits(checked) {
-				this.selectedEventSplits = checked ? this.astronautsNames.slice() : []
+				this.selectedEventSplits = checked ? this.userNames.slice() : []
 			},
 
 			getMissionDayNumber(currentDate) {
@@ -496,9 +494,9 @@
 
 			async createTask() {
 				var selectedEvent = this.selectedEvent
-				for (var astronaut of this.selectedEventSplits) {
-					var newTask = new Task(astronaut, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
-					this.$store.dispatch('flightplan/createTask', newTask)
+				for (var user of this.selectedEventSplits) {
+					var newTask = new Task(user, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
+					this.$store.dispatch(this.moduleName+'/createTask', newTask)
 					.then(() => {
 						this.showCreateModal = false
 					})
@@ -524,7 +522,7 @@
 				var selectedEvent = this.selectedEvent
 				var editedTask = new Task(selectedEvent.split, selectedEvent.start, selectedEvent.end, selectedEvent.title, selectedEvent.content, selectedEvent.class, selectedEvent.procedures, selectedEvent.background, selectedEvent.allDay)
 				editedTask.id = selectedEvent.id
-				this.$store.dispatch('flightplan/updateTask', editedTask)
+				this.$store.dispatch(this.moduleName+'/updateTask', editedTask)
 				.then(() => {
 					this.showEventModal = false
 				})
@@ -535,7 +533,7 @@
 			},
 
 			async deleteTask(task) {
-				this.$store.dispatch('flightplan/deleteTask', task)
+				this.$store.dispatch(this.moduleName+'/deleteTask', task)
 				.then(() => {
 					this.$bvModal.hide('eventModal')
 				})
@@ -611,70 +609,6 @@
 		align-items: center;
 	}
 
-	.vuecal__event.Break {
-		background-color: yellow; 
-		color: black;
-	}
-	.Break {
-		background-color: yellow; 
-		color: black;
-	}
-	.vuecal__event.Routine {
-		background-color: green; 
-		color: #fff;
-	}
-	.Routine {
-		background-color: green; 
-		color: #fff;
-	}
-	.vuecal__event.Preparation {
-		background-color: cyan; 
-		color: black;
-	}
-	.Preparation {
-		background-color: cyan; 
-		color: black;
-	}
-	.vuecal__event.IBS {
-		background-color: blue; 
-		color: #fff;
-	}
-	.IBS {
-		background-color: blue; 
-		color: #fff;
-	}
-	.vuecal__event.OBS {
-		background-color: red; 
-		color: #fff;
-	}
-	.OBS {
-		background-color: red; 
-		color: #fff;
-	}
-	.vuecal__event.Data-analysis {
-		background-color: coral; 
-		color: #fff;
-	}
-	.Data-analysis {
-		background-color: coral; 
-		color: #fff;
-	}
-	.vuecal__event.Sport {
-		background-color: purple; 
-		color: #fff;
-	}
-	.Sport {
-		background-color: purple; 
-		color: #fff;
-	}
-	.vuecal__event.External-contact {
-		background-color: orange; 
-		color: black;
-	}
-	.External-contact {
-		background-color: orange; 
-		color: black;
-	}
 	.vuecal__event.Background {
 		background: repeating-linear-gradient(45deg, transparent, transparent 10px, 
 			#d2d2d2 10px, #d2d2d2 20px);
