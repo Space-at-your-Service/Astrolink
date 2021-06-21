@@ -1,13 +1,13 @@
-// Store module that contains the flightplan, i.e the astronauts' planning
+// Store module that contains the MCC planning
 
 import TaskService from '../services/TaskService.js'
 import Serializer from '../utils/Serializer.js'
 
-export const flightplan = {
+export const mccplanning = {
 	namespaced: true,
 
 	state: {
-		flightplan: []
+		mccPlanning: []
 	},
 
 	getters: {
@@ -15,47 +15,47 @@ export const flightplan = {
 
 	mutations: {
 		SET_STATE(state, payload) {
-			state.flightplan = payload
+			state.mccPlanning = payload
 		},
 
 		CREATE_SUCCESS(state, payload) {
 			const task = {...payload}
-			state.flightplan.push(task)
+			state.mccPlanning.push(task)
 		},
 
 		DELETE_SUCCESS(state, payload) {
-			const index = state.flightplan.findIndex(task => {return task.id === payload.id})
+			const index = state.mccPlanning.findIndex(task => {return task.id === payload.id})
 			if (index > -1) {
-				state.flightplan.splice(index, 1)
+				state.mccPlanning.splice(index, 1)
 			}
 		},
 
 		UPDATE_SUCCESS(state, payload) {
-			const index = state.flightplan.findIndex(task => {return task.id === payload.id})
+			const index = state.mccPlanning.findIndex(task => {return task.id === payload.id})
 			if (index > -1) {
-				state.flightplan.splice(index, 1)
+				state.mccPlanning.splice(index, 1)
 
 				const task = {...payload}
-				state.flightplan.push(task)
+				state.mccPlanning.push(task)
 			}
 		}
 	},
 
 	actions: {
-		async getFlightplanState({ commit }) {
+		async getMccPlanningState({ commit }) {
 			var payload = undefined
-			return TaskService.getFlightplan()
+			return TaskService.getMccPlanning()
 			.then(response => {
 				payload = response.data
-				const flightplan = []
+				const mccPlanning = []
 				for (const serializedTask of payload) {
-					flightplan.push(Serializer.deserializeTask(serializedTask))
+					mccPlanning.push(Serializer.deserializeTask(serializedTask))
 				}
-				commit('SET_STATE', flightplan)
-				console.log('flightplan loaded')
+				commit('SET_STATE', mccPlanning)
+				console.log('MCC planning loaded')
 			})
 			.catch(err => {
-				console.log('loading error (flightplan)')
+				console.log('loading error (MCC planning)')
 				throw err
 			})
 		},

@@ -1,14 +1,12 @@
 export default class Task {
-	constructor(holder='', start='', end='', title='',
-	content='', category='', split='', procedures=[], background=false, allDay=false) {
-		// this.id = undefined
-		this.holder = holder
+	constructor(split='', start='', end='', title='',
+	content='', category='', procedures=[], background=false, allDay=false) {
+		this.split = split
 		this.start = start
 		this.end = end
 		this.title = title
 		this.content = content
 		this.class = category
-		this.split = split
 		this.procedures = procedures
 		this.background = background
 		this.allDay = allDay

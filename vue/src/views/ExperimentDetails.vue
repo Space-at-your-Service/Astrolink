@@ -49,44 +49,49 @@
 				<b-container class="my-2 py-3" style="border-top-style: solid; border-top-width: 1px">
 					<h4>Data</h4>
 					<b-row>
-						<b-col cols=6>
-							<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
-							<ul>
-								<li v-for="textsheet in experiment.data.textsheets" :key="textsheet.title" class="my-3">
-									<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.id">
-										{{ textsheet.title }}
-									</router-link><br/>
-									<strong>Created:</strong> {{ dateFormat(textsheet.creationDate) }}
-							<strong>by:</strong>  {{ textsheet.creator }}<br/>
-							<strong>Last modified:</strong> {{ dateFormat(textsheet.lastModifiedDate) }}
-							<strong>by:</strong> {{ textsheet.lastUser }}
-								</li>
-							</ul>
-							<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/new-entry'">
-								<b-button class="m-1" variant="primary" size="sm"><b-icon icon="file-earmark-plus"></b-icon> New textsheet</b-button>
-							</router-link>
+						<b-col>
+							<div v-if="isAllowed('activities.view_textsheet')">
+								<h5><b-icon icon="file-earmark-richtext" variant="primary"></b-icon> Textsheets</h5>
+
+								<ul>
+									<li v-for="textsheet in experiment.data.textsheets" :key="textsheet.title" class="my-3">
+										<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/'+textsheet.id">
+											{{ textsheet.title }}
+										</router-link><br/>
+										<strong>Created:</strong> {{ dateFormat(textsheet.creationDate) }}
+										<strong>by:</strong>  {{ textsheet.creator }}<br/>
+										<strong>Last modified:</strong> {{ dateFormat(textsheet.lastModifiedDate) }}
+										<strong>by:</strong> {{ textsheet.lastUser }}
+									</li>
+								</ul>
+							</div>
+							<div>
+								<router-link :to="'/experiments/'+experiment.title+'/data/textsheets/new-entry'" v-if="isAllowed('activities.add_textsheet')">
+									<b-button class="m-1" variant="primary" size="sm"><b-icon icon="file-earmark-plus"></b-icon> New textsheet</b-button>
+								</router-link>
+							</div>
 						</b-col>
 					
-						<b-col cols=6>
+						<!-- <b-col cols=6>
 							<h5><b-icon icon="file-earmark-spreadsheet" variant="success"></b-icon> Spreadsheets</h5>
 							<ul>
-								<!-- <li v-for="spreadsheet in experiment.data.spreadsheets" :key="spreadsheet.id">
+								<li v-for="spreadsheet in experiment.data.spreadsheets" :key="spreadsheet.id">
 									<router-link  to="/">
 										{{ spreadsheet.title }}
 									</router-link>
-								</li> -->
+								</li>
 							</ul>
 
 							<router-link to="/">
 								<b-button class="m-1" variant="success" size="sm" disabled><b-icon icon="file-earmark-plus"></b-icon> New spreadsheet</b-button>
 							</router-link>
-						</b-col>
+						</b-col> -->
 					</b-row>
 				</b-container>
 			</b-card-text>
 
 			<template #footer>
-				<b-button variant="info" disabled><b-icon icon="pencil-square"></b-icon> Edit</b-button>
+				<b-button variant="info" disabled v-if="isAllowed('activities.edit_experiment')"><b-icon icon="pencil-square"></b-icon> Edit</b-button>
 			</template>
 		</b-card>
 	</div>
@@ -97,6 +102,7 @@
 	import ProcedureService from '../services/ProcedureService.js'
 	import DateFormat from '../utils/DateFormat.js'
 	import { mapState } from 'vuex'
+	import { mapGetters } from 'vuex'
 
 	export default {
 		components: {
@@ -110,6 +116,7 @@
 		},
 		computed: {
 			...mapState('experiment', ['defaultExperimentLogo']),
+			...mapGetters('user', ['isAllowed']),
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
 			}

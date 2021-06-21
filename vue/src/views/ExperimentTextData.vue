@@ -11,7 +11,7 @@
 					</b-form>
 				</b-col>
 
-				<b-col cols="3" v-if="!enabled">
+				<b-col cols="3" v-if="!enabled && isAllowed('activities.edit_textsheet')">
 					<b-button @click="enableEdition"  class="float-right"  size="lg" variant="info" style="border-radius: 15px; width: 150px;">
 						<b-icon icon="pencil-square"></b-icon>
 						Edit
@@ -54,6 +54,7 @@
 	import { VueEditor } from 'vue2-editor';
 	import Textsheet from '../models/Textsheet'
 	import { mapState } from 'vuex'
+	import { mapGetters } from 'vuex'
 	import Dialog from '../utils/Dialog.js'
 	import Notif from '../utils/Notif.js'
 
@@ -83,6 +84,7 @@
 		},
 		computed: {
 			...mapState('user', ['username']),
+			...mapGetters('user', ['isAllowed']),
 			experiment() {
 				return this.$store.getters['experiment/getExperimentByTitle'](this.$route.params.experimentTitle)
 			}

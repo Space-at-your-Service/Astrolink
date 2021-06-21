@@ -108,11 +108,22 @@ class TaskSerializer(serializers.ModelSerializer):
         return newtask
 
 
+    def update(self, instance, validated_data):
+
+        if "holder" in validated_data:
+            validated_data["holder"] = get_user_model().objects.get(username = validated_data.pop("holder"))
+
+        return super().update(instance, validated_data)
+
+
     def to_representation(self, instance):
 
         self.fields["procedures"] = ProcedureSerializer(many = True)
 
-        return serializers.ModelSerializer.to_representation(self, instance)
+        rep = serializers.ModelSerializer.to_representation(self, instance)
+        rep["id"] = instance.id
+
+        return rep
 
 
 class TextsheetSerializer(serializers.ModelSerializer):

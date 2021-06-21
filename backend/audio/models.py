@@ -17,6 +17,7 @@ class Audio(models.Model):
     @field id (str) : A unique name for the audio
     @field user (str) : User who sent the audio
     @field rooms (str) : list of the rooms where the audio was sent
+    @field audiofile (file) : audio file (mp3)
     @field timestamp(str): timestamp of the audio
     @field seenBy (str): list of the users who listenned to the audio
     """

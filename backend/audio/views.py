@@ -1,5 +1,5 @@
 """
-asclepios > views
+audio > views
 Defines all of the app's
 REST Endpoints
 """
@@ -35,8 +35,8 @@ class AudiosView(APIView):
             Retrieves all the audios
         """
 
-        #request.user.check_perms(("communication.view_communication",))
-        #log.info(f"{request.user} accessed GET communication/")
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed GET audio/")
 
         all_audios = Audio.objects.all().order_by("timestamp")
         ser = AudioSerializer(all_audios, many = True)
@@ -51,47 +51,47 @@ class AudioView(APIView):
 
     def get(self, request, id):
 
-        """ GET 
+        """ GET audio/id
 
             Gets a specific audio
         """
 
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed GET audio/{id}")
 
         audio = Audio.objects.get(id = id)
 
         return HttpResponse(FileWrapper(audio.audiofile), content_type = "audio/mp3")
 
     def put(self, request, id, posting=False):
+        """ PUT audio/id
+        Modifies a specific audio. posting boolean is true if and only if and audio has been sent in 
+        the base room. It will then add the base room to the rooms list of the audio.
 
-            """ 
-            put2 modifies the rooms of a given audio to add the base room in it
-            after a given timeout. 
-            """
-            if posting:
-                time.sleep(8)
-                withBase = request.data['rooms'].split(',')
-                withBase.append('base')
-                request.data['rooms'] = (',').join(withBase)
-            audio = Audio.objects.get(id = id)
-            request.data.pop('audiofile')
-            audio_data = request.data
-            ser = AudioSerializer(audio, data = audio_data, partial=True)
+        """
+        if posting:
+            time.sleep(8)
+            withBase = request.data['rooms'].split(',')
+            withBase.append('base')
+            request.data['rooms'] = (',').join(withBase)
+        audio = Audio.objects.get(id = id)
+        request.data.pop('audiofile')
+        audio_data = request.data
+        ser = AudioSerializer(audio, data = audio_data, partial=True)
 
-            if ser.is_valid():
+        if ser.is_valid():
 
-                ser.save()
-                return JsonResponse(ser.data)
+            ser.save()
+            return JsonResponse(ser.data)
 
-            return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
+        return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
     def post(self, request,id):
-        """ POST audio/
-
+        """ POST audio/id
             post an audio
         """
-
-
-        log.info(f"{request.user} accessed POST audio/")
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed POST audio/{id}")
 
         if('base' in request.data['rooms'].split(',')):
             noBase = request.data['rooms'].split(',')

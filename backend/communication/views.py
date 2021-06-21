@@ -1,5 +1,5 @@
 """
-asclepios > views
+communication > views
 Defines all of the app's
 REST Endpoints
 """
@@ -28,8 +28,9 @@ class CommunicationView(APIView):
             Retrieves all the lists of users rooms
         """
 
-        #request.user.check_perms(("communication.view_communication",))
-        #log.info(f"{request.user} accessed GET communication/")
+
+        request.user.check_perms(("communication.view_communication",))
+        log.info(f"{request.user} accessed GET communication/")
 
         all_rooms = Room.objects.all().order_by("id")
         ser = RoomSerializer(all_rooms, many = True)
@@ -42,7 +43,7 @@ class CommunicationView(APIView):
             Edits a given room
         """
 
-       # request.user.check_perms(("communication.join_room",))
+        request.user.check_perms(("communication.view_communication",))
         log.info(f"{request.user} accessed PUT communication/{pk}/")
 
         room = Room.objects.get(pk = pk)

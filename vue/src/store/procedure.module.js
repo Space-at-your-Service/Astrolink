@@ -46,7 +46,7 @@ export const procedure = {
 				const optionGroup = { label: section.type, options: [] }
 				for (var subsection of section.subsections) {
 					for (var procedure of subsection.procedures) {
-						optionGroup.options.push({value: procedure.title, text: '[' + subsection.type + '] ' + procedure.title})
+						optionGroup.options.push({value: procedure, text: '[' + subsection.type + '] ' + procedure.title})
 					}
 				}
 				options.push(optionGroup)

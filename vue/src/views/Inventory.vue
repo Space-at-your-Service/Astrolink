@@ -236,7 +236,7 @@
 				},
 				selected: [],
 				currentPage: 1,
-				perPage: 10,
+				perPage: 30,
 				isBusy: false,
 				createdItem: { id: '', name: '', details: '', quantity: 0 },
 				editedItem: { id: '', name: '', details: '', quantity: 0 }

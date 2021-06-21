@@ -12,6 +12,10 @@ h3 {
   color: #fff;
 }
 
+:root {
+  --crimson: rgb(175, 0, 42);
+}
+
 .main-container {
   width:100%;
   height:100%;
