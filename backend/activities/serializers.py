@@ -113,6 +113,9 @@ class TaskSerializer(serializers.ModelSerializer):
         if "holder" in validated_data:
             validated_data["holder"] = get_user_model().objects.get(username = validated_data.pop("holder"))
 
+        if instance.holder.groups.filter(unit__name = "Astronauts"): #TODO: don't hardcode astronauts
+            self.context["request"].user.check_perms(("activities.touch_flightplan",))
+
         return super().update(instance, validated_data)
 
 

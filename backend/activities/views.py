@@ -143,6 +143,7 @@ class PlanningView(APIView):
             Retrieves the planning of the user requesting
         """
 
+        request.user.check_perms(("activities.view_task",))
         log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         planning = Task.objects.filter(holder = request.user)
@@ -194,12 +195,12 @@ class TaskView(APIView):
 
         """ PUT activities/tasks/<id>/ """
 
-        request.user.check_perms(("activities.add_task",))
+        request.user.check_perms(("activities.change_task",))
         log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
 
         tsk = Task.objects.get(pk = pk)
 
-        ser = TaskSerializer(tsk, data = request.data, partial = True)
+        ser = TaskSerializer(tsk, data = request.data, context = {"request" : request}, partial = True)
 
         if ser.is_valid():
 

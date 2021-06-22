@@ -24,8 +24,7 @@ class Item(models.Model):
     quantity = models.PositiveSmallIntegerField(default = 0)
 
     class Meta:
-        permissions = [("modify_item_qty", "Can modify an Item count"),
-                      ]
+        permissions = [("modify_item_qty", "Can modify an Item count"),]
 
     def __str__(self):
 

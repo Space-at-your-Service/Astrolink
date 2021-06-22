@@ -2,7 +2,7 @@
 	<div class="main-container">
 		<h3 class="section-title">MCC Planning</h3>
 
-		<Planning :tasks="mccPlanning" :eventsCssClasses="categories" :userList="staff.mcc" :userNames="mccNames" moduleName='mccplanning'/>
+		<Planning :tasks="mccPlanning" :eventsCssClasses="categories" :userList="staff.mcc" :userNames="mccNames" moduleName='mccplanning' :planningPermissions="planningPermissions"/>
 	</div>
 </template>
 
@@ -17,7 +17,13 @@
 		
 		data() {
 			return {
-				categories: ['Shift-tasks', 'Briefing-debriefing', 'Change-of-shift', 'Meal']
+				categories: ['Shift-tasks', 'Briefing-debriefing', 'Change-of-shift', 'Meal'],
+				planningPermissions: {
+					view: ['activities.view_task'], 
+					create: ['activities.add_task'], 
+					edit: ['activities.change_task'], 
+					delete: ['activities.delete_task']
+				}
 				
 			}
 		},

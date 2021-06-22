@@ -215,10 +215,10 @@
 					<b-badge :class="selectedEvent.class">{{ selectedEvent.class }}</b-badge>
 				</template>
 				<template #modal-footer>
-					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowed('activities.delete_task')">
+					<b-button variant="danger" @click="deleteTask(selectedEvent)" v-if="!isEditingEvent && isAllowedMultiple(planningPermissions.delete)">
 						<b-icon icon="trash"></b-icon> Delete
 					</b-button>
-					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent && isAllowed('activities.change_task')">
+					<b-button @click="isEditingEvent = true" variant="info" v-if="!isEditingEvent && isAllowedMultiple(planningPermissions.edit)">
 						<b-icon icon="pencil-square"></b-icon> Edit
 					</b-button>
 					<b-button variant="info" @click="okEdit" v-if="isEditingEvent">
@@ -358,7 +358,7 @@
 
 	export default {
 		components: { VueCal },
-		props: ['tasks', 'eventsCssClasses', 'userList', 'userNames', 'moduleName'],
+		props: ['tasks', 'eventsCssClasses', 'userList', 'userNames', 'moduleName', 'planningPermissions'],
 
 		data() {
 			return {
@@ -379,10 +379,10 @@
 		computed: {
 			...mapState(['missionStartDate', 'missionEndDate']),
 			...mapGetters('procedure', ['proceduresAsOptions']),
-			...mapGetters('user', ['isAllowed']),
+			...mapGetters('user', ['isAllowedMultiple']),
 
 			editionOptions() {
-				return { title: false, drag: this.isAllowed('activities.change_task'), resize: this.isAllowed('activities.change_task'), delete: false, create: this.isAllowed('activities.add_task') }
+				return { title: false, drag: this.isAllowedMultiple(this.planningPermissions.edit), resize: this.isAllowedMultiple(this.planningPermissions.edit), delete: false, create: this.isAllowedMultiple(this.planningPermissions.create) }
 				
 			},
 			minDate() {
