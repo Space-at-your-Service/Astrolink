@@ -22,6 +22,11 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
     def update(self, instance, validated_data):
 
         if "quantity" in validated_data and instance.quantity != validated_data["quantity"]:
-            self.context["request"].user.check_perms("inventory.modify_item_qty")
 
-        return super().update(instance, validated_data)
+            usr = self.context["request"].user
+            usr.check_perms("inventory.modify_item_qty")
+
+            if usr.has_perm("inventory.change_item"):
+                return super().update(instance, validated_data)
+            else:
+                return super().update(instance, {"quantity" : validated_data["quantity"]})
