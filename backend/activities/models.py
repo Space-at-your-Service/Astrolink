@@ -187,6 +187,9 @@ class Task(models.Model):
     background = models.BooleanField(default = False)
     allDay = models.BooleanField(default = False)
 
+    class Meta:
+        permissions = [("touch_flightplan", "Modifications to the flightplan allowed"),]
+
     def __str__(self):
 
         return f"[{self.holder.username}] {self.title}"
