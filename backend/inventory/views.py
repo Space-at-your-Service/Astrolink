@@ -72,7 +72,7 @@ class ItemView(APIView):
         item = Item.objects.get(pk = pk)
 
         item_data = JSONParser().parse(request)
-        ser = ItemSerializer(item, data = item_data)
+        ser = ItemSerializer(item, context = {"request" : request}, data = item_data)
 
         if ser.is_valid():
 
