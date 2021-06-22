@@ -2,7 +2,7 @@
 	<div class="main-container">
 		<h3 class="section-title">Flightplan</h3>
 
-		<Planning :tasks="flightplan" :eventsCssClasses="categories" :userList="astronautsCrew" :userNames="astronautsNames" moduleName='flightplan'/>
+		<Planning :tasks="flightplan" :eventsCssClasses="categories" :userList="astronautsCrew" :userNames="astronautsNames" moduleName='flightplan' :planningPermissions="planningPermissions"/>
 	</div>
 </template>
 
@@ -17,7 +17,13 @@
 		},
 		data() {
 			return {
-				categories: ['Break', 'Routine', 'Preparation', 'IBS', 'OBS', 'Data-analysis', 'Sport', 'External-contact']
+					categories: ['Break', 'Routine', 'Preparation', 'IBS', 'OBS', 'Data-analysis', 'Sport', 'External-contact'],
+					planningPermissions: {
+						view: ['activities.view_task'], 
+						create: ['activities.add_task', 'activities.touch_flightplan'], 
+						edit: ['activities.change_task', 'activities.touch_flightplan'], 
+						delete: ['activities.delete_task', 'activities.touch_flightplan']
+					}
 			}
 		},
 		computed: {

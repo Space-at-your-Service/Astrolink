@@ -29,6 +29,13 @@ export const user = {
 			return getters.rights.includes(right)
 		},
 
+		isAllowedMultiple: (state, getters) => rights => {
+			var isAllowed = true
+			for (const right of rights)
+				isAllowed = isAllowed && getters.rights.includes(right)
+			return isAllowed
+		},
+
 		permissionsReadable: state => {
 			return Object.values(state.permissions)
 		},
