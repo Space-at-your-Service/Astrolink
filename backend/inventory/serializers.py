@@ -28,5 +28,5 @@ class ItemSerializer(serializers.HyperlinkedModelSerializer):
 
         elif "quantity" in validated_data and instance.quantity != validated_data["quantity"]:
 
-            usr.check_perms("inventory.modify_item_qty")
+            usr.check_perms(("inventory.modify_item_qty",))
             return super().update(instance, {"quantity" : validated_data["quantity"]})

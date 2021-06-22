@@ -66,7 +66,6 @@ class ItemView(APIView):
             Edits a given item
         """
 
-        request.user.check_perms(("inventory.change_item",))
         log.info(f"{request.user} accessed PUT inventory/{pk}/")
 
         item = Item.objects.get(pk = pk)
