@@ -81,7 +81,7 @@ class PasswordView(APIView):
 
                 except ValidationError as e:
 
-                    return JsonResponse(e.messages, status = status.HTTP_400_BAD_REQUEST)
+                    return JsonResponse(e.messages, status = status.HTTP_400_BAD_REQUEST, safe = False)
 
             return HttpResponse("Old password incorrect", status = status.HTTP_400_BAD_REQUEST)
 
