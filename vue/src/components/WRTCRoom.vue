@@ -53,7 +53,7 @@
         :roomId="roomName"
         socketURL="https://rtcmulticonnection.herokuapp.com:443/"
         stunServer='stun:stun.l.google.com:19302'
-        turnServer='Astrolink1@PASSWORD%turn:turn.astrolink.earth:5349'
+        turnServer='Astrolink1@AstroPassword%turn:turn.astrolink.earth:5349'
         :enableVideo="videoOn"
         v-on:joined-room="logEvent"
         v-on:left-room="logEvent"
