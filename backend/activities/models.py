@@ -4,18 +4,19 @@ Defines all the different
 models of the app
 """
 
+import os
 
 from datetime import datetime
-from os.path import join
 
 from django.db import models
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 
 def procedure_path(instance, filename):
 
-    return join("procedures", 
+    return os.path.join("procedures", 
                 instance.types.masterType.type, 
                 instance.types.subtype,
                 filename)
@@ -64,7 +65,7 @@ class Procedure(models.Model):
 
     title = models.CharField(max_length = 50, primary_key = True)
     types = models.ForeignKey(ProcedureSubtype, on_delete = models.PROTECT, related_name = "procedures", null = True)
-    abstract = models.CharField(max_length = 140)
+    abstract = models.CharField(max_length = 300)
 
     favoriteOf = models.ManyToManyField(get_user_model(), related_name = "favoriteProcedures", blank = True)
 
@@ -193,3 +194,39 @@ class Task(models.Model):
     def __str__(self):
 
         return f"[{self.holder.username}] {self.title}"
+
+
+@receiver(models.signals.post_delete, sender = Procedure)
+def autodel_deleted_procedure(sender, instance, **kwargs):
+
+    """
+    Deletes file from filesystem
+    when corresponding `Procedure` object is deleted.
+    """
+
+    if instance.pdfFile:
+        if os.path.isfile(instance.pdfFile.path):
+            os.remove(instance.pdfFile.path)
+
+
+@receiver(models.signals.pre_save, sender = Procedure)
+def autodel_edited_procedure(sender, instance, **kwargs):
+
+    """
+    Deletes old file from filesystem
+    when corresponding `Procedure` object is updated
+    with new file.
+    """
+
+    if not instance.pk:
+        return False
+
+    try:
+        old_file = Procedure.objects.get(pk = instance.pk).pdfFile
+    except Procedure.DoesNotExist:
+        return False
+
+    new_file = instance.pdfFile
+    if not old_file == new_file:
+        if os.path.isfile(old_file.path):
+            os.remove(old_file.path)
