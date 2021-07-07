@@ -113,13 +113,13 @@
 						<b-form-group 
 						label="Title"
 						label-for="titleInput">
-							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
+							<b-form-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" maxlength="50" required></b-form-input>
 						</b-form-group>
 					
 						<b-form-group 
 						label="Content"
 						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" maxlength="300" required></b-form-textarea>
 						</b-form-group>
 
 						<b-form-group 
@@ -273,13 +273,13 @@
 						<b-form-group 
 						label="Title"
 						label-for="titleInput">
-							<b-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" required></b-input>
+							<b-form-input id="titleInput" v-model="selectedEvent.title" placeholder="Task name" maxlength="50" required></b-form-input>
 						</b-form-group>
 					
 						<b-form-group 
 						label="Content"
 						label-for="contentInput">
-							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" required></b-form-textarea>
+							<b-form-textarea id="contentInput" v-model="selectedEvent.content" placeholder="Task content" rows="4" cols="50" maxlength="300" required></b-form-textarea>
 						</b-form-group>
 
 						<b-form-group 

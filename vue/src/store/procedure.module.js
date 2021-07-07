@@ -9,7 +9,7 @@ export const procedure = {
 		procedures: [],
 		procedureTypes: [
 			{primaryType: 'General', subtypes: ['Systems', 'Hygiene', 'Cooking', 'Routine maintenance', 'Special maintenance']}, 
-			{primaryType: 'Science', subtypes: ['Rover', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Crans Psychology', 'IDUN', 'Psychology-NASA', 'Psychology-Mission', 'Psychology-Design base']},
+			{primaryType: 'Science', subtypes: ['EVA', 'Space suits', 'Georemap/App-EVA', 'Geophysical Exploration', 'Hydration', 'MAS', 'REDMARS', 'Bioplastic', 'Psychology-Design base']},
 			{primaryType: 'MCC', subtypes: ['Main']}, 
 			{primaryType: 'Emergencies', subtypes: ['Main']}, 
 			{primaryType: 'Others', subtypes: ['Main']}

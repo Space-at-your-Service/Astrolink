@@ -28,7 +28,7 @@
 				label="Title"
 				label-for="createdTitleInput"
 				>
-					<b-form-input id="createdTitleInput" v-model="createdExperiment.title" trim required></b-form-input>
+					<b-form-input id="createdTitleInput" v-model="createdExperiment.title" trim maxlength="50" required></b-form-input>
 				</b-form-group>
 
 				<b-form-group
@@ -55,7 +55,7 @@
 				label="Abstract"
 				label-for="createdAbstractInput"
 				>
-					<b-form-textarea id="createdAbstractInput" v-model="createdExperiment.abstract" size="sm" no-resize required></b-form-textarea>
+					<b-form-textarea id="createdAbstractInput" v-model="createdExperiment.abstract" size="sm" maxlength="140" no-resize required></b-form-textarea>
 				</b-form-group>
 
 				<b-form-group
@@ -85,7 +85,7 @@
 				label="Detailed description"
 				label-for="createdDescriptionInput"
 				>
-					<b-form-textarea id="createdDescriptionInput" v-model="createdExperiment.description" :rows="4"  required></b-form-textarea>
+					<b-form-textarea id="createdDescriptionInput" v-model="createdExperiment.description" :rows="4" maxlength="300" required></b-form-textarea>
 				</b-form-group>
 
 				<!-- <b-form-group 

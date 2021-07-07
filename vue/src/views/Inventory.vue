@@ -156,7 +156,7 @@
 				:invalid-feedback="invalidNameFeedback()"
 				:state="checkName(createdItem)"
 				>
-					<b-form-input id="createdNameInput" v-model="createdItem.name" trim></b-form-input>
+					<b-form-input id="createdNameInput" v-model="createdItem.name" trim maxlength="20"></b-form-input>
 				</b-form-group>
 
 				<b-form-group
@@ -174,7 +174,7 @@
 				:invalid-feedback="invalidDetailsFeedback()"
 				:state="checkDetails(createdItem)"
 				>
-					<b-form-textarea id="createdDetailsInput" v-model="createdItem.details" size="sm" no-resize></b-form-textarea>
+					<b-form-textarea id="createdDetailsInput" v-model="createdItem.details" size="sm" no-resize maxlength="140"></b-form-textarea>
 				</b-form-group>
 			</form>
 		</b-modal>
@@ -187,7 +187,7 @@
 				:invalid-feedback="invalidNameFeedback()"
 				:state="checkName(editedItem)"
 				>
-					<b-form-input id="editedNameInput" v-model="editedItem.name" trim></b-form-input>
+					<b-form-input id="editedNameInput" v-model="editedItem.name" trim maxlength="20"></b-form-input>
 				</b-form-group>
 
 				<b-form-group
@@ -204,7 +204,7 @@
 				:invalid-feedback="invalidDetailsFeedback()"
 				:state="checkDetails(editedItem)"
 				>
-					<b-form-textarea id="editedDetailsInput" v-model="editedItem.details" size="sm" no-resize></b-form-textarea>
+					<b-form-textarea id="editedDetailsInput" v-model="editedItem.details" size="sm" no-resize maxlength="140"></b-form-textarea>
 				</b-form-group>
 			</form>
 		</b-modal>

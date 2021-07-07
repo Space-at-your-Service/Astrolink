@@ -8,7 +8,7 @@ export const experiment = {
 	state: {
 		experiments: [],
 		statusOptions: ['planned', 'ongoing', 'complete', 'aborted'],
-		defaultExperimentLogo: "https://upload.wikimedia.org/wikipedia/commons/2/2b/Apollo_program_insignia.png"
+		defaultExperimentLogo: "https://i.postimg.cc/KYbcMYbn/Ascl-pios-Logo-rond.png"
 	},
 
 	getters: {

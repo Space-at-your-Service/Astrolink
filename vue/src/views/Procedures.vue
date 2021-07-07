@@ -138,7 +138,7 @@
 				label="Title"
 				label-for="createdTitleInput"
 				>
-					<b-form-input id="createdTitleInput" v-model="createdProcedure.title" trim required></b-form-input>
+					<b-form-input id="createdTitleInput" v-model="createdProcedure.title" trim maxlength="50" required></b-form-input>
 				</b-form-group>
 
 				<b-form-group
@@ -167,7 +167,7 @@
 				label="Abstract"
 				label-for="createdAbstractInput"
 				>
-					<b-form-textarea id="createdAbstractInput" v-model="createdProcedure.abstract" size="sm" no-resize></b-form-textarea>
+					<b-form-textarea id="createdAbstractInput" v-model="createdProcedure.abstract" maxlength="300" size="sm" no-resize></b-form-textarea>
 				</b-form-group>
 
 				<b-form-group 
@@ -178,7 +178,7 @@
 					v-model="createdProcedure.file"
 					accept=".pdf"
 					size="md"
-					placeholder="Drop the procedure PDF file here"
+					placeholder="Drop the procedure PDF file here (max. 100Mo)"
 					drop-placeholder="Yosh, got it !"
 					no-drop-placeholder="Only PDF format is accepted"
 					required
@@ -202,7 +202,7 @@
 					v-model="editedProcedure.file"
 					accept=".pdf"
 					size="md"
-					placeholder="Drop the procedure PDF file here"
+					placeholder="Drop the procedure PDF file here (max. 100Mo)"
 					drop-placeholder="Drop it !"
 					no-drop-placeholder="Only PDF files are accepted"
 					>

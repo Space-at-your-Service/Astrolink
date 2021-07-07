@@ -91,9 +91,23 @@
 			</b-card-text>
 
 			<template #footer>
-				<b-button variant="info" disabled v-if="isAllowed('activities.edit_experiment')"><b-icon icon="pencil-square"></b-icon> Edit</b-button>
+				<b-button v-b-modal.editModal variant="info" @click="editModal(experiment)" v-if="isAllowed('activities.change_experiment')"><b-icon icon="pencil-square"></b-icon> Edit</b-button>
 			</template>
 		</b-card>
+
+		<b-modal id="editModal" title="Experiment edit" centered @ok="okEdit">
+			<form>
+				<b-form-group>
+				
+				</b-form-group>
+			</form>
+
+			<b-button size="sm" variant="danger" @click="deleteExperiment(editedExperiment)" class="ml-1" v-if="isAllowed('activities.delete_experiment')">
+				<b-icon icon="trash"></b-icon>
+				Delete experiment
+			</b-button>
+		</b-modal>
+
 	</div>
 </template>
 
@@ -101,6 +115,9 @@
 	import expBadge from '../components/expBadge.vue'
 	import ProcedureService from '../services/ProcedureService.js'
 	import DateFormat from '../utils/DateFormat.js'
+	import Dialog from '../utils/Dialog.js'
+	import Notif from '../utils/Notif.js'
+	import Experiment from '../models/Experiment.js'
 	import { mapState } from 'vuex'
 	import { mapGetters } from 'vuex'
 
@@ -111,6 +128,7 @@
 
 		data() {
 			return {
+				editedExperiment: new Experiment()
 
 			}
 		},
@@ -133,8 +151,34 @@
 					window.open(fileURL, title)
 				})
 			},
+
 			dateFormat(rawDate) {
 				return DateFormat.dateString(rawDate)
+			},
+
+			editModal(experiment) {
+				this.editedExperiment = experiment
+			},
+
+			okEdit() {
+
+			},
+
+			deleteExperiment(experiment){
+				Dialog.confirmDelete(this, 'Do you really want to remove this experiment from the database ?')
+				.then((value)=> {
+					if (value) {
+						this.$store.dispatch('experiment/deleteExperiment', experiment)
+						.then(() => {
+							this.$bvModal.hide('editModal')
+							Notif.toastSuccess(this, 'Experiment deleted', 'The experiment has been successfully deleted.')
+							this.$router.go(-1)
+						})
+						.catch(() => {
+							Notif.toastError(this, 'Could not delete', 'Could not delete the experiment.')
+						})	
+					}
+				})
 			}
 		}
 	}

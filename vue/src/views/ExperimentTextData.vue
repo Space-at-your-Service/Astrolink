@@ -6,12 +6,12 @@
 			<b-row>
 				<b-col>
 					<b-form @submit.prevent.stop>
-						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
+						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center" maxlength="50">
 						</b-form-input>
 					</b-form>
 				</b-col>
 
-				<b-col cols="3" v-if="!enabled && isAllowed('activities.edit_textsheet')">
+				<b-col cols="3" v-if="!enabled && isAllowed('activities.change_textsheet')">
 					<b-button @click="enableEdition"  class="float-right"  size="lg" variant="info" style="border-radius: 15px; width: 150px;">
 						<b-icon icon="pencil-square"></b-icon>
 						Edit
