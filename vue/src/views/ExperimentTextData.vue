@@ -6,7 +6,7 @@
 			<b-row>
 				<b-col>
 					<b-form @submit.prevent.stop>
-						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center">
+						<b-form-input ref="titleInput" id="titleInput" v-model="sheet.title" placeholder="Textsheet Title" :disabled="!isNew" class="text-center" maxlength="50">
 						</b-form-input>
 					</b-form>
 				</b-col>
