@@ -91,7 +91,7 @@
 			</b-card-text>
 
 			<template #footer>
-				<b-button variant="info" disabled v-if="isAllowed('activities.edit_experiment')"><b-icon icon="pencil-square"></b-icon> Edit</b-button>
+				<b-button variant="info" v-if="isAllowed('activities.change_experiment')"><b-icon icon="pencil-square"></b-icon> Edit</b-button>
 			</template>
 		</b-card>
 	</div>

@@ -11,7 +11,7 @@
 					</b-form>
 				</b-col>
 
-				<b-col cols="3" v-if="!enabled && isAllowed('activities.edit_textsheet')">
+				<b-col cols="3" v-if="!enabled && isAllowed('activities.change_textsheet')">
 					<b-button @click="enableEdition"  class="float-right"  size="lg" variant="info" style="border-radius: 15px; width: 150px;">
 						<b-icon icon="pencil-square"></b-icon>
 						Edit
