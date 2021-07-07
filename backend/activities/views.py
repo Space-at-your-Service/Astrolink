@@ -340,6 +340,22 @@ class ExperimentView(APIView):
         return JsonResponse(ser.errors, status = status.HTTP_400_BAD_REQUEST)
 
 
+    def delete(self, request, pk):
+
+        """ DELETE activities/experiments/<experiment_title>
+
+            Deletes an experiment
+        """
+
+        request.user.check_perms(("activities.delete_experiment",))
+        log.info(f"{request.user} accessed {request.method} {request.get_full_path()}")
+
+        experiment = Experiment.objects.get(pk = pk)
+        experiment.delete()
+
+        return HttpResponse("Delete successful", status = status.HTTP_204_NO_CONTENT)
+
+
 def inflate_textsheet(requestdata):
 
     if "experiment" in requestdata and requestdata["experiment"]:
